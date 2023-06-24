@@ -1,0 +1,30 @@
+# note: this is just the suggested development environment
+name: gsb
+channels:
+- conda-forge
+dependencies:
+- python=3.10
+- GitPython=3.1
+- ipython>=8
+- jupyterlab>=3
+- black
+- isort
+- mypy
+- pylint
+- versioneer
+- pip>=23
+- pre-commit
+- pytest>=7
+- pytest-cov>=4
+- anybadge
+- mkdocs
+- mike
+- mkdocstrings
+- mkdocstrings-python
+- mkdocs-literate-nav
+- mkdocs-material
+- mkdocs-gen-files
+- pip:
+  - mkdocs-section-index
+  - mkdocs-coverage
+  - semantic-version>=2.7

@@ -1,0 +1,60 @@
+site_name: Documentation for the gsb Package
+repo_url: https://github.com/OpenBagTwo/gsb
+repo_name: gsb
+site_author: Gili "OpenBagTwo" Barlev
+docs_dir: docs
+edit_uri: ''
+theme:
+  name: material
+  favicon: img/favicon.png
+  logo: img/logo.png
+  features:
+  - content.code.copy
+  palette:
+    primary: deep orange
+    scheme: slate
+nav:
+- Home: index.md
+- About: about.md
+- Installation Instructions: installation.md
+- Quick-Start Guide: usage.md
+- Best Practices: suggestions.md
+- Contribution Guide: contrib.md
+- Full CLI Documentation: cli.md
+- Python API Docs: reference/
+plugins:
+- search
+- autorefs
+- mike
+- gen-files:
+    scripts:
+#    - docs/gen_clidocs.py
+    - docs/gen_apidocs.py
+- section-index
+- literate-nav:
+    nav_file: SUMMARY.md
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          docstring_style: numpy
+          enable_inventory: true
+- coverage:
+    page_name: coverage
+    html_report_dir: htmlcov
+watch:
+- gsb
+extra:
+  version:
+    provider: mike
+markdown_extensions:
+- pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true
+- pymdownx.inlinehilite
+- pymdownx.snippets
+- pymdownx.superfences
+- admonition
+- pymdownx.details
+- sane_lists

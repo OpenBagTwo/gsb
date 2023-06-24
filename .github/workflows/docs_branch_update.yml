@@ -1,0 +1,52 @@
+# Rebuild the docs on changes to dev or on a new release
+
+name: Docs Update
+
+concurrency: gh-pages
+
+on:
+  push:
+    branches:
+    - dev
+  release:
+    types: [published]
+jobs:
+  docs_rebuild:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: set up development environment
+      run: |
+        $CONDA/bin/conda env create -q -f environment.yml
+        source $CONDA/bin/activate gsb
+        pip install -e .
+    - name: configure git
+      run: |
+        git config --global user.name docs-golem
+        git config --global user.email losthemobvote@openbagtwo.net
+    - name: run tests (to generate coverage report)
+      run: |
+        source $CONDA/bin/activate gsb
+        pytest --cov gsb --ignore-glob="docs/**" --cov-report=html --cov-report=term
+    - name: generate coverage badge
+      uses: tj-actions/coverage-badge-py@v2
+    - name: generate lint badge
+      run: |
+        source $CONDA/bin/activate gsb
+        pylint gsb --output docs/lint-report.txt --exit-zero
+        anybadge -l pylint -v $(cat docs/lint-report.txt | sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p') -f pylint.svg 0=darkred 4=red 7=orange 9=yellow 10=green
+    - name: add badges to docs
+      run: |
+        mv *.svg docs/img/
+    - name: deploy dev docs
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        source $CONDA/bin/activate gsb
+        mike deploy ${{ github.ref_name }} --push --rebase
+    - name: deploy release docs
+      if: ${{ github.event_name == 'release' && !github.event.release.prerelease }}
+      run: |
+        source $CONDA/bin/activate gsb
+        mike deploy ${{ github.ref_name }} release --push --rebase -u
