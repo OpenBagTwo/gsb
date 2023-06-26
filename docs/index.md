@@ -9,7 +9,7 @@
 ![MacOS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=apple&logoColor=white&color=434334)
 ![RaspberryPi](https://img.shields.io/badge/Raspberry%20Pi-000000?style=flat-square&logo=raspberrypi&logoColor=white&color=c51a4a)
 
-[![python](https://img.shields.io/badge/Python-3.10,3.11-3776AB.svg?style=flat&logo=python&logoColor=white&color=ffdc53&labelColor=3d7aaa)](https://www.python.org)
+[![python](https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat&logo=python&logoColor=white&color=ffdc53&labelColor=3d7aaa)](https://www.python.org)
 [![coverage](https://openbagtwo.github.io/gsb/dev/img/coverage.svg)](https://openbagtwo.github.io/gsb/dev/coverage)
 [![lint](https://openbagtwo.github.io/gsb/dev/img/pylint.svg)](https://openbagtwo.github.io/gsb/dev/lint-report.txt)
 
@@ -41,10 +41,7 @@ game saves. Features (will) include:
 
 ## Installation
 
-The `gsb` package is written for **Python 3.10 or greater** and leverages
-[GitPython](https://gitpython.readthedocs.io/en/stable/)
- under the hood which requires git 1.7 or newer.
-
+The `gsb` package is written for **Python 3.11 or greater and Git 2.20 or later**.
 Aside from those minimal requirements, `gsb` should run on any operating
 system and any architecture.
 

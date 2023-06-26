@@ -8,7 +8,7 @@ long_description = (Path(__file__).parent / "README.md").read_text()
 
 setup(
     name="gsb",
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     description="Game Save Backups: A Git-Based Tool for Managing Your Save States",
     long_description=long_description,
     long_description_content_type="text/markdown",
