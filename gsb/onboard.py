@@ -66,18 +66,16 @@ def _update_gitignore(repo_root: Path, patterns: Iterable[str]) -> None:
     patterns
         List of glob-patterns to ignore
     """
-    gitignore = repo_root / ".gitignore"
-
-    try:
-        existing_lines: list[str] = [
-            line.strip() for line in gitignore.read_text().strip().splitlines()
-        ]
-    except FileNotFoundError:
-        existing_lines = []
-    new_lines: list[str] = sorted(
-        {*DEFAULT_IGNORE_LIST, *existing_lines, *patterns}
-    ) + [
-        "\n"
-    ]  # always want to terminate with a newline
-
-    gitignore.write_text("\n".join(new_lines))
+    with open(repo_root / ".gitignore", "a+") as gitignore:
+        gitignore.seek(0)
+        existing_lines: list[str] = [line.strip() for line in gitignore.readlines()]
+        if existing_lines and "# gsb" not in existing_lines:
+            gitignore.write("\n# gsb\n")
+        new_lines: list[str] = sorted(
+            [
+                pattern
+                for pattern in {*DEFAULT_IGNORE_LIST, *patterns}
+                if pattern not in existing_lines
+            ]
+        )
+        gitignore.write("\n".join(new_lines) + "\n")

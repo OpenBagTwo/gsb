@@ -1,7 +1,7 @@
 """Tests for creating new repos"""
 import pytest
 
-from gsb import onboard
+from gsb import _git, onboard
 from gsb.manifest import MANIFEST_NAME
 
 
@@ -59,5 +59,40 @@ class TestFreshInit:
 
 
 class TestInitExistingGitRepo:
-    # TODO
-    ...
+    @pytest.fixture
+    def existing_repo(self, tmp_path):
+        root = tmp_path / "roto-rooter"
+        root.mkdir()
+        _git.init(root)
+        (root / ".gitignore").write_text(
+            """# cruft
+cruft
+
+# ides
+.idea
+.borland_turbo
+"""
+        )
+        # TODO: git add and commit to establish a git history
+        yield root
+
+    def test_init_is_fine_onboarding_an_existing_git_repo(self, existing_repo):
+        _ = onboard.create_repo(existing_repo)
+
+    def test_init_only_appends_to_existing_gitignore(self, existing_repo):
+        _ = onboard.create_repo(existing_repo, ignore=["cruft", "stuff"])
+        assert (
+            (existing_repo / ".gitignore").read_text()
+            == """# cruft
+cruft
+
+# ides
+.idea
+.borland_turbo
+
+# gsb
+stuff
+"""
+        )
+
+    # TODO: test existing repo history inheritance
