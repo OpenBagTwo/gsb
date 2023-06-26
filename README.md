@@ -41,9 +41,8 @@ game saves. Features (will) include:
 
 ## Installation
 
-The `gsb` package is written for **Python 3.11 or greater and Git 2.20 or later**.
-Aside from those minimal requirements, `gsb` should run on any operating
-system and any architecture.
+The `gsb` package is written for **Python 3.11** but otherwise
+should run on any operating system and architecture.
 
 The latest release can be installed from PyPI via `pip`:
 

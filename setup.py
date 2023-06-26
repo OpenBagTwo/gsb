@@ -27,6 +27,6 @@ setup(
     license="GPL v3",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    install_requires=["GitPython>=3.1"],
+    install_requires=["pygit2>=1.12"],
     extras_require={"test": ["pytest>=7", "pytest-cov>=4"]},
 )
