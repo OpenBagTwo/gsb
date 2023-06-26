@@ -30,7 +30,7 @@ class TestFreshInit:
         assert manifest.patterns == (".",)
 
     def test_providing_patterns(self, root):
-        repo, manifest = onboard.create_repo(root, "savey_mcsavegame", "logs/")
+        manifest = onboard.create_repo(root, "savey_mcsavegame", "logs/")
         assert sorted(manifest.patterns) == [
             MANIFEST_NAME,  # I'm assuming that this will always begin with "."
             "savey_mcsavegame",
@@ -42,9 +42,7 @@ class TestFreshInit:
         _ = (root / ".gitignore").read_text()
 
     def test_providing_ignore(self, root):
-        repo, manifest = onboard.create_repo(
-            root, "savey_mcsavegame", ignore=[".stuff"]
-        )
+        _ = onboard.create_repo(root, "savey_mcsavegame", ignore=[".stuff"])
         ignored = (root / ".gitignore").read_text().splitlines()
         assert ".stuff" in ignored
 

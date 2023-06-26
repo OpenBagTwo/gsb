@@ -2,14 +2,12 @@
 from pathlib import Path
 from typing import Iterable
 
-from git import Repo
-
 from .manifest import Manifest
 
 
 def create_repo(
     repo_root: Path, *patterns: Iterable[str], ignore: Iterable[str] | None = None
-) -> tuple[Repo, Manifest]:
+) -> Manifest:
     """Create a new gsb-managed git repo in the specified location
 
     Parameters
@@ -26,8 +24,8 @@ def create_repo(
 
     Returns
     -------
-    Repo
-        The newly-created repo
+    Manifest
+        The static configuration for that repo
 
     Raises
     ------
