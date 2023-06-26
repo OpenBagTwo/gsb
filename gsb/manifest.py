@@ -12,12 +12,12 @@ class Manifest(NamedTuple):
     ----------
     root : Path
         The directory containing the save / repo
-    patterns : tuple[str]
+    patterns : tuple of str
         The glob match-patterns that determine which files get tracked
     """
 
     root: Path
-    patterns: tuple[str]
+    patterns: tuple[str, ...]
 
     @classmethod
     def read(cls, file_path: Path) -> Self:

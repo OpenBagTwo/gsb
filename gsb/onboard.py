@@ -2,11 +2,14 @@
 from pathlib import Path
 from typing import Iterable
 
-from .manifest import Manifest
+from . import _git
+from .manifest import MANIFEST_NAME, Manifest
+
+DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
 
 
 def create_repo(
-    repo_root: Path, *patterns: Iterable[str], ignore: Iterable[str] | None = None
+    repo_root: Path, *patterns: str, ignore: Iterable[str] | None = None
 ) -> Manifest:
     """Create a new gsb-managed git repo in the specified location
 
@@ -36,4 +39,38 @@ def create_repo(
     FileExistsError
         If there is already a git repo in that location
     """
-    raise NotImplementedError
+    if not repo_root.exists():
+        raise FileNotFoundError(f"{repo_root} does not exist")
+    if not repo_root.is_dir():
+        raise ValueError(f"{repo_root} is not a directory")
+    if (repo_root / MANIFEST_NAME).exists():
+        raise FileExistsError(f"{repo_root} already contains a GSB-managed repo")
+    if not patterns:
+        patterns = (".",)
+
+    _git.init(repo_root)
+
+    _update_gitignore(repo_root, ignore or ())
+
+    manifest = Manifest(repo_root, tuple(patterns))
+    manifest.write()
+    return manifest
+
+
+def _update_gitignore(repo_root: Path, patterns: Iterable[str]) -> None:
+    """Create or append to the ".gitignore" file in the specified repo"""
+    gitignore = repo_root / ".gitignore"
+
+    try:
+        existing_lines: list[str] = [
+            line.strip() for line in gitignore.read_text().strip().splitlines()
+        ]
+    except FileNotFoundError:
+        existing_lines = []
+    new_lines: list[str] = sorted(
+        {*DEFAULT_IGNORE_LIST, *existing_lines, *patterns}
+    ) + [
+        "\n"
+    ]  # always want to terminate with a newline
+
+    gitignore.write_text("\n".join(new_lines))
