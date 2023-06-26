@@ -40,10 +40,6 @@ def create_repo(
     FileExistsError
         If there is already a git repo in that location
     """
-    if not repo_root.exists():
-        raise FileNotFoundError(f"{repo_root} does not exist")
-    if not repo_root.is_dir():
-        raise ValueError(f"{repo_root} is not a directory")
     if (repo_root / MANIFEST_NAME).exists():
         raise FileExistsError(f"{repo_root} already contains a GSB-managed repo")
     if not patterns:
