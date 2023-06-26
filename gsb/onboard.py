@@ -5,6 +5,7 @@ from typing import Iterable
 from . import _git
 from .manifest import MANIFEST_NAME, Manifest
 
+DEFAULT_PATTERNS: tuple[str, ...] = (".gitignore", MANIFEST_NAME)
 DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
 
 
@@ -16,11 +17,11 @@ def create_repo(
     Parameters
     ----------
     repo_root : Path
-        The directory where the repo should be created.
+        The directory where the repo should be created
     patterns : str
         List of glob-patterns to match, specifying what in the working directory
         should be archived. If none are provided, then it will be assumed that
-        the intent is to back up the *entire* folder and all its contents
+        the intent is to back up the *entire* folder and all its contents.
     ignore : list of str, optional
         List of glob-patterns to *ignore*. If None are specified, then nothing
         will be ignored.
@@ -47,18 +48,28 @@ def create_repo(
         raise FileExistsError(f"{repo_root} already contains a GSB-managed repo")
     if not patterns:
         patterns = (".",)
+    if "." not in patterns:
+        patterns = tuple({*patterns, *DEFAULT_PATTERNS})
 
     _git.init(repo_root)
 
     _update_gitignore(repo_root, ignore or ())
 
-    manifest = Manifest(repo_root, tuple(patterns))
-    manifest.write()
-    return manifest
+    # enforce round-trip
+    Manifest(repo_root, tuple(patterns)).write()
+    return Manifest.of(repo_root)
 
 
 def _update_gitignore(repo_root: Path, patterns: Iterable[str]) -> None:
-    """Create or append to the ".gitignore" file in the specified repo"""
+    """Create or append to the ".gitignore" file in the specified repo
+
+    Parameters
+    ----------
+    repo_root : Path
+        The directory where the repo should be created
+    patterns
+        List of glob-patterns to ignore
+    """
     gitignore = repo_root / ".gitignore"
 
     try:

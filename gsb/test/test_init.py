@@ -26,16 +26,21 @@ class TestFreshInit:
         yield root
 
     def test_no_pattern_means_add_all(self, root):
-        repo, manifest = onboard.create_repo(root)
+        manifest = onboard.create_repo(root)
         assert manifest.patterns == (".",)
 
     def test_providing_patterns(self, root):
         manifest = onboard.create_repo(root, "savey_mcsavegame", "logs/")
-        assert sorted(manifest.patterns) == [
-            MANIFEST_NAME,  # I'm assuming that this will always begin with "."
-            "savey_mcsavegame",
-            "logs/",
-        ]
+        assert manifest.patterns == tuple(
+            sorted(
+                (
+                    ".gitignore",
+                    MANIFEST_NAME,
+                    "savey_mcsavegame",
+                    "logs/",
+                )
+            )
+        )
 
     def test_init_always_creates_a_gitignore(self, root):
         _ = onboard.create_repo(root)
