@@ -1,7 +1,8 @@
 """Abstraction around the git library interface (to allow for easier backend swaps"""
+import datetime as dt
 import getpass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, NamedTuple
 
 import pygit2
 
@@ -132,7 +133,8 @@ def add(repo_root: Path, files: Iterable[str | Path], force: bool) -> None:
 
 
 def commit(repo_root: Path, message: str) -> None:
-    """Commit staged changes
+    """Commit staged changes, equivalent to running
+    `git commit -m <message>`
 
     Parameters
     ----------
@@ -165,3 +167,83 @@ def commit(repo_root: Path, message: str) -> None:
     repo.create_commit(
         ref, author, committer, message, repo.index.write_tree(), parents
     )
+
+
+class Commit(NamedTuple):
+    """Commit metadata
+
+    Attributes
+    ----------
+    hash : str
+        The full commit hash
+    message : str
+        The commit message
+    timestamp : dt.datetime
+        The timestamp of the commit
+    """
+
+    hash: str
+    message: str
+    timestamp: dt.datetime
+
+
+def log(repo_root: Path, n: int) -> list[Commit]:
+    """Return metadata about the last `n` commits such as you'd get by running
+    `git log -<num>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    n : int
+        The number of commits to go back. A value less than zero will retrieve
+        the *full* history
+
+    Returns
+    -------
+    list of commit
+        The requested commits, returned in reverse-chronological order
+
+    Raises
+    ------
+    ValueError
+        If `repo_root` is not a directory
+    OSError
+        If `repo_root` does not exist or cannot be accessed
+    """
+    repo = _repo(repo_root)
+
+    history: list[Commit] = []
+
+    for i, commit_object in enumerate(
+        repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_TIME)
+    ):
+        if i + 1 == n:
+            break
+        history.append(
+            Commit(
+                commit_object.id,
+                commit_object.message,
+                dt.datetime.fromtimestamp(commit_object.commit_time),
+            )
+        )
+
+    return history
+
+
+def ls_files(repo_root: Path) -> list[Path]:
+    """List the files in the index, similar to the output you'd get from
+    running `git ls-files`
+
+    Parameters
+    ----------
+     repo_root : Path
+        The root directory of the git repo
+
+    Returns
+    -------
+    list of Path
+        The files being tracked in this repo
+    """
+    repo = _repo(repo_root)
+    return [repo_root / file.path for file in repo.index]

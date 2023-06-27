@@ -57,6 +57,33 @@ class TestFreshInit:
         with pytest.raises(FileExistsError):
             _ = onboard.create_repo(root)
 
+    def test_init_adds_save_contents(self, root):
+        (root / "game.sav").write_text("poke\n")
+        _ = onboard.create_repo(root, "game.sav")
+        index = _git.ls_files(root)
+        expected = {root / "game.sav", root / MANIFEST_NAME, root / ".gitignore"}
+        assert expected == expected.intersection(index)
+
+    def test_initial_add_respects_gitignore(self, root):
+        (root / ".dot_dot").write_text("dash\n")
+        _ = onboard.create_repo(root, ignore=[".*"])
+        index = _git.ls_files(root)
+
+        assert (root / ".dot_dot") not in index
+
+    def test_initial_add_always_tracks_manifest_and_gitignore(self, root):
+        _ = onboard.create_repo(root, ignore=[".*"])
+        index = _git.ls_files(root)
+
+        expected = {root / MANIFEST_NAME, root / ".gitignore"}
+        assert expected == expected.intersection(index)
+
+    def test_init_performs_initial_commit(self, root):
+        _ = onboard.create_repo(root)
+        history = _git.log(root, -1)
+
+        assert [commit.message for commit in history] == ["Started tracking with gsb\n"]
+
 
 class TestInitExistingGitRepo:
     @pytest.fixture
@@ -95,4 +122,24 @@ stuff
 """
         )
 
-    # TODO: test existing repo history inheritance
+    @pytest.fixture
+    def repo_with_history(self, existing_repo):
+        (existing_repo / "game.sav").write_text("chose a squirtle\n")
+        _git.add(existing_repo, "game.sav")
+        _git.commit(existing_repo, "Initial commit")
+
+        (existing_repo / "game.sav").write_text("take that brock\n")
+        _git.add(existing_repo, "game.sav")
+        _git.commit(existing_repo, "Checkpoint")
+
+        yield existing_repo
+
+    def test_init_preserves_existing_commits(self, existing_repo):
+        _ = onboard.create_repo(existing_repo)
+        history = _git.log(existing_repo, -1)
+
+        assert [commit.message for commit in history] == [
+            "Started tracking with gsb\n",
+            "Checkpoint\n",
+            "Initial commit\n",
+        ]

@@ -12,7 +12,7 @@ DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
 def create_repo(
     repo_root: Path, *patterns: str, ignore: Iterable[str] | None = None
 ) -> Manifest:
-    """Create a new gsb-managed git repo in the specified location
+    """Create a new `gsb`-managed git repo in the specified location
 
     Parameters
     ----------
