@@ -34,8 +34,6 @@ class TestFreshInit:
         assert manifest.patterns == tuple(
             sorted(
                 (
-                    ".gitignore",
-                    MANIFEST_NAME,
                     "savey_mcsavegame",
                     "logs/",
                 )
@@ -125,18 +123,18 @@ stuff
     @pytest.fixture
     def repo_with_history(self, existing_repo):
         (existing_repo / "game.sav").write_text("chose a squirtle\n")
-        _git.add(existing_repo, "game.sav")
+        _git.add(existing_repo, "game.sav", force=False)
         _git.commit(existing_repo, "Initial commit")
 
         (existing_repo / "game.sav").write_text("take that brock\n")
-        _git.add(existing_repo, "game.sav")
+        _git.add(existing_repo, "game.sav", force=False)
         _git.commit(existing_repo, "Checkpoint")
 
         yield existing_repo
 
-    def test_init_preserves_existing_commits(self, existing_repo):
-        _ = onboard.create_repo(existing_repo)
-        history = _git.log(existing_repo, -1)
+    def test_init_preserves_existing_commits(self, repo_with_history):
+        _ = onboard.create_repo(repo_with_history)
+        history = _git.log(repo_with_history, -1)
 
         assert [commit.message for commit in history] == [
             "Started tracking with gsb\n",

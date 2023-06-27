@@ -5,7 +5,7 @@ from typing import Iterable
 from . import _git
 from .manifest import MANIFEST_NAME, Manifest
 
-DEFAULT_PATTERNS: tuple[str, ...] = (".gitignore", MANIFEST_NAME)
+REQUIRED_FILES: tuple[str, ...] = (".gitignore", MANIFEST_NAME)
 DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
 
 
@@ -45,7 +45,7 @@ def create_repo(
     if not patterns:
         patterns = (".",)
     if "." not in patterns:
-        patterns = tuple({*patterns, *DEFAULT_PATTERNS})
+        patterns = tuple(set(patterns))
 
     _git.init(repo_root)
 
@@ -53,7 +53,13 @@ def create_repo(
 
     # enforce round-trip
     Manifest(repo_root, tuple(patterns)).write()
-    return Manifest.of(repo_root)
+    manifest = Manifest.of(repo_root)
+
+    _git.add(repo_root, patterns, force=False)
+    _git.add(repo_root, REQUIRED_FILES, force=True)
+    _git.commit(repo_root, "Started tracking with gsb")
+
+    return manifest
 
 
 def _update_gitignore(repo_root: Path, patterns: Iterable[str]) -> None:

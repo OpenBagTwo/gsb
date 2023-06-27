@@ -1,6 +1,7 @@
 """Abstraction around the git library interface (to allow for easier backend swaps"""
 import datetime as dt
 import getpass
+import socket
 from pathlib import Path
 from typing import Iterable, NamedTuple
 
@@ -71,20 +72,24 @@ def _config() -> dict[str, str]:
     -----
     Loading a repo-specific git config is not supported by this method
     """
+    config = _git_config()
+    config["user.name"] = config.get("user.name") or getpass.getuser()
+    if "user.email" not in config:
+        config["user.email"] = f"{getpass.getuser()}@{socket.gethostname()}"
+
+    config["committer.name"] = "gsb"
+    config["committer.email"] = "gsb@openbagtwo.github.io"
+    return config
+
+
+def _git_config() -> dict[str, str]:  # pragma: no cover
+    """Separate encapsulation for the purposes of monkeypatching"""
     try:
-        config: dict[str, str] = {
+        return {
             entry.name: entry.value for entry in pygit2.Config().get_global_config()
         }
     except OSError:
-        config = {}
-
-    config["user.name"] = config.get("user.name") or getpass.getuser()
-    if "user.email" not in config:
-        config["user.email"] = ""
-
-    config["committer.name"] = "gsb"
-    config["committer.email"] = ""
-    return config
+        return {}
 
 
 def add(repo_root: Path, files: Iterable[str | Path], force: bool) -> None:
@@ -123,7 +128,7 @@ def add(repo_root: Path, files: Iterable[str | Path], force: bool) -> None:
             except OSError as maybe_file_not_found:
                 if "No such file or directory" in str(maybe_file_not_found):
                     raise FileNotFoundError(maybe_file_not_found)
-                raise
+                raise  # pragma: no cover
             except pygit2.GitError as maybe_directory:
                 if "is a directory" in str(maybe_directory):
                     raise IsADirectoryError(maybe_directory)
@@ -153,13 +158,16 @@ def commit(repo_root: Path, message: str) -> None:
     repo = _repo(repo_root)
     try:
         ref = repo.head.name
-        parents = repo.head.target
+        parents = [repo.head.target]
     except pygit2.GitError as headless:
         if "reference 'refs/heads/main' not found" in str(headless):
             ref = "HEAD"
             parents = []
         else:
-            raise
+            raise  # pragma: no cover
+
+    if not message.endswith("\n"):
+        message += "\n"
 
     config = _config()
     author = pygit2.Signature(config["user.name"], config["user.email"])
@@ -216,7 +224,7 @@ def log(repo_root: Path, n: int) -> list[Commit]:
     history: list[Commit] = []
 
     for i, commit_object in enumerate(
-        repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_TIME)
+        repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE)
     ):
         if i + 1 == n:
             break
