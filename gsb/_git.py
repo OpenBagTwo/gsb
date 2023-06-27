@@ -19,10 +19,8 @@ def init(repo_root: Path) -> None:
 
     Raises
     ------
-    ValueError
-        If `repo_root` is not a directory
     OSError
-        If `repo_root` does not exist or cannot be accessed
+        If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     _repo(repo_root, new=True)
 
@@ -45,16 +43,18 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
 
     Raises
     ------
-    ValueError
+    NotADirectoryError
         If `repo_root` is not a directory
+    FileNotFoundError
+        If `repo_root` does not exist
     OSError
-        If `repo_root` does not exist or cannot be accessed
+        If `repo_root` cannot otherwise be accessed
     """
     repo_root = repo_root.expanduser().resolve()
     if not repo_root.exists():
         raise FileNotFoundError(f"{repo_root} does not exist")
     if not repo_root.is_dir():
-        raise ValueError(f"{repo_root} is not a directory")
+        raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
         return pygit2.init_repository(repo_root)
     return pygit2.Repository(repo_root)
@@ -92,7 +92,7 @@ def _git_config() -> dict[str, str]:  # pragma: no cover
         return {}
 
 
-def add(repo_root: Path, files: Iterable[str | Path], force: bool) -> None:
+def add(repo_root: Path, patterns: Iterable[str]) -> None:
     """Add files matching the given pattern to the repo, equivalent to running
     `git add <pattern>`
 
@@ -100,46 +100,55 @@ def add(repo_root: Path, files: Iterable[str | Path], force: bool) -> None:
     ----------
     repo_root : Path
         The root directory of the git repo
-    files : list of str or path
-        The file paths to add. When `force=False` this also supports glob
-        patterns.
-    force : bool
-        Whether to override `.gitignore`
+    patterns : list of str
+        The glob patterns to match
 
     Raises
     ------
-    ValueError
-        If `repo_root` is not a directory
-    FileNotFoundError
-        If `force=True` and the force-added file does not exist
-    IsADirectoryError
-        If `force=True` and one of the specified files is a directory
     OSError
-        If `repo_root` does not exist or cannot be accessed
-
-    Notes
-    -----
+        If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
-    if force:
-        for path in files:
-            try:
-                repo.index.add(path)
-            except OSError as maybe_file_not_found:
-                if "No such file or directory" in str(maybe_file_not_found):
-                    raise FileNotFoundError(maybe_file_not_found)
-                raise  # pragma: no cover
-            except pygit2.GitError as maybe_directory:
-                if "is a directory" in str(maybe_directory):
-                    raise IsADirectoryError(maybe_directory)
-    else:
-        repo.index.add_all(list(files))
+    repo.index.add_all(list(patterns))
+    repo.index.write()
+
+
+def force_add(repo_root: Path, files: Iterable[Path]) -> None:
+    """Forcibly add specific files, overriding .gitignore, equivalent to running
+    `git add <file> --force`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    files : list of paths
+        The file paths to add, relative to the repo root
+
+    Raises
+    ------
+    FileNotFoundError
+        If one of the specified paths does not exist
+    IsADirectoryError
+        If one of the specified paths is a directory
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    """
+    repo = _repo(repo_root)
+    for path in files:
+        try:
+            repo.index.add(path)
+        except OSError as maybe_file_not_found:  # pragma: no cover
+            if "No such file or directory" in str(maybe_file_not_found):
+                raise FileNotFoundError(maybe_file_not_found)
+            raise  # pragma: no cover
+        except pygit2.GitError as maybe_directory:  # pragma: no cover
+            if "is a directory" in str(maybe_directory):
+                raise IsADirectoryError(maybe_directory)
     repo.index.write()
 
 
 def commit(repo_root: Path, message: str) -> None:
-    """Commit staged changes, equivalent to running
-    `git commit -m <message>`
+    """Commit staged changes, equivalent to running `git commit -m <message>`
 
     Parameters
     ----------
@@ -150,10 +159,8 @@ def commit(repo_root: Path, message: str) -> None:
 
     Raises
     ------
-    ValueError
-        If `repo_root` is not a directory
     OSError
-        If `repo_root` does not exist or cannot be accessed
+        If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
     try:
@@ -214,10 +221,8 @@ def log(repo_root: Path, n: int) -> list[Commit]:
 
     Raises
     ------
-    ValueError
-        If `repo_root` is not a directory
     OSError
-        If `repo_root` does not exist or cannot be accessed
+        If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
 
@@ -245,13 +250,113 @@ def ls_files(repo_root: Path) -> list[Path]:
 
     Parameters
     ----------
-     repo_root : Path
+    repo_root : Path
         The root directory of the git repo
 
     Returns
     -------
     list of Path
         The files being tracked in this repo
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
     return [repo_root / file.path for file in repo.index]
+
+
+def tag(repo_root: Path, tag_name: str, annotation: str | None) -> None:
+    """Create a tag at the current HEAD, equivalent to running
+    `git tag [-am <annotation>]`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    tag_name : str
+        The name to give the tag
+    annotation : str or None
+        The annotation to give the tag. If None is provided, a lightweight tag
+        will be created
+
+    Raises
+    ------
+    ValueError
+        If there is already a tag with the provided name
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    """
+    repo = _repo(repo_root)
+
+    config = _config()
+    tagger = pygit2.Signature(config["committer.name"], config["committer.email"])
+
+    if annotation:
+        if not annotation.endswith("\n"):
+            annotation += "\n"
+
+        repo.create_tag(
+            tag_name,
+            repo.head.target,
+            pygit2.GIT_OBJ_COMMIT,
+            tagger,
+            annotation,
+        )
+    else:
+        repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
+
+    # PSA: pygit2.AlreadyExistsError subclasses ValueError
+
+
+class Tag(NamedTuple):
+    """Tag metadata
+
+    Attributes
+    ----------
+    name : str
+        The name of the tag
+    annotation : str or None
+        The tag's annotation. If None, then this is a lightweight tag
+    """
+
+    name: str
+    annotation: str | None
+    # TODO : capture tagger as well for filtering to just gsb tags
+
+
+def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
+    """List the repo's tags, similar to the output you'd get from
+    running `git tag -n`, with the additional option of filtering out
+    lightweight tags
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    annotated_only : bool
+        Lightweight tags will be included if and only if this is `False`.
+
+    Returns
+    -------
+    list of Tag
+        The requested list of tags
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    """
+    # TODO: add ability to filter out non-gsb tags
+    repo = _repo(repo_root)
+    tags: list[Tag] = []
+    for reference in repo.references.iterator(pygit2.GIT_REFERENCES_TAGS):
+        tag_object = repo.revparse_single(reference.name)
+        if tag_object.type == pygit2.GIT_OBJ_TAG:
+            tags.append(Tag(tag_object.name, tag_object.message))
+        if tag_object.type == pygit2.GIT_OBJ_COMMIT:
+            if annotated_only:
+                continue
+            tags.append(Tag(reference.shorthand, None))
+    return sorted(tags)

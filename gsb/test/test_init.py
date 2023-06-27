@@ -10,7 +10,7 @@ class TestFreshInit:
         not_a_dir = tmp_path / "file.txt"
         not_a_dir.write_text("I'm a file\n")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(NotADirectoryError):
             _ = onboard.create_repo(not_a_dir)
 
     def test_root_must_exist(self, tmp_path):
@@ -69,6 +69,14 @@ class TestFreshInit:
 
         assert (root / ".dot_dot") not in index
 
+    @pytest.mark.parametrize("pattern", (".dot*", "."))
+    def test_gitignore_takes_priority_over_patterns_gitignore(self, root, pattern):
+        (root / ".dot_dot").write_text("dash\n")
+        _ = onboard.create_repo(root, pattern, ignore=[".*"])
+        index = _git.ls_files(root)
+
+        assert (root / ".dot_dot") not in index
+
     def test_initial_add_always_tracks_manifest_and_gitignore(self, root):
         _ = onboard.create_repo(root, ignore=[".*"])
         index = _git.ls_files(root)
@@ -81,6 +89,12 @@ class TestFreshInit:
         history = _git.log(root, -1)
 
         assert [commit.message for commit in history] == ["Started tracking with gsb\n"]
+
+    def test_init_tags_that_initial_commit(self, root):
+        _ = onboard.create_repo(root)
+        tags = _git.get_tags(root, annotated_only=False)
+
+        assert [tag.annotation for tag in tags] == ["Start of gsb tracking\n"]
 
 
 class TestInitExistingGitRepo:
@@ -123,12 +137,14 @@ stuff
     @pytest.fixture
     def repo_with_history(self, existing_repo):
         (existing_repo / "game.sav").write_text("chose a squirtle\n")
-        _git.add(existing_repo, "game.sav", force=False)
+        _git.add(existing_repo, "game.sav")
         _git.commit(existing_repo, "Initial commit")
+        _git.tag(existing_repo, "v0.0.1", "F1rst")
 
         (existing_repo / "game.sav").write_text("take that brock\n")
-        _git.add(existing_repo, "game.sav", force=False)
+        _git.add(existing_repo, "game.sav")
         _git.commit(existing_repo, "Checkpoint")
+        _git.tag(existing_repo, "v0.0.1+1", None)
 
         yield existing_repo
 
@@ -141,3 +157,16 @@ stuff
             "Checkpoint\n",
             "Initial commit\n",
         ]
+
+    @pytest.mark.parametrize(
+        "include_lightweight", (True, False), ids=("all", "annotated")
+    )
+    def test_init_preserves_existing_tags(self, repo_with_history, include_lightweight):
+        _ = onboard.create_repo(repo_with_history)
+        tags = _git.get_tags(repo_with_history, annotated_only=not include_lightweight)
+
+        expected = {"F1rst\n", "Start of gsb tracking\n"}
+        if include_lightweight:
+            expected.add(None)
+
+        assert {tag.annotation for tag in tags} == expected
