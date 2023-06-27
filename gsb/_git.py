@@ -56,7 +56,7 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     if not repo_root.is_dir():
         raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
-        return pygit2.init_repository(repo_root)
+        return pygit2.init_repository(repo_root, initial_head="gsb")
     return pygit2.Repository(repo_root)
 
 
@@ -167,7 +167,7 @@ def commit(repo_root: Path, message: str) -> None:
         ref = repo.head.name
         parents = [repo.head.target]
     except pygit2.GitError as headless:
-        if "reference 'refs/heads/main' not found" in str(headless):
+        if "reference 'refs/heads/gsb' not found" in str(headless):
             ref = "HEAD"
             parents = []
         else:
