@@ -53,7 +53,7 @@ def get_history(
     Returns
     -------
     list of dict
-        Metadata on the requested revisions, sorted in reverse-chronological
+        metadata on the requested revisions, sorted in reverse-chronological
         order
     """
     raise NotImplementedError
