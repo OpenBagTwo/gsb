@@ -11,17 +11,17 @@
       
       
       
-        <link rel="prev" href="../manifest/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../cli/">
+        <link rel="next" href="../manifest/">
       
       <link rel="icon" href="../../../img/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
-        <title>onboard - Documentation for the gsb Package</title>
+        <title>history - Documentation for the gsb Package</title>
       
     
     
@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gsb.onboard" class="md-skip">
+        <a href="#gsb.history" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              onboard
+              history
             
           </span>
         </div>
@@ -387,11 +387,55 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../history/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          history
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         history
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gsb.history" class="md-nav__link">
+    gsb.history
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gsb.history.get_history" class="md-nav__link">
+    get_history()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -415,55 +459,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          onboard
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../onboard/" class="md-nav__link">
         onboard
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#gsb.onboard" class="md-nav__link">
-    gsb.onboard
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#gsb.onboard.create_repo" class="md-nav__link">
-    create_repo()
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -521,15 +521,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#gsb.onboard" class="md-nav__link">
-    gsb.onboard
+  <a href="#gsb.history" class="md-nav__link">
+    gsb.history
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#gsb.onboard.create_repo" class="md-nav__link">
-    create_repo()
+  <a href="#gsb.history.get_history" class="md-nav__link">
+    get_history()
   </a>
   
 </li>
@@ -549,15 +549,15 @@
                   
 
 
-  <h1>onboard</h1>
+  <h1>history</h1>
 
 <div class="doc doc-object doc-module">
 
 
-<a id="gsb.onboard"></a>
+<a id="gsb.history"></a>
   <div class="doc doc-contents first">
   
-      <p>Functionality for onboarding a new save state</p>
+      <p>Functionality for tracking and managing revision history</p>
 
   
 
@@ -575,15 +575,15 @@
 
 
 
-<h2 id="gsb.onboard.create_repo" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_repo</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="o">*</span><span class="n">patterns</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h2 id="gsb.history.get_history" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_history</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">tagged_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_non_gsb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">limit</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Create a new <code>gsb</code>-managed git repo in the specified location</p>
+      <p>Retrieve a list of GSB-managed versions</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -603,7 +603,7 @@
           </td>
           <td>
             <div class="doc-md-description">
-              <p>The directory where the repo should be created</p>
+              <p>The directory containing the GSB-managed repo</p>
             </div>
           </td>
           <td>
@@ -611,34 +611,63 @@
           </td>
         </tr>
         <tr>
-          <td><code>patterns</code></td>
+          <td><code>tagged_only</code></td>
           <td>
-                <code>str</code>
+                <code>bool</code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>List of glob-patterns to match, specifying what in the working directory
-should be archived. If none are provided, then it will be assumed that
-the intent is to back up the <em>entire</em> folder and all its contents.</p>
+              <p>By default, this method only returns tagged backups. To include
+all available revisions, pass in <code>tagged_only=False</code>.</p>
             </div>
           </td>
           <td>
-                <code>()</code>
+                <code>True</code>
           </td>
         </tr>
         <tr>
-          <td><code>ignore</code></td>
+          <td><code>include_non_gsb</code></td>
           <td>
-                <code>list of str</code>
+                <code>bool</code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>List of glob-patterns to <em>ignore</em>. If None are specified, then nothing
-will be ignored.</p>
+              <p>By default, this method excludes any revisions created outside of <code>gsb</code>.
+To include all git commits and tags, pass in <code>include_non_gsb=True</code>.</p>
             </div>
           </td>
           <td>
-                <code>None</code>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>limit</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>By default, this method returns the entire history. To return only the
+last <em>n</em> revisions, pass in <code>limit=n</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>-1</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>since</code></td>
+          <td>
+                <code>date or timestamp</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>By default, this method returns the entire history. To return only
+revisions made on or after a certain date, pass in <code>since=&lt;start_date&gt;</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>dt.datetime(1970, 1, 1)</code>
           </td>
         </tr>
     </tbody>
@@ -655,11 +684,12 @@ will be ignored.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="gsb.manifest.Manifest" href="../manifest/#gsb.manifest.Manifest">Manifest</a></code>
+                <code>list of dict</code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>The static configuration for that repo</p>
+              <p>metadata on the requested revisions, sorted in reverse-chronological
+order</p>
             </div>
           </td>
         </tr>
@@ -677,21 +707,11 @@ will be ignored.</p>
     <tbody>
         <tr>
           <td>
-                <code>FileExistsError</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>If there is already a <code>gsb</code> repo in that location</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
                 <code>OSError</code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>If <code>repo_root</code> does not exist, is not a directory or cannot be accessed</p>
+              <p>If the specified repo does not exist or is not a git repo</p>
             </div>
           </td>
         </tr>
@@ -699,8 +719,15 @@ will be ignored.</p>
   </table>
 
       <details class="quote">
-        <summary>Source code in <code>gsb/onboard.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-34">34</a></span>
+        <summary>Source code in <code>gsb/history.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
@@ -749,56 +776,83 @@ will be ignored.</p>
 <span class="normal"><a href="#__codelineno-0-80">80</a></span>
 <span class="normal"><a href="#__codelineno-0-81">81</a></span>
 <span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="k">def</span> <span class="nf">create_repo</span><span class="p">(</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">repo_root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="n">patterns</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Manifest</span><span class="p">:</span>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new `gsb`-managed git repo in the specified location</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    repo_root : Path</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        The directory where the repo should be created</span>
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    patterns : str</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        List of glob-patterns to match, specifying what in the working directory</span>
-</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        should be archived. If none are provided, then it will be assumed that</span>
-</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        the intent is to back up the *entire* folder and all its contents.</span>
-</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    ignore : list of str, optional</span>
-</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        List of glob-patterns to *ignore*. If None are specified, then nothing</span>
-</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        will be ignored.</span>
-</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>
-</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">    -------</span>
-</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    Manifest</span>
-</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        The static configuration for that repo</span>
-</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>
-</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    Raises</span>
-</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    ------</span>
-</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    FileExistsError</span>
-</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">        If there is already a `gsb` repo in that location</span>
-</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    OSError</span>
-</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">        If `repo_root` does not exist, is not a directory or cannot be accessed</span>
-</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">repo_root</span> <span class="o">/</span> <span class="n">MANIFEST_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo_root</span><span class="si">}</span><span class="s2"> already contains a GSB-managed repo&quot;</span><span class="p">)</span>
-</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">patterns</span><span class="p">:</span>
-</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="n">patterns</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,)</span>
-</span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
-</span><span id="__span-0-68"><a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">patterns</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">patterns</span><span class="p">))</span>
-</span><span id="__span-0-69"><a id="__codelineno-0-69" name="__codelineno-0-69"></a>
-</span><span id="__span-0-70"><a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">repo_root</span><span class="p">)</span>
-</span><span id="__span-0-71"><a id="__codelineno-0-71" name="__codelineno-0-71"></a>
-</span><span id="__span-0-72"><a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="n">_update_gitignore</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">ignore</span> <span class="ow">or</span> <span class="p">())</span>
-</span><span id="__span-0-73"><a id="__codelineno-0-73" name="__codelineno-0-73"></a>
-</span><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="c1"># enforce round-trip</span>
-</span><span id="__span-0-75"><a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="n">Manifest</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">patterns</span><span class="p">))</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
-</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">repo_root</span><span class="p">)</span>
-</span><span id="__span-0-77"><a id="__codelineno-0-77" name="__codelineno-0-77"></a>
-</span><span id="__span-0-78"><a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">patterns</span><span class="p">)</span>
-</span><span id="__span-0-79"><a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">force_add</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">REQUIRED_FILES</span><span class="p">)</span>
-</span><span id="__span-0-80"><a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="s2">&quot;Started tracking with gsb&quot;</span><span class="p">)</span>
-</span><span id="__span-0-81"><a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">_generate_tag_name</span><span class="p">(),</span> <span class="s2">&quot;Start of gsb tracking&quot;</span><span class="p">)</span>
-</span><span id="__span-0-82"><a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-</span><span id="__span-0-83"><a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">return</span> <span class="n">manifest</span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span>
+<span class="normal"><a href="#__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">def</span> <span class="nf">get_history</span><span class="p">(</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">repo_root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">tagged_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">include_non_gsb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">since</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Revision</span><span class="p">]:</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a list of GSB-managed versions</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    repo_root : Path</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        The directory containing the GSB-managed repo</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    tagged_only : bool, optional</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        By default, this method only returns tagged backups. To include</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        all available revisions, pass in `tagged_only=False`.</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    include_non_gsb : bool, optional</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        By default, this method excludes any revisions created outside of `gsb`.</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        To include all git commits and tags, pass in `include_non_gsb=True`.</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    limit : int, optional</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        By default, this method returns the entire history. To return only the</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        last _n_ revisions, pass in `limit=n`.</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    since : date or timestamp, optional</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        By default, this method returns the entire history. To return only</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        revisions made on or after a certain date, pass in `since=&lt;start_date&gt;`.</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    -------</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    list of dict</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        metadata on the requested revisions, sorted in reverse-chronological</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">        order</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    Raises</span>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    ------</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    OSError</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">        If the specified repo does not exist or is not a git repo</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="n">tag_lookup</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">tag</span><span class="o">.</span><span class="n">target</span><span class="p">:</span> <span class="n">tag</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">_git</span><span class="o">.</span><span class="n">get_tags</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">annotated_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="p">}</span>
+</span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a>
+</span><span id="__span-0-68"><a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">revisions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Revision</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-0-69"><a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">_git</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">repo_root</span><span class="p">):</span>
+</span><span id="__span-0-70"><a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">revisions</span><span class="p">)</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
+</span><span id="__span-0-71"><a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="k">break</span>
+</span><span id="__span-0-72"><a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="k">if</span> <span class="n">commit</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&lt;</span> <span class="n">since</span><span class="p">:</span>
+</span><span id="__span-0-73"><a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="k">break</span>
+</span><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="k">if</span> <span class="n">tag</span> <span class="o">:=</span> <span class="n">tag_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">commit</span><span class="p">):</span>
+</span><span id="__span-0-75"><a id="__codelineno-0-75" name="__codelineno-0-75"></a>            <span class="n">identifier</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span>
+</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a>            <span class="n">is_gsb</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">gsb</span> <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">gsb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">commit</span><span class="o">.</span><span class="n">gsb</span>
+</span><span id="__span-0-77"><a id="__codelineno-0-77" name="__codelineno-0-77"></a>            <span class="n">description</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">or</span> <span class="n">commit</span><span class="o">.</span><span class="n">message</span>
+</span><span id="__span-0-78"><a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-0-79"><a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="k">if</span> <span class="n">tagged_only</span><span class="p">:</span>
+</span><span id="__span-0-80"><a id="__codelineno-0-80" name="__codelineno-0-80"></a>                <span class="k">continue</span>
+</span><span id="__span-0-81"><a id="__codelineno-0-81" name="__codelineno-0-81"></a>            <span class="n">identifier</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">hash</span>
+</span><span id="__span-0-82"><a id="__codelineno-0-82" name="__codelineno-0-82"></a>            <span class="n">is_gsb</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">gsb</span>
+</span><span id="__span-0-83"><a id="__codelineno-0-83" name="__codelineno-0-83"></a>            <span class="n">description</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">message</span>
+</span><span id="__span-0-84"><a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_non_gsb</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_gsb</span><span class="p">:</span>
+</span><span id="__span-0-85"><a id="__codelineno-0-85" name="__codelineno-0-85"></a>            <span class="k">continue</span>
+</span><span id="__span-0-86"><a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="n">revisions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="__span-0-87"><a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="p">{</span>
+</span><span id="__span-0-88"><a id="__codelineno-0-88" name="__codelineno-0-88"></a>                <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">,</span>
+</span><span id="__span-0-89"><a id="__codelineno-0-89" name="__codelineno-0-89"></a>                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+</span><span id="__span-0-90"><a id="__codelineno-0-90" name="__codelineno-0-90"></a>                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">commit</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+</span><span id="__span-0-91"><a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="p">}</span>
+</span><span id="__span-0-92"><a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="p">)</span>
+</span><span id="__span-0-93"><a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">return</span> <span class="n">revisions</span>
 </span></code></pre></div></td></tr></table></div>
       </details>
   </div>
