@@ -170,60 +170,6 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
     return repo.index
 
 
-def commit(
-    repo_root: Path, message: str, _committer: tuple[str, str] | None = None
-) -> pygit2.Object:
-    """Commit staged changes, equivalent to running `git commit -m <message>`
-
-    Parameters
-    ----------
-    repo_root : Path
-        The root directory of the git repo
-    message : str
-        The commit message
-    _committer : (str, str) tuple
-        By default this method uses "gsb" as the committer. This should not
-        be overridden outside of testing, but to do so, pass in both the
-        username and email address.
-
-    Returns
-    -------
-    commit
-        The generated commit object
-
-    Raises
-    ------
-    OSError
-        If `repo_root` does not exist, is not a directory or cannot be accessed
-    """
-    repo = _repo(repo_root)
-    try:
-        ref = repo.head.name
-        parents = [repo.head.target]
-    except pygit2.GitError as headless:
-        if "reference 'refs/heads/gsb' not found" in str(headless):
-            ref = "HEAD"
-            parents = []
-        else:
-            raise  # pragma: no cover
-
-    if not message.endswith("\n"):
-        message += "\n"
-
-    config = _config()
-    author = pygit2.Signature(config["user.name"], config["user.email"])
-    if _committer is None:
-        committer = pygit2.Signature(
-            config["committer.name"], config["committer.email"]
-        )
-    else:
-        committer = pygit2.Signature(*_committer)
-    commit_id = repo.create_commit(
-        ref, author, committer, message, repo.index.write_tree(), parents
-    )
-    return repo[commit_id]
-
-
 class Commit(NamedTuple):
     """Commit metadata
 
@@ -257,6 +203,64 @@ class Commit(NamedTuple):
             dt.datetime.fromtimestamp(commit_object.commit_time),
             gsb,
         )
+
+
+def commit(
+    repo_root: Path, message: str, _committer: tuple[str, str] | None = None
+) -> Commit:
+    """Commit staged changes, equivalent to running `git commit -m <message>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    message : str
+        The commit message
+    _committer : (str, str) tuple
+        By default this method uses "gsb" as the committer. This should not
+        be overridden outside of testing, but to do so, pass in both the
+        username and email address.
+
+    Returns
+    -------
+    commit
+        The generated commit object
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the commit is empty ("nothing to do")
+    """
+    repo = _repo(repo_root)
+    try:
+        ref = repo.head.name
+        parents = [repo.head.target]
+    except pygit2.GitError as headless:
+        if "reference 'refs/heads/gsb' not found" in str(headless):
+            ref = "HEAD"
+            parents = []
+        else:
+            raise  # pragma: no cover
+    if not repo.status(untracked_files="no"):
+        raise ValueError("Nothing to commit")
+
+    if not message.endswith("\n"):
+        message += "\n"
+
+    config = _config()
+    author = pygit2.Signature(config["user.name"], config["user.email"])
+    if _committer is None:
+        committer = pygit2.Signature(
+            config["committer.name"], config["committer.email"]
+        )
+    else:
+        committer = pygit2.Signature(*_committer)
+    commit_id = repo.create_commit(
+        ref, author, committer, message, repo.index.write_tree(), parents
+    )
+    return Commit.from_pygit2(repo[commit_id])
 
 
 def log(repo_root: Path) -> Generator[Commit, None, None]:
@@ -306,12 +310,62 @@ def ls_files(repo_root: Path) -> list[Path]:
     return [repo_root / file.path for file in repo.index]
 
 
+class Tag(NamedTuple):
+    """Tag metadata
+
+    Attributes
+    ----------
+    name : str
+        The name of the tag
+    annotation : str or None
+        The tag's annotation. If None, then this is a lightweight tag
+    target : Commit
+        The commit the tag is targeting
+    gsb : bool or None
+        True if the tagger was  `gsb`, False if it was created by
+        someone / something else and None if it's a lightweight tag (which
+        doesn't have a tagger)
+    """
+
+    name: str
+    annotation: str | None
+    target: Commit
+    gsb: bool | None
+
+    @classmethod
+    def from_repo_reference(
+        cls, reference: pygit2.Reference | str, repo: pygit2.Repository
+    ) -> Self:
+        if isinstance(reference, str):
+            tag_object = repo.revparse_single(reference)
+        else:
+            tag_object = repo.revparse_single(reference.name)
+            reference = reference.shorthand
+
+        if tag_object.type == pygit2.GIT_OBJ_TAG:
+            try:
+                gsb = tag_object.tagger.name == "gsb"
+            except AttributeError:
+                gsb = False
+            return cls(
+                tag_object.name,
+                tag_object.message,
+                Commit.from_pygit2(repo[tag_object.target]),
+                gsb,
+            )
+        if tag_object.type == pygit2.GIT_OBJ_COMMIT:
+            return cls(reference, None, Commit.from_pygit2(tag_object), False)
+        raise RuntimeError(  # pragma: no cover
+            f"Don't know how to parse reference of type: {tag_object.type}"
+        )
+
+
 def tag(
     repo_root: Path,
     tag_name: str,
     annotation: str | None,
     _tagger: tuple[str, str] | None = None,
-) -> pygit2.Object:
+) -> Tag:
     """Create a tag at the current HEAD, equivalent to running
     `git tag [-am <annotation>]`
 
@@ -363,32 +417,9 @@ def tag(
     else:
         repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
 
-    return repo.revparse_single(tag_name)
+    return Tag.from_repo_reference(tag_name, repo)
 
     # PSA: pygit2.AlreadyExistsError subclasses ValueError
-
-
-class Tag(NamedTuple):
-    """Tag metadata
-
-    Attributes
-    ----------
-    name : str
-        The name of the tag
-    annotation : str or None
-        The tag's annotation. If None, then this is a lightweight tag
-    target : Commit
-        The commit the tag is targeting
-    gsb : bool or None
-        True if the tagger was  `gsb`, False if it was created by
-        someone / something else and None if it's a lightweight tag (which
-        doesn't have a tagger)
-    """
-
-    name: str
-    annotation: str | None
-    target: Commit
-    gsb: bool | None
 
 
 def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
@@ -416,28 +447,7 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
     repo = _repo(repo_root)
     tags: list[Tag] = []
     for reference in repo.references.iterator(pygit2.GIT_REFERENCES_TAGS):
-        tag_object = repo.revparse_single(reference.name)
-        if tag_object.type == pygit2.GIT_OBJ_TAG:
-            try:
-                gsb = tag_object.tagger.name == "gsb"
-            except AttributeError:
-                gsb = False
-            tags.append(
-                Tag(
-                    tag_object.name,
-                    tag_object.message,
-                    Commit.from_pygit2(repo[tag_object.target]),
-                    gsb,
-                )
-            )
-        elif tag_object.type == pygit2.GIT_OBJ_COMMIT:
-            if annotated_only:
-                continue
-            tags.append(
-                Tag(reference.shorthand, None, Commit.from_pygit2(tag_object), False)
-            )
-        else:  # pragma: no cover
-            raise RuntimeError(
-                f"Don't know how to parse reference of type: {tag_object.type}"
-            )
+        parsed_tag = Tag.from_repo_reference(reference, repo)
+        if parsed_tag.annotation or not annotated_only:
+            tags.append(parsed_tag)
     return sorted(tags)

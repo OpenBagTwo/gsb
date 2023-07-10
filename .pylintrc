@@ -13,6 +13,7 @@ generated-members =
     pygit2.GIT_OBJ_TAG
     pygit2.GIT_REFERENCES_TAGS
     pygit2.GIT_SORT_NONE
+    pygit2.Reference
     pygit2.GitError
     pygit2.Object
     pygit2.Signature

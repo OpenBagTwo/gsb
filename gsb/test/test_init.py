@@ -88,7 +88,7 @@ class TestFreshInit:
         _ = onboard.create_repo(root)
         history = _git.log(root)
 
-        assert [commit.message for commit in history] == ["Started tracking with gsb\n"]
+        assert [commit.message for commit in history] == ["Start of gsb tracking\n"]
 
     def test_init_tags_that_initial_commit(self, root):
         _ = onboard.create_repo(root)
@@ -112,7 +112,6 @@ cruft
 .borland_turbo
 """
         )
-        # TODO: git add and commit to establish a git history
         yield root
 
     def test_init_is_fine_onboarding_an_existing_git_repo(self, existing_repo):
@@ -137,12 +136,12 @@ stuff
     @pytest.fixture
     def repo_with_history(self, existing_repo):
         (existing_repo / "game.sav").write_text("chose a squirtle\n")
-        _git.add(existing_repo, "game.sav")
+        _git.add(existing_repo, ["game.sav"])
         _git.commit(existing_repo, "Initial commit")
         _git.tag(existing_repo, "v0.0.1", "F1rst")
 
         (existing_repo / "game.sav").write_text("take that brock\n")
-        _git.add(existing_repo, "game.sav")
+        _git.add(existing_repo, ["game.sav"])
         _git.commit(existing_repo, "Checkpoint")
         _git.tag(existing_repo, "v0.0.1+1", None)
 
@@ -153,7 +152,7 @@ stuff
         history = _git.log(repo_with_history)
 
         assert [commit.message for commit in history] == [
-            "Started tracking with gsb\n",
+            "Start of gsb tracking\n",
             "Checkpoint\n",
             "Initial commit\n",
         ]
