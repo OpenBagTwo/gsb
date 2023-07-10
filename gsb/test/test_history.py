@@ -16,9 +16,9 @@ class TestGetHistory:
         with pytest.raises(OSError):
             history.get_history(random_folder)
 
-    @pytest.fixture
-    def repo_with_history(self, tmp_path):
-        root = tmp_path / "fossil record"
+    @pytest.fixture(scope="class")
+    def repo_with_history(self, tmp_path_factory):
+        root = tmp_path_factory.mktemp("saves") / "fossil record"
         root.mkdir()
         _git.init(root)
 
@@ -70,7 +70,7 @@ class TestGetHistory:
         _git.commit(root, "Autocommit")
         _git.tag(root, "gsb1.1", "Triassic")
 
-        time.sleep(1)  # TODO: this is per-test so it's gonna be really painful
+        time.sleep(1)
 
         (root / "species").write_text("plesiosaurs\n")
         _git.add(root, "species")
