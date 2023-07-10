@@ -1,10 +1,10 @@
+************* Module gsb._git
+gsb/_git.py:336:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module gsb.manifest
 gsb/manifest.py:30:4: C0103: Method name "of" doesn't conform to snake_case naming style (invalid-name)
-************* Module gsb.onboard
-gsb/onboard.py:12:1: W0511: TODO: these two are probably going to get refactored somewhere else (fixme)
 ************* Module gsb.cli
 gsb/cli.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 
 -----------------------------------
-Your code has been rated at 9.87/10
+Your code has been rated at 9.88/10
 
