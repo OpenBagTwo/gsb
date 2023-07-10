@@ -67,7 +67,7 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
         return pygit2.Repository(repo_root)
     except pygit2.GitError as maybe_no_git:
         if "repository not found" in str(maybe_no_git).lower():
-            raise FileNotFoundError(maybe_no_git)
+            raise FileNotFoundError(maybe_no_git) from maybe_no_git
         raise  # pragma: no cover
 
 
@@ -161,11 +161,11 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
             repo.index.add(path)
         except OSError as maybe_file_not_found:  # pragma: no cover
             if "No such file or directory" in str(maybe_file_not_found):
-                raise FileNotFoundError(maybe_file_not_found)
+                raise FileNotFoundError(maybe_file_not_found) from maybe_file_not_found
             raise  # pragma: no cover
         except pygit2.GitError as maybe_directory:  # pragma: no cover
             if "is a directory" in str(maybe_directory):
-                raise IsADirectoryError(maybe_directory)
+                raise IsADirectoryError(maybe_directory) from maybe_directory
     repo.index.write()
     return repo.index
 
@@ -360,10 +360,10 @@ def tag(
             tagger,
             annotation,
         )
-        return repo.revparse_single(tag_name)
     else:
         repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
-        return repo.revparse_single(tag_name)
+
+    return repo.revparse_single(tag_name)
 
     # PSA: pygit2.AlreadyExistsError subclasses ValueError
 

@@ -93,7 +93,7 @@ def _update_gitignore(repo_root: Path, patterns: Iterable[str]) -> None:
     patterns
         List of glob-patterns to ignore
     """
-    with open(repo_root / ".gitignore", "a+") as gitignore:
+    with open(repo_root / ".gitignore", "a+", encoding="UTF-8") as gitignore:
         gitignore.seek(0)
         existing_lines: list[str] = [line.strip() for line in gitignore.readlines()]
         if existing_lines and "# gsb" not in existing_lines:
