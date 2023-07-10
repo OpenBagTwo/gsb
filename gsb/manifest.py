@@ -78,7 +78,8 @@ class Manifest(NamedTuple):
             "generated_by_gsb": get_versions()["version"],
             "last_modified": dt.datetime.now().isoformat(sep=" "),
         }
-        for attribute, value in self._asdict().items():
+        for attribute, value in self._asdict().items():  # pylint: disable=no-member
+            #                  see: https://github.com/pylint-dev/pylint/issues/7891
             if attribute == "root":
                 continue
             as_dict[attribute] = value
