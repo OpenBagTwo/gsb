@@ -43,11 +43,22 @@ def create_backup(repo_root: Path, tag: str | None = None) -> str:
     str
         An identifier for the backup in the form of either a commit hash or a
         tag name
+
+    Raises
+    ------
+    OSError
+        If the specified repo does not exist or is not a gsb-managed repo
+    ValueError
+        If there are no changes to commit and no tag message was provided
     """
     manifest = Manifest.of(repo_root)
     _git.add(repo_root, manifest.patterns)
     _git.force_add(repo_root, REQUIRED_FILES)
-    identifier = _git.commit(repo_root, tag or "Manual backup").hash
+    try:
+        identifier = _git.commit(repo_root, tag or "Manual backup").hash
+    except ValueError:
+        if not tag:
+            raise
     if tag:
         identifier = _git.tag(repo_root, _generate_tag_name(), tag).name
     return identifier

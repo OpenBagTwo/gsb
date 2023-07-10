@@ -22,17 +22,20 @@ class TestGetHistory:
         root.mkdir()
         _git.init(root)
 
+        (root / ".touched").touch()
+        _git.add(root, [".touched"])
+
         _git.commit(root, "First commit", _committer=("you-ser", "me@computer"))
         _git.tag(root, "Init", None, _tagger=("you-ser", "me@computer"))
 
         (root / "species").write_text("trilobite\n")
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Add an animal", _committer=("you-ser", "me@computer"))
 
         with (root / "species").open("a") as f:
             f.write("hallucigenia\n")
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "I think I'm drunk", _committer=("you-ser", "me@computer"))
         _git.tag(
             root,
@@ -42,7 +45,7 @@ class TestGetHistory:
         )
 
         (root / "species").write_text("trilobite\n")
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Remove hallucigenia", _committer=("you-ser", "me@computer"))
         _git.tag(
             root,
@@ -52,13 +55,12 @@ class TestGetHistory:
         )
 
         (root / "species").unlink()
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(
             root, "Oh no! Everyone's dead!", _committer=("you-ser", "me@computer")
         )
 
-        _git.add(root, "species")
-        _git.commit(root, "Started tracking with gsb")
+        _git.add(root, ["species"])
         _git.tag(root, "gsb1.0", "Start of gsb tracking")
 
         (root / "species").write_text(
@@ -66,14 +68,14 @@ class TestGetHistory:
             + "\n"
         )
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Autocommit")
         _git.tag(root, "gsb1.1", "Triassic")
 
         time.sleep(1)
 
         (root / "species").write_text("plesiosaurs\n")
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         jurassic = _git.commit(root, "Autocommit")
 
         (root / "species").write_text(
@@ -81,7 +83,7 @@ class TestGetHistory:
             + "\n"
         )
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Autocommit")
         _git.tag(root, "gsb1.2", "Jurassic")
 
@@ -100,19 +102,19 @@ class TestGetHistory:
             + "\n"
         )
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Autocommit")
 
         with (root / "species").open("a") as f:
             f.write("mammals\n")
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "It's my ancestors!", _committer=("you-ser", "me@computer"))
 
         with (root / "species").open("a") as f:
             f.write("\n".join(("birds", "insects", "shark", "squids")) + "\n")
 
-        _git.add(root, "species")
+        _git.add(root, ["species"])
         _git.commit(root, "Autocommit")
 
         _git.tag(root, "gsb1.3", "Cretaceous (my gracious!)")

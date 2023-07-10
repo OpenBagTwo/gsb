@@ -230,6 +230,8 @@ def commit(
     ------
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the commit is empty ("nothing to do")
     """
     repo = _repo(repo_root)
     try:
@@ -241,6 +243,8 @@ def commit(
             parents = []
         else:
             raise  # pragma: no cover
+    if not repo.status(untracked_files="no"):
+        raise ValueError("Nothing to commit")
 
     if not message.endswith("\n"):
         message += "\n"
