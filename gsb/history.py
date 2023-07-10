@@ -6,7 +6,7 @@ from typing import TypedDict
 from . import _git
 
 
-class Revision(TypedDict):
+class _Revision(TypedDict):
     """Metadata on a GSB-managed version
 
     Parameters
@@ -30,7 +30,7 @@ def get_history(
     include_non_gsb: bool = False,
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
-) -> list[Revision]:
+) -> list[_Revision]:
     """Retrieve a list of GSB-managed versions
 
     Parameters
@@ -65,7 +65,7 @@ def get_history(
         tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
     }
 
-    revisions: list[Revision] = []
+    revisions: list[_Revision] = []
     for commit in _git.log(repo_root):
         if len(revisions) == limit:
             break
