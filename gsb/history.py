@@ -61,16 +61,12 @@ def get_history(
     OSError
         If the specified repo does not exist or is not a git repo
     """
-    # TODO: if performance requires it, implement _git.log to fetch m commits
-    #       at a time
-    commits = _git.log(repo_root, n=-1)
-
     tag_lookup = {
         tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
     }
 
     revisions: list[Revision] = []
-    for commit in commits:
+    for commit in _git.log(repo_root):
         if len(revisions) == limit:
             break
         if commit.timestamp < since:

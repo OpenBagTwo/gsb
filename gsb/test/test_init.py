@@ -86,7 +86,7 @@ class TestFreshInit:
 
     def test_init_performs_initial_commit(self, root):
         _ = onboard.create_repo(root)
-        history = _git.log(root, -1)
+        history = _git.log(root)
 
         assert [commit.message for commit in history] == ["Started tracking with gsb\n"]
 
@@ -150,7 +150,7 @@ stuff
 
     def test_init_preserves_existing_commits(self, repo_with_history):
         _ = onboard.create_repo(repo_with_history)
-        history = _git.log(repo_with_history, -1)
+        history = _git.log(repo_with_history)
 
         assert [commit.message for commit in history] == [
             "Started tracking with gsb\n",

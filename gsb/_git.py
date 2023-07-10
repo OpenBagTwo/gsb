@@ -3,7 +3,7 @@ import datetime as dt
 import getpass
 import socket
 from pathlib import Path
-from typing import Iterable, NamedTuple, Self
+from typing import Generator, Iterable, NamedTuple, Self
 
 import pygit2
 
@@ -68,7 +68,7 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     except pygit2.GitError as maybe_no_git:
         if "repository not found" in str(maybe_no_git).lower():
             raise FileNotFoundError(maybe_no_git)
-        raise
+        raise  # pragma: no cover
 
 
 def _config() -> dict[str, str]:
@@ -259,22 +259,18 @@ class Commit(NamedTuple):
         )
 
 
-def log(repo_root: Path, n: int) -> list[Commit]:
-    """Return metadata about the last `n` commits such as you'd get by running
-    `git log -<num>`
+def log(repo_root: Path) -> Generator[Commit, None, None]:
+    """Return metadata about commits such as you'd get by running `git log`
 
     Parameters
     ----------
     repo_root : Path
         The root directory of the git repo
-    n : int
-        The number of commits to go back. A value less than zero will retrieve
-        the *full* history
 
     Returns
     -------
-    list of commit
-        The requested commits, returned in reverse-chronological order
+    iterable of commit
+        The requested commits, returned lazily, in reverse-chronological order
 
     Raises
     ------
@@ -283,16 +279,8 @@ def log(repo_root: Path, n: int) -> list[Commit]:
     """
     repo = _repo(repo_root)
 
-    history: list[Commit] = []
-
-    for i, commit_object in enumerate(
-        repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE)
-    ):
-        if i + 1 == n:
-            break
-        history.append(Commit.from_pygit2(commit_object))
-
-    return history
+    for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
+        yield Commit.from_pygit2(commit_object)
 
 
 def ls_files(repo_root: Path) -> list[Path]:
