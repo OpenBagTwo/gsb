@@ -88,7 +88,7 @@ class TestFreshInit:
         _ = onboard.create_repo(root)
         history = _git.log(root)
 
-        assert [commit.message for commit in history] == ["Started tracking with gsb\n"]
+        assert [commit.message for commit in history] == ["Start of gsb tracking\n"]
 
     def test_init_tags_that_initial_commit(self, root):
         _ = onboard.create_repo(root)
@@ -153,7 +153,7 @@ stuff
         history = _git.log(repo_with_history)
 
         assert [commit.message for commit in history] == [
-            "Started tracking with gsb\n",
+            "Start of gsb tracking\n",
             "Checkpoint\n",
             "Initial commit\n",
         ]

@@ -117,7 +117,7 @@ class TestGetHistory:
 
         _git.tag(root, "gsb1.3", "Cretaceous (my gracious!)")
 
-        yield root, dt.datetime.fromtimestamp(jurassic.commit_time)
+        yield root, jurassic.timestamp
 
     @pytest.fixture
     def root(self, repo_with_history):

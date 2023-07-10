@@ -1,34 +1,12 @@
 """Functionality for onboarding a new save state"""
-import datetime as dt
 from pathlib import Path
 from typing import Iterable
 
 from . import _git
+from .backup import create_backup
 from .manifest import MANIFEST_NAME, Manifest
 
 DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
-
-
-# TODO: these two are probably going to get refactored somewhere else
-REQUIRED_FILES: tuple[Path, ...] = (Path(".gitignore"), Path(MANIFEST_NAME))
-
-
-def _generate_tag_name() -> str:
-    """Generate a new calver-ish tag name
-
-    Returns
-    -------
-    str
-        A tag name that should hopefully be distinctly gsb and distinct
-        from any tags a user would manually create
-
-    Notes
-    -----
-    When unit testing, this method will need to be monkeypatched to provide
-    even greater granularity... unless you want to use `time.sleep(1)` between
-    each tag :O
-    """
-    return dt.datetime.now().strftime("gsb%Y.%m.%d+%H%M%S")
 
 
 def create_repo(
@@ -75,10 +53,7 @@ def create_repo(
     Manifest(repo_root, tuple(patterns)).write()
     manifest = Manifest.of(repo_root)
 
-    _git.add(repo_root, patterns)
-    _git.force_add(repo_root, REQUIRED_FILES)
-    _git.commit(repo_root, "Started tracking with gsb")
-    _git.tag(repo_root, _generate_tag_name(), "Start of gsb tracking")
+    create_backup(repo_root, "Start of gsb tracking")
 
     return manifest
 
