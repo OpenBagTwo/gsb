@@ -1,5 +1,6 @@
 """Tests for reviewing repo histories"""
 import datetime as dt
+import time
 
 import pytest
 
@@ -7,6 +8,14 @@ from gsb import _git, history
 
 
 class TestGetHistory:
+    @pytest.mark.parametrize("create_root", (True, False), ids=("no_git", "no_folder"))
+    def test_raises_when_theres_no_git_repo(self, tmp_path, create_root):
+        random_folder = tmp_path / "random folder"
+        if create_root:
+            random_folder.mkdir()
+        with pytest.raises(OSError):
+            history.get_history(random_folder)
+
     @pytest.fixture
     def repo_with_history(self, tmp_path):
         root = tmp_path / "fossil record"
@@ -60,6 +69,8 @@ class TestGetHistory:
         _git.add(root, "species")
         _git.commit(root, "Autocommit")
         _git.tag(root, "gsb1.1", "Triassic")
+
+        time.sleep(1)  # TODO: this is per-test so it's gonna be really painful
 
         (root / "species").write_text("plesiosaurs\n")
         _git.add(root, "species")
@@ -140,12 +151,12 @@ class TestGetHistory:
             revision["description"]
             for revision in history.get_history(root, tagged_only=False)
         ] == [
-            "Start of gsb tracking",
-            "Triassic",
+            "Cretaceous (my gracious!)",
             "Autocommit",
             "Jurassic",
             "Autocommit",
-            "Cretaceous",
+            "Triassic",
+            "Start of gsb tracking",
         ]
 
     def test_get_history_can_return_non_gsb_tags_as_well(self, root):
@@ -157,8 +168,8 @@ class TestGetHistory:
             "gsb1.2",
             "gsb1.1",
             "gsb1.0",
+            "0.2",
             "0.1",
-            "Init",
         ]
 
     def test_get_history_can_return_non_gsb_commits_as_well(self, root):
@@ -168,6 +179,6 @@ class TestGetHistory:
                 root, tagged_only=False, include_non_gsb=True, limit=2
             )
         ] == [
-            "Cretaceous",
+            "Cretaceous (my gracious!)",
             "It's my ancestors!",
         ]

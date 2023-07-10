@@ -36,7 +36,7 @@ def get_history(
     Parameters
     ----------
     repo_root : Path
-        The directory where the repo should be created
+        The directory containing the GSB-managed repo
     tagged_only : bool, optional
         By default, this method only returns tagged backups. To include
         all available revisions, pass in `tagged_only=False`.
@@ -55,5 +55,43 @@ def get_history(
     list of dict
         metadata on the requested revisions, sorted in reverse-chronological
         order
+
+    Raises
+    ------
+    OSError
+        If the specified repo does not exist or is not a git repo
     """
-    raise NotImplementedError
+    # TODO: if performance requires it, implement _git.log to fetch m commits
+    #       at a time
+    commits = _git.log(repo_root, n=-1)
+
+    tag_lookup = {
+        tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
+    }
+
+    revisions: list[Revision] = []
+    for commit in commits:
+        if len(revisions) == limit:
+            break
+        if commit.timestamp < since:
+            break
+        if tag := tag_lookup.get(commit):
+            identifier = tag.name
+            is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
+            description = tag.annotation or commit.message
+        else:
+            if tagged_only:
+                continue
+            identifier = commit.hash
+            is_gsb = commit.gsb
+            description = commit.message
+        if not include_non_gsb and not is_gsb:
+            continue
+        revisions.append(
+            {
+                "identifier": identifier,
+                "description": description.strip(),
+                "timestamp": commit.timestamp,
+            }
+        )
+    return revisions

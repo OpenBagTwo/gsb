@@ -51,7 +51,8 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     NotADirectoryError
         If `repo_root` is not a directory
     FileNotFoundError
-        If `repo_root` does not exist
+        If `repo_root` does not exist or the repo is not a valid repository
+        and `new=False`
     OSError
         If `repo_root` cannot otherwise be accessed
     """
@@ -62,7 +63,12 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
         raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
         return pygit2.init_repository(repo_root, initial_head="gsb")
-    return pygit2.Repository(repo_root)
+    try:
+        return pygit2.Repository(repo_root)
+    except pygit2.GitError as maybe_no_git:
+        if "repository not found" in str(maybe_no_git).lower():
+            raise FileNotFoundError(maybe_no_git)
+        raise
 
 
 def _config() -> dict[str, str]:
@@ -412,7 +418,7 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
     Returns
     -------
     list of Tag
-        The requested list of tags
+        The requested list of tags, sorted in lexical order
 
     Raises
     ------
