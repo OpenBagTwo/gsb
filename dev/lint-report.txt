@@ -1,33 +1,10 @@
-************* Module gsb._git
-gsb/_git.py:68:11: E1101: Module 'pygit2' has no 'GitError' member (no-member)
-gsb/_git.py:70:12: W0707: Consider explicitly re-raising using 'raise FileNotFoundError(maybe_no_git) from maybe_no_git' (raise-missing-from)
-gsb/_git.py:164:16: W0707: Consider explicitly re-raising using 'raise FileNotFoundError(maybe_file_not_found) from maybe_file_not_found' (raise-missing-from)
-gsb/_git.py:166:15: E1101: Module 'pygit2' has no 'GitError' member (no-member)
-gsb/_git.py:168:16: W0707: Consider explicitly re-raising using 'raise IsADirectoryError(maybe_directory) from maybe_directory' (raise-missing-from)
-gsb/_git.py:175:5: E1101: Module 'pygit2' has no 'Object' member (no-member)
-gsb/_git.py:203:11: E1101: Module 'pygit2' has no 'GitError' member (no-member)
-gsb/_git.py:214:13: E1101: Module 'pygit2' has no 'Signature' member (no-member)
-gsb/_git.py:216:20: E1101: Module 'pygit2' has no 'Signature' member (no-member)
-gsb/_git.py:220:20: E1101: Module 'pygit2' has no 'Signature' member (no-member)
-gsb/_git.py:248:40: E1101: Module 'pygit2' has no 'Object' member (no-member)
-gsb/_git.py:282:62: E1101: Module 'pygit2' has no 'GIT_SORT_NONE' member (no-member)
-gsb/_git.py:314:5: E1101: Module 'pygit2' has no 'Object' member (no-member)
-gsb/_git.py:348:17: E1101: Module 'pygit2' has no 'Signature' member (no-member)
-gsb/_git.py:350:17: E1101: Module 'pygit2' has no 'Signature' member (no-member)
-gsb/_git.py:352:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-gsb/_git.py:359:12: E1101: Module 'pygit2' has no 'GIT_OBJ_COMMIT' member (no-member)
-gsb/_git.py:418:46: E1101: Module 'pygit2' has no 'GIT_REFERENCES_TAGS' member (no-member)
-gsb/_git.py:420:30: E1101: Module 'pygit2' has no 'GIT_OBJ_TAG' member (no-member)
-gsb/_git.py:433:32: E1101: Module 'pygit2' has no 'GIT_OBJ_COMMIT' member (no-member)
 ************* Module gsb.manifest
 gsb/manifest.py:30:4: C0103: Method name "of" doesn't conform to snake_case naming style (invalid-name)
-gsb/manifest.py:81:32: E1101: Instance of 'Manifest' has no '_asdict' member (no-member)
 ************* Module gsb.onboard
 gsb/onboard.py:12:1: W0511: TODO: these two are probably going to get refactored somewhere else (fixme)
-gsb/onboard.py:96:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
 ************* Module gsb.cli
 gsb/cli.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 
 -----------------------------------
-Your code has been rated at 5.99/10
+Your code has been rated at 9.87/10
 

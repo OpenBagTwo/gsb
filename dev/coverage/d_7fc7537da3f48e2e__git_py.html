@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">112 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">108<span class="text"> run</span></button>
+            <span class="text">111 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">107<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">4<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">17<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_cli_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-07-10 13:41 +0000
+            created at 2023-07-10 14:05 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -149,7 +149,7 @@
     <p class="run"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">        <span class="key">return</span> <span class="nam">pygit2</span><span class="op">.</span><span class="nam">Repository</span><span class="op">(</span><span class="nam">repo_root</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">    <span class="key">except</span> <span class="nam">pygit2</span><span class="op">.</span><span class="nam">GitError</span> <span class="key">as</span> <span class="nam">maybe_no_git</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t69" href="#t69">69</a></span><span class="t">        <span class="key">if</span> <span class="str">"repository not found"</span> <span class="key">in</span> <span class="nam">str</span><span class="op">(</span><span class="nam">maybe_no_git</span><span class="op">)</span><span class="op">.</span><span class="nam">lower</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">            <span class="key">raise</span> <span class="nam">FileNotFoundError</span><span class="op">(</span><span class="nam">maybe_no_git</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">            <span class="key">raise</span> <span class="nam">FileNotFoundError</span><span class="op">(</span><span class="nam">maybe_no_git</span><span class="op">)</span> <span class="key">from</span> <span class="nam">maybe_no_git</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">        <span class="key">raise</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -243,11 +243,11 @@
     <p class="run"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">            <span class="nam">repo</span><span class="op">.</span><span class="nam">index</span><span class="op">.</span><span class="nam">add</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">        <span class="key">except</span> <span class="nam">OSError</span> <span class="key">as</span> <span class="nam">maybe_file_not_found</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">            <span class="key">if</span> <span class="str">"No such file or directory"</span> <span class="key">in</span> <span class="nam">str</span><span class="op">(</span><span class="nam">maybe_file_not_found</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">                <span class="key">raise</span> <span class="nam">FileNotFoundError</span><span class="op">(</span><span class="nam">maybe_file_not_found</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">                <span class="key">raise</span> <span class="nam">FileNotFoundError</span><span class="op">(</span><span class="nam">maybe_file_not_found</span><span class="op">)</span> <span class="key">from</span> <span class="nam">maybe_file_not_found</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t">            <span class="key">raise</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">        <span class="key">except</span> <span class="nam">pygit2</span><span class="op">.</span><span class="nam">GitError</span> <span class="key">as</span> <span class="nam">maybe_directory</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">            <span class="key">if</span> <span class="str">"is a directory"</span> <span class="key">in</span> <span class="nam">str</span><span class="op">(</span><span class="nam">maybe_directory</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">                <span class="key">raise</span> <span class="nam">IsADirectoryError</span><span class="op">(</span><span class="nam">maybe_directory</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">                <span class="key">raise</span> <span class="nam">IsADirectoryError</span><span class="op">(</span><span class="nam">maybe_directory</span><span class="op">)</span> <span class="key">from</span> <span class="nam">maybe_directory</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">    <span class="nam">repo</span><span class="op">.</span><span class="nam">index</span><span class="op">.</span><span class="nam">write</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">    <span class="key">return</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">index</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -442,10 +442,10 @@
     <p class="pln"><span class="n"><a id="t360" href="#t360">360</a></span><span class="t">            <span class="nam">tagger</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t361" href="#t361">361</a></span><span class="t">            <span class="nam">annotation</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t362" href="#t362">362</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t363" href="#t363">363</a></span><span class="t">        <span class="key">return</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">revparse_single</span><span class="op">(</span><span class="nam">tag_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t364" href="#t364">364</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t365" href="#t365">365</a></span><span class="t">        <span class="nam">repo</span><span class="op">.</span><span class="nam">create_reference</span><span class="op">(</span><span class="str">f"refs/tags/{tag_name}"</span><span class="op">,</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">head</span><span class="op">.</span><span class="nam">target</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t366" href="#t366">366</a></span><span class="t">        <span class="key">return</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">revparse_single</span><span class="op">(</span><span class="nam">tag_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t363" href="#t363">363</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t364" href="#t364">364</a></span><span class="t">        <span class="nam">repo</span><span class="op">.</span><span class="nam">create_reference</span><span class="op">(</span><span class="str">f"refs/tags/{tag_name}"</span><span class="op">,</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">head</span><span class="op">.</span><span class="nam">target</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t365" href="#t365">365</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t366" href="#t366">366</a></span><span class="t">    <span class="key">return</span> <span class="nam">repo</span><span class="op">.</span><span class="nam">revparse_single</span><span class="op">(</span><span class="nam">tag_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t367" href="#t367">367</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t368" href="#t368">368</a></span><span class="t">    <span class="com"># PSA: pygit2.AlreadyExistsError subclasses ValueError</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t369" href="#t369">369</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -532,7 +532,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_cli_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-07-10 13:41 +0000
+            created at 2023-07-10 14:05 +0000
         </p>
     </div>
 </footer>
