@@ -3,12 +3,12 @@ import datetime as dt
 import getpass
 import socket
 from pathlib import Path
-from typing import Iterable, NamedTuple
+from typing import Generator, Iterable, NamedTuple, Self
 
 import pygit2
 
 
-def init(repo_root: Path) -> None:
+def init(repo_root: Path) -> pygit2.Repository:
     """Initialize (or re-initialize) a git repo, equivalent to running
     `git init`
 
@@ -17,12 +17,17 @@ def init(repo_root: Path) -> None:
     repo_root : Path
         The root directory of the git repo
 
+    Returns
+    -------
+    repo
+        The initialized git repository
+
     Raises
     ------
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
-    _repo(repo_root, new=True)
+    return _repo(repo_root, new=True)
 
 
 def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
@@ -46,7 +51,8 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     NotADirectoryError
         If `repo_root` is not a directory
     FileNotFoundError
-        If `repo_root` does not exist
+        If `repo_root` does not exist or the repo is not a valid repository
+        and `new=False`
     OSError
         If `repo_root` cannot otherwise be accessed
     """
@@ -57,7 +63,12 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
         raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
         return pygit2.init_repository(repo_root, initial_head="gsb")
-    return pygit2.Repository(repo_root)
+    try:
+        return pygit2.Repository(repo_root)
+    except pygit2.GitError as maybe_no_git:
+        if "repository not found" in str(maybe_no_git).lower():
+            raise FileNotFoundError(maybe_no_git)
+        raise  # pragma: no cover
 
 
 def _config() -> dict[str, str]:
@@ -92,7 +103,7 @@ def _git_config() -> dict[str, str]:  # pragma: no cover
         return {}
 
 
-def add(repo_root: Path, patterns: Iterable[str]) -> None:
+def add(repo_root: Path, patterns: Iterable[str]) -> pygit2.Index:
     """Add files matching the given pattern to the repo, equivalent to running
     `git add <pattern>`
 
@@ -103,6 +114,11 @@ def add(repo_root: Path, patterns: Iterable[str]) -> None:
     patterns : list of str
         The glob patterns to match
 
+    Returns
+    -------
+    index
+        The updated git index
+
     Raises
     ------
     OSError
@@ -111,9 +127,10 @@ def add(repo_root: Path, patterns: Iterable[str]) -> None:
     repo = _repo(repo_root)
     repo.index.add_all(list(patterns))
     repo.index.write()
+    return repo.index
 
 
-def force_add(repo_root: Path, files: Iterable[Path]) -> None:
+def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
     """Forcibly add specific files, overriding .gitignore, equivalent to running
     `git add <file> --force`
 
@@ -123,6 +140,11 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> None:
         The root directory of the git repo
     files : list of paths
         The file paths to add, relative to the repo root
+
+    Returns
+    -------
+    index
+        The updated git index
 
     Raises
     ------
@@ -145,9 +167,12 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> None:
             if "is a directory" in str(maybe_directory):
                 raise IsADirectoryError(maybe_directory)
     repo.index.write()
+    return repo.index
 
 
-def commit(repo_root: Path, message: str) -> None:
+def commit(
+    repo_root: Path, message: str, _committer: tuple[str, str] | None = None
+) -> pygit2.Object:
     """Commit staged changes, equivalent to running `git commit -m <message>`
 
     Parameters
@@ -156,6 +181,15 @@ def commit(repo_root: Path, message: str) -> None:
         The root directory of the git repo
     message : str
         The commit message
+    _committer : (str, str) tuple
+        By default this method uses "gsb" as the committer. This should not
+        be overridden outside of testing, but to do so, pass in both the
+        username and email address.
+
+    Returns
+    -------
+    commit
+        The generated commit object
 
     Raises
     ------
@@ -178,10 +212,16 @@ def commit(repo_root: Path, message: str) -> None:
 
     config = _config()
     author = pygit2.Signature(config["user.name"], config["user.email"])
-    committer = pygit2.Signature(config["committer.name"], config["committer.email"])
-    repo.create_commit(
+    if _committer is None:
+        committer = pygit2.Signature(
+            config["committer.name"], config["committer.email"]
+        )
+    else:
+        committer = pygit2.Signature(*_committer)
+    commit_id = repo.create_commit(
         ref, author, committer, message, repo.index.write_tree(), parents
     )
+    return repo[commit_id]
 
 
 class Commit(NamedTuple):
@@ -195,29 +235,42 @@ class Commit(NamedTuple):
         The commit message
     timestamp : dt.datetime
         The timestamp of the commit
+    gsb : bool
+        True if and only if the tag was created by `gsb`
     """
 
     hash: str
     message: str
     timestamp: dt.datetime
+    gsb: bool
+
+    @classmethod
+    def from_pygit2(cls, commit_object: pygit2.Object) -> Self:
+        """Resolve from a pygit2 object"""
+        try:
+            gsb = commit_object.committer.name == "gsb"
+        except AttributeError:
+            gsb = False
+        return cls(
+            commit_object.id,
+            commit_object.message,
+            dt.datetime.fromtimestamp(commit_object.commit_time),
+            gsb,
+        )
 
 
-def log(repo_root: Path, n: int) -> list[Commit]:
-    """Return metadata about the last `n` commits such as you'd get by running
-    `git log -<num>`
+def log(repo_root: Path) -> Generator[Commit, None, None]:
+    """Return metadata about commits such as you'd get by running `git log`
 
     Parameters
     ----------
     repo_root : Path
         The root directory of the git repo
-    n : int
-        The number of commits to go back. A value less than zero will retrieve
-        the *full* history
 
     Returns
     -------
-    list of commit
-        The requested commits, returned in reverse-chronological order
+    iterable of commit
+        The requested commits, returned lazily, in reverse-chronological order
 
     Raises
     ------
@@ -226,22 +279,8 @@ def log(repo_root: Path, n: int) -> list[Commit]:
     """
     repo = _repo(repo_root)
 
-    history: list[Commit] = []
-
-    for i, commit_object in enumerate(
-        repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE)
-    ):
-        if i + 1 == n:
-            break
-        history.append(
-            Commit(
-                commit_object.id,
-                commit_object.message,
-                dt.datetime.fromtimestamp(commit_object.commit_time),
-            )
-        )
-
-    return history
+    for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
+        yield Commit.from_pygit2(commit_object)
 
 
 def ls_files(repo_root: Path) -> list[Path]:
@@ -267,7 +306,12 @@ def ls_files(repo_root: Path) -> list[Path]:
     return [repo_root / file.path for file in repo.index]
 
 
-def tag(repo_root: Path, tag_name: str, annotation: str | None) -> None:
+def tag(
+    repo_root: Path,
+    tag_name: str,
+    annotation: str | None,
+    _tagger: tuple[str, str] | None = None,
+) -> pygit2.Object:
     """Create a tag at the current HEAD, equivalent to running
     `git tag [-am <annotation>]`
 
@@ -280,6 +324,15 @@ def tag(repo_root: Path, tag_name: str, annotation: str | None) -> None:
     annotation : str or None
         The annotation to give the tag. If None is provided, a lightweight tag
         will be created
+    _tagger : (str, str) tuple
+        By default this method uses "gsb" as the tagger. This should not
+        be overridden outside of testing, but to do so, pass in both the
+        username and email address.
+
+    Returns
+    -------
+    tag
+        The generated tag object
 
     Raises
     ------
@@ -291,7 +344,10 @@ def tag(repo_root: Path, tag_name: str, annotation: str | None) -> None:
     repo = _repo(repo_root)
 
     config = _config()
-    tagger = pygit2.Signature(config["committer.name"], config["committer.email"])
+    if _tagger is None:
+        tagger = pygit2.Signature(config["committer.name"], config["committer.email"])
+    else:
+        tagger = pygit2.Signature(*_tagger)
 
     if annotation:
         if not annotation.endswith("\n"):
@@ -304,8 +360,10 @@ def tag(repo_root: Path, tag_name: str, annotation: str | None) -> None:
             tagger,
             annotation,
         )
+        return repo.revparse_single(tag_name)
     else:
         repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
+        return repo.revparse_single(tag_name)
 
     # PSA: pygit2.AlreadyExistsError subclasses ValueError
 
@@ -319,11 +377,18 @@ class Tag(NamedTuple):
         The name of the tag
     annotation : str or None
         The tag's annotation. If None, then this is a lightweight tag
+    target : Commit
+        The commit the tag is targeting
+    gsb : bool or None
+        True if the tagger was  `gsb`, False if it was created by
+        someone / something else and None if it's a lightweight tag (which
+        doesn't have a tagger)
     """
 
     name: str
     annotation: str | None
-    # TODO : capture tagger as well for filtering to just gsb tags
+    target: Commit
+    gsb: bool | None
 
 
 def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
@@ -336,27 +401,43 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
     repo_root : Path
         The root directory of the git repo
     annotated_only : bool
-        Lightweight tags will be included if and only if this is `False`.
+        Lightweight tags will be included if and only if this is `False`
 
     Returns
     -------
     list of Tag
-        The requested list of tags
+        The requested list of tags, sorted in lexical order
 
     Raises
     ------
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
-    # TODO: add ability to filter out non-gsb tags
     repo = _repo(repo_root)
     tags: list[Tag] = []
     for reference in repo.references.iterator(pygit2.GIT_REFERENCES_TAGS):
         tag_object = repo.revparse_single(reference.name)
         if tag_object.type == pygit2.GIT_OBJ_TAG:
-            tags.append(Tag(tag_object.name, tag_object.message))
-        if tag_object.type == pygit2.GIT_OBJ_COMMIT:
+            try:
+                gsb = tag_object.tagger.name == "gsb"
+            except AttributeError:
+                gsb = False
+            tags.append(
+                Tag(
+                    tag_object.name,
+                    tag_object.message,
+                    Commit.from_pygit2(repo[tag_object.target]),
+                    gsb,
+                )
+            )
+        elif tag_object.type == pygit2.GIT_OBJ_COMMIT:
             if annotated_only:
                 continue
-            tags.append(Tag(reference.shorthand, None))
+            tags.append(
+                Tag(reference.shorthand, None, Commit.from_pygit2(tag_object), False)
+            )
+        else:  # pragma: no cover
+            raise RuntimeError(
+                f"Don't know how to parse reference of type: {tag_object.type}"
+            )
     return sorted(tags)
