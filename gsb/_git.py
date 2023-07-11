@@ -198,7 +198,7 @@ class Commit(NamedTuple):
         except AttributeError:
             gsb = False
         return cls(
-            commit_object.id,
+            str(commit_object.id),
             commit_object.message,
             dt.datetime.fromtimestamp(commit_object.commit_time),
             gsb,
@@ -355,7 +355,7 @@ class Tag(NamedTuple):
             )
         if tag_object.type == pygit2.GIT_OBJ_COMMIT:
             return cls(reference, None, Commit.from_pygit2(tag_object), False)
-        raise RuntimeError(  # pragma: no cover
+        raise TypeError(  # pragma: no cover
             f"Don't know how to parse reference of type: {tag_object.type}"
         )
 
@@ -424,7 +424,7 @@ def tag(
 
 def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
     """List the repo's tags, similar to the output you'd get from
-    running `git tag -n`, with the additional option of filtering out
+    running `git tag`, with the additional option of filtering out
     lightweight tags
 
     Parameters
@@ -451,3 +451,56 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
         if parsed_tag.annotation or not annotated_only:
             tags.append(parsed_tag)
     return sorted(tags)
+
+
+def show(repo_root: Path, reference: str) -> Commit | Tag:
+    """Get information about a specified revision, similar to the output you'd
+    get from running `git show <commit-hash-or-tag-name>`.
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    reference : str
+        A unique descriptor of the tag or commit
+
+    Returns
+    -------
+    Commit or Tag
+        The requested tag or commit
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the specified revision does not exist
+    """
+    raise NotImplementedError
+
+
+def reset(repo_root: Path, reference: str, hard: bool) -> None:
+    """Reset the repo to the specified revision, equivalent to running
+    `git reset [--hard/--soft] <revision>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    reference : str
+        A unique descriptor of the tag or commit
+    hard : bool
+        If True, perform a hard reset. If False, perform a soft reset.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the specified revision does not exist
+    """
+    raise NotImplementedError
