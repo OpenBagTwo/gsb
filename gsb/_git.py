@@ -336,6 +336,7 @@ class Tag(NamedTuple):
     def from_repo_reference(
         cls, reference: pygit2.Reference | str, repo: pygit2.Repository
     ) -> Self:
+        """Parse the reference and resolve from the pygit2 object"""
         if isinstance(reference, str):
             tag_object = repo.revparse_single(reference)
         else:
@@ -479,8 +480,10 @@ def show(repo_root: Path, reference: str) -> Commit | Tag:
     repo = _repo(repo_root)
     try:
         revision = repo.revparse_single(reference)
-    except KeyError:
-        raise ValueError(f"Could not find a revision named {repr(reference)}")
+    except KeyError as no_rev:
+        raise ValueError(
+            f"Could not find a revision named {repr(reference)}"
+        ) from no_rev
     if revision.type == pygit2.GIT_OBJ_TAG:
         return Tag.from_repo_reference(str(revision.id), repo)
     if revision.type == pygit2.GIT_OBJ_COMMIT:
@@ -517,7 +520,9 @@ def reset(repo_root: Path, reference: str, hard: bool) -> None:
     repo = _repo(repo_root)
     try:
         reference = repo.revparse_single(reference).id
-    except KeyError:
-        raise ValueError(f"Could not find a revision named {repr(reference)}")
+    except KeyError as no_rev:
+        raise ValueError(
+            f"Could not find a revision named {repr(reference)}"
+        ) from no_rev
 
     repo.reset(reference, pygit2.GIT_RESET_HARD if hard else pygit2.GIT_RESET_SOFT)
