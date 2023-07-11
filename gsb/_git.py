@@ -476,7 +476,18 @@ def show(repo_root: Path, reference: str) -> Commit | Tag:
     ValueError
         If the specified revision does not exist
     """
-    raise NotImplementedError
+    repo = _repo(repo_root)
+    try:
+        revision = repo.revparse_single(reference)
+    except KeyError:
+        raise ValueError(f"Could not find a revision named {repr(reference)}")
+    if revision.type == pygit2.GIT_OBJ_TAG:
+        return Tag.from_repo_reference(str(revision.id), repo)
+    if revision.type == pygit2.GIT_OBJ_COMMIT:
+        return Commit.from_pygit2(revision)
+    raise TypeError(  # pragma: no cover
+        f"Object of type {revision.type} is not a valid revision"
+    )
 
 
 def reset(repo_root: Path, reference: str, hard: bool) -> None:
@@ -503,4 +514,10 @@ def reset(repo_root: Path, reference: str, hard: bool) -> None:
     ValueError
         If the specified revision does not exist
     """
-    raise NotImplementedError
+    repo = _repo(repo_root)
+    try:
+        reference = repo.revparse_single(reference).id
+    except KeyError:
+        raise ValueError(f"Could not find a revision named {repr(reference)}")
+
+    repo.reset(reference, pygit2.GIT_RESET_HARD if hard else pygit2.GIT_RESET_SOFT)
