@@ -1,0 +1,8 @@
+************* Module gsb.manifest
+gsb/manifest.py:30:4: C0103: Method name "of" doesn't conform to snake_case naming style (invalid-name)
+************* Module gsb.cli
+gsb/cli.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+
+-----------------------------------
+Your code has been rated at 9.93/10
+
