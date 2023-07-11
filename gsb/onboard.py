@@ -2,8 +2,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from . import _git
-from .backup import create_backup
+from . import _git, backup
 from .manifest import MANIFEST_NAME, Manifest
 
 DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
@@ -53,7 +52,7 @@ def create_repo(
     Manifest(repo_root, tuple(patterns)).write()
     manifest = Manifest.of(repo_root)
 
-    create_backup(repo_root, "Start of gsb tracking")
+    backup.create_backup(repo_root, "Start of gsb tracking")
 
     return manifest
 
