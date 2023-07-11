@@ -10,7 +10,7 @@ from gsb import _git, backup, onboard
 @pytest.mark.usefixtures("patch_tag_naming")
 class TestCreateBackup:
     @pytest.mark.parametrize("root_type", ("no_folder", "no_git", "no_manifest"))
-    def test_raises_when_theres_no_git_repo(self, tmp_path, root_type):
+    def test_raises_when_theres_no_gsb_repo(self, tmp_path, root_type):
         random_folder = tmp_path / "random folder"
         if root_type != "no_folder":
             random_folder.mkdir()
@@ -88,4 +88,4 @@ class TestCreateBackup:
         tag_name = backup.create_backup(repo_root, "You're it")
 
         repo = _git._repo(repo_root, new=False)
-        assert repo.revparse_single(tag_name).target == hash
+        assert str(repo.revparse_single(tag_name).target) == hash
