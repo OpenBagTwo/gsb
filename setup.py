@@ -21,7 +21,7 @@ setup(
     package_data={},
     entry_points={
         "console_scripts": [
-            "gsb = gsb.cli:main",
+            "gsb = gsb.cli:gsb",
         ]
     },
     license="GPL v3",
