@@ -25,6 +25,7 @@ dependencies:
 - mkdocs-literate-nav
 - mkdocs-material
 - mkdocs-gen-files
+- mkdocs-click
 - pip:
   - mkdocs-section-index
   - mkdocs-coverage
