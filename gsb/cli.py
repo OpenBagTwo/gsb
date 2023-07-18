@@ -10,12 +10,12 @@ from . import backup as backup_
 @click.group()
 @click.help_option("--help", "-h")
 @click.version_option(_version.get_versions()["version"], "--version", "-v", "-V")
-def main():
+def gsb():
     """CLI for managing incremental backups of your save states using Git!"""
     pass
 
 
-@main.command()
+@gsb.command()
 @click.argument(
     "path_as_arg",
     type=Path,
