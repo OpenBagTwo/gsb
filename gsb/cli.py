@@ -42,6 +42,7 @@ def _subcommand_init(command: Callable) -> Callable:
     "--tag",
     type=str,
     help='Specify a description for this backup and "tag" it for future reference.',
+    metavar='"MESSAGE"',
 )
 @click.argument(
     "path_as_arg",
