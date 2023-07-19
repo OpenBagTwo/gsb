@@ -1,4 +1,5 @@
 """Tests for creating backups"""
+import os
 import subprocess
 from pathlib import Path
 
@@ -127,7 +128,12 @@ class TestCLI:
 
     @pytest.mark.usefixtures("patch_tag_naming")
     def test_creating_a_tagged_backup(self, repo_root, prior_commits, prior_tags):
-        subprocess.run(['gsb backup --tag "Hello World"'], cwd=repo_root, shell=True)
+        if os.name == "posix":
+            subprocess.run(
+                ['gsb backup --tag "Hello World"'], cwd=repo_root, shell=True
+            )
+        else:
+            subprocess.run(["gsb", "backup", "--tag", "Hello World"], cwd=repo_root)
 
         tags = list(_git.get_tags(repo_root, False))
 
