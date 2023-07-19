@@ -1,4 +1,6 @@
 """Tests for creating new repos"""
+import subprocess
+
 import pytest
 
 from gsb import _git, onboard
@@ -169,3 +171,81 @@ stuff
             expected.add(None)
 
         assert {tag.annotation for tag in tags} == expected
+
+
+class TestCLI:
+    @pytest.fixture
+    def root(self, tmp_path):
+        root = tmp_path / "froot"
+        root.mkdir()
+        (root / "toot").touch()
+        yield root
+
+    def test_init_in_cwd_by_default(self, root):
+        subprocess.run(["gsb", "init"], cwd=root)
+        assert (root / ".git").exists()
+
+    def test_passing_in_a_custom_root_by_option(self, root):
+        subprocess.run(["gsb", "init", "--path", root.name], cwd=root.parent)
+        assert (root / ".git").exists()
+
+    @pytest.mark.parametrize(
+        "how", ("by_argument", "by_option", "by_option_individually", "mixed")
+    )
+    def test_passing_in_patterns(self, root, how):
+        patterns = {"toot", "soot", "foot", "*oot/**"}
+        args = ["gsb", "init", *patterns]
+        if how.startswith("by_option"):
+            args.insert(2, "--track")
+        if how == "by_option_individually":
+            for i in range(1, len(patterns)):
+                args.insert(2 + 2 * i, "--track")
+        if how == "mixed":
+            args.insert(2 + len(patterns) // 2, "--track")
+
+        subprocess.run(args)
+
+        written_patterns = set((root / MANIFEST_NAME).read_text().splitlines())
+
+        assert patterns.intersection(written_patterns) == patterns
+
+    @pytest.mark.parametrize("how", ("by_option", "by_option_individually"))
+    def test_passing_in_ignores(self, root, how):
+        patterns = {"scoot", "flute"}
+        args = ["gsb", "init", "--ignore", *patterns]
+        if how == "by_option_individually":
+            for i in range(1, len(patterns)):
+                args.insert(2 + 2 * i, "--ignore")
+
+        subprocess.run(args, cwd=root)
+
+        written_patterns = set((root / ".gitignore").read_text().splitlines())
+
+        assert patterns.intersection(written_patterns) == patterns
+
+    def test_mixing_includes_and_ignores(self, root):
+        subprocess.run(
+            [
+                "gsb",
+                "init",
+                "toot",
+                "--ignore",
+                "flute",
+                "scoot",
+                "--track",
+                "boot",
+                "*oot/**",
+                "--path",
+                str(root.absolute()),
+            ]
+        )
+
+        includes = set((root / MANIFEST_NAME).read_text().splitlines())
+        ignores = set((root / ".gitignore").read_text().splitlines())
+
+        expected_includes = {"toot", "boot", "*oot/**"}
+        expected_ignores = {"flute", "scoot"}
+        assert expected_includes.intersection(includes) == expected_includes
+        assert expected_ignores.intersection(ignores) == expected_ignores
+        assert expected_includes.intersection(ignores) == set()
+        assert expected_ignores.intersection(includes) == set()
