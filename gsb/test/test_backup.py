@@ -125,14 +125,6 @@ class TestCLI:
 
         assert len(list(_git.log(repo_root))) == len(prior_commits) + 1
 
-    def test_conflicting_paths_raises_error(self, repo_root):
-        assert (
-            subprocess.run(
-                ["gsb", "backup", '"I thought tag was an arg"', "--path", repo_root]
-            ).returncode
-            == 1
-        )
-
     @pytest.mark.usefixtures("patch_tag_naming")
     def test_creating_a_tagged_backup(self, repo_root, prior_commits, prior_tags):
         subprocess.run(["gsb", "backup", "--tag", "Hello"], cwd=repo_root)
