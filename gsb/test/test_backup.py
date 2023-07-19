@@ -127,7 +127,7 @@ class TestCLI:
 
     @pytest.mark.usefixtures("patch_tag_naming")
     def test_creating_a_tagged_backup(self, repo_root, prior_commits, prior_tags):
-        subprocess.run(["gsb", "backup", "--tag", "Hello"], cwd=repo_root)
+        subprocess.run(['gsb backup --tag "Hello World"'], cwd=repo_root, shell=True)
 
         tags = list(_git.get_tags(repo_root, False))
 
@@ -139,4 +139,4 @@ class TestCLI:
             len(prior_tags) + 1,
         )
 
-        assert tags[-1].annotation == "Hello\n"
+        assert tags[-1].annotation == "Hello World\n"
