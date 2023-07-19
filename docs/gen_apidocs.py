@@ -11,6 +11,9 @@ for path in Path("gsb").rglob("*.py"):
         continue
     if path.name.startswith("_") and path.name != "__init__.py":
         continue
+    if path.name == "cli.py":
+        # we have CLI docs for that
+        continue
 
     doc_file_path = Path("reference") / path.with_suffix(".md")
     py_path: tuple[str, ...] = path.with_suffix("").parts
