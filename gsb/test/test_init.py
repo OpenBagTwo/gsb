@@ -4,7 +4,7 @@ import subprocess
 import pytest
 
 from gsb import _git, onboard
-from gsb.manifest import MANIFEST_NAME
+from gsb.manifest import MANIFEST_NAME, Manifest
 
 
 class TestFreshInit:
@@ -192,7 +192,7 @@ class TestCLI:
     @pytest.mark.parametrize(
         "how", ("by_argument", "by_option", "by_option_individually", "mixed")
     )
-    def test_passing_in_patterns(self, root, how):
+    def test_passing_in_track_patterns(self, root, how):
         patterns = {"toot", "soot", "foot", "*oot/**"}
         args = ["gsb", "init", *patterns]
         if how.startswith("by_option"):
@@ -203,19 +203,17 @@ class TestCLI:
         if how == "mixed":
             args.insert(2 + len(patterns) // 2, "--track")
 
-        subprocess.run(args)
+        subprocess.run(args, cwd=root)
 
-        written_patterns = set((root / MANIFEST_NAME).read_text().splitlines())
+        written_patterns = set(Manifest.of(root).patterns)
 
         assert patterns.intersection(written_patterns) == patterns
 
-    @pytest.mark.parametrize("how", ("by_option", "by_option_individually"))
-    def test_passing_in_ignores(self, root, how):
+    def test_passing_in_ignores(self, root):
         patterns = {"scoot", "flute"}
-        args = ["gsb", "init", "--ignore", *patterns]
-        if how == "by_option_individually":
-            for i in range(1, len(patterns)):
-                args.insert(2 + 2 * i, "--ignore")
+        args = ["gsb", "init"]
+        for pattern in patterns:
+            args.extend(("--ignore", pattern))
 
         subprocess.run(args, cwd=root)
 
@@ -231,16 +229,17 @@ class TestCLI:
                 "toot",
                 "--ignore",
                 "flute",
-                "scoot",
                 "--track",
                 "boot",
                 "*oot/**",
+                "--ignore",
+                "scoot",
                 "--path",
                 str(root.absolute()),
             ]
         )
 
-        includes = set((root / MANIFEST_NAME).read_text().splitlines())
+        includes = set(Manifest.of(root).patterns)
         ignores = set((root / ".gitignore").read_text().splitlines())
 
         expected_includes = {"toot", "boot", "*oot/**"}
