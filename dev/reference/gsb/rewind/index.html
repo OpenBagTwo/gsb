@@ -17,7 +17,7 @@
         <link rel="next" href="../backup/">
       
       <link rel="icon" href="../../../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
@@ -310,7 +310,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../cli.md" class="md-nav__link">
+      <a href="../../../cli/" class="md-nav__link">
         Full CLI Documentation
       </a>
     </li>
@@ -510,20 +510,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -625,6 +611,7 @@
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -638,6 +625,8 @@
   <div class="doc doc-contents ">
   
       <p>Rewind to a previous backup state and create a new backup</p>
+
+
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -681,6 +670,8 @@
     </tbody>
   </table>
 
+
+
   <p><strong>Returns:</strong></p>
   <table>
     <thead>
@@ -704,6 +695,8 @@
   </table>
       <h4 id="gsb.rewind.restore_backup--notes">Notes</h4>
 <p>Before creating the backup, any un-backed up changes will first be backed up</p>
+
+
 
   <p><strong>Raises:</strong></p>
   <table>
@@ -737,9 +730,9 @@
     </tbody>
   </table>
 
-      <details class="quote">
-        <summary>Source code in <code>gsb/rewind.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+          <details class="quote">
+            <summary>Source code in <code>gsb/rewind.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
 <span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span>
@@ -811,7 +804,7 @@
 </span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>
 </span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">return</span> <span class="n">backup</span><span class="o">.</span><span class="n">create_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Restored to </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
