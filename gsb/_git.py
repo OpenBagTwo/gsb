@@ -1,11 +1,14 @@
 """Abstraction around the git library interface (to allow for easier backend swaps"""
 import datetime as dt
 import getpass
+import logging
 import socket
 from pathlib import Path
 from typing import Generator, Iterable, NamedTuple, Self
 
 import pygit2
+
+LOGGER = logging.getLogger(__name__)
 
 
 def init(repo_root: Path) -> pygit2.Repository:
@@ -27,6 +30,7 @@ def init(repo_root: Path) -> pygit2.Repository:
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
+    LOGGER.debug("git init %s", repo_root)
     return _repo(repo_root, new=True)
 
 
@@ -84,6 +88,7 @@ def _config() -> dict[str, str]:
     Loading a repo-specific git config is not supported by this method
     """
     config = _git_config()
+    LOGGER.debug("git config --global --list")
     config["user.name"] = config.get("user.name") or getpass.getuser()
     if "user.email" not in config:
         config["user.email"] = f"{getpass.getuser()}@{socket.gethostname()}"
@@ -125,7 +130,10 @@ def add(repo_root: Path, patterns: Iterable[str]) -> pygit2.Index:
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
-    repo.index.add_all(list(patterns))
+    patterns = list(patterns)
+    repo.index.add_all(patterns)
+    for pattern in patterns:
+        LOGGER.debug("git add %s", pattern)
     repo.index.write()
     return repo.index
 
@@ -159,6 +167,7 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
     for path in files:
         try:
             repo.index.add(path)
+            LOGGER.debug("git add --force %s", path)
         except OSError as maybe_file_not_found:  # pragma: no cover
             if "No such file or directory" in str(maybe_file_not_found):
                 raise FileNotFoundError(maybe_file_not_found) from maybe_file_not_found
@@ -260,6 +269,7 @@ def commit(
     commit_id = repo.create_commit(
         ref, author, committer, message, repo.index.write_tree(), parents
     )
+    LOGGER.debug("git commit -m %s", message)
     return Commit.from_pygit2(repo[commit_id])
 
 
@@ -282,6 +292,8 @@ def log(repo_root: Path) -> Generator[Commit, None, None]:
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
+
+    LOGGER.debug("git log")
 
     for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
         yield Commit.from_pygit2(commit_object)
@@ -307,6 +319,7 @@ def ls_files(repo_root: Path) -> list[Path]:
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
+    LOGGER.debug("git ls-files")
     return [repo_root / file.path for file in repo.index]
 
 
@@ -415,8 +428,10 @@ def tag(
             tagger,
             annotation,
         )
+        LOGGER.debug("git tag %s -am %s", tag_name, annotation)
     else:
         repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
+        LOGGER.debug("git tag %s", tag_name)
 
     return Tag.from_repo_reference(tag_name, repo)
 
@@ -451,6 +466,7 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
         parsed_tag = Tag.from_repo_reference(reference, repo)
         if parsed_tag.annotation or not annotated_only:
             tags.append(parsed_tag)
+    LOGGER.debug("git tag")
     return sorted(tags)
 
 
@@ -480,6 +496,7 @@ def show(repo_root: Path, reference: str) -> Commit | Tag:
     repo = _repo(repo_root)
     try:
         revision = repo.revparse_single(reference)
+        LOGGER.debug("git show %s", reference)
     except KeyError as no_rev:
         raise ValueError(
             f"Could not find a revision named {repr(reference)}"
@@ -525,4 +542,5 @@ def reset(repo_root: Path, reference: str, hard: bool) -> None:
             f"Could not find a revision named {repr(reference)}"
         ) from no_rev
 
+    LOGGER.debug(f"git reset --{'hard' if hard else 'soft'} %s", reference)
     repo.reset(reference, pygit2.GIT_RESET_HARD if hard else pygit2.GIT_RESET_SOFT)
