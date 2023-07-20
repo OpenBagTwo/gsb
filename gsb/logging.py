@@ -38,7 +38,8 @@ def verbosity_to_log_level(verbosity: int) -> int:
     verbosity: int
         A verbosity level usually specified by the number of `-v` flags a user
         provides minus the number of `-q` flags. As a baseline, a verbosity of
-        0 will set the level to handle all INFO-level messages and above.
+        0 will set the level to handle all messages above (excluding) the
+        INFO level.
 
     Returns
     -------
@@ -51,4 +52,4 @@ def verbosity_to_log_level(verbosity: int) -> int:
     DEBUG by default. This allows us to capture intermediate log levels (read:
     `IMPORTANT`) at the `verbosity = -1` (`-q`) level.
     """
-    return logging.DEBUG + 1 - 10 * verbosity
+    return logging.INFO + 1 - 10 * verbosity
