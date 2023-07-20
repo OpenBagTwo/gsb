@@ -1,5 +1,6 @@
 """Command-line interface"""
 import functools
+import logging
 from pathlib import Path
 from typing import Callable
 
@@ -8,6 +9,9 @@ import click
 from . import _version
 from . import backup as backup_
 from . import onboard
+from .logging import CLIFormatter, verbosity_to_log_level
+
+LOGGER = logging.getLogger(__package__)
 
 
 @click.group()
@@ -22,7 +26,20 @@ def _subcommand_init(command: Callable) -> Callable:
     """Register a subcommand and add some standard CLI handling"""
 
     @functools.wraps(command)
-    def wrapped(path: Path | None, *args, **kwargs) -> Callable:
+    def wrapped(
+        path: Path | None, verbose: int, quiet: int, *args, **kwargs
+    ) -> Callable:
+        cli_handler = logging.StreamHandler()
+        cli_handler.setFormatter(CLIFormatter())
+        LOGGER.addHandler(cli_handler)
+
+        log_level = verbosity_to_log_level(verbose - quiet)
+
+        cli_handler.setLevel(log_level)
+
+        # TODO: when we add log files, set this to minimum log level across all handlers
+        LOGGER.setLevel(log_level)
+
         return command((path or Path()).absolute(), *args, **kwargs)
 
     wrapped = click.option(
@@ -33,6 +50,20 @@ def _subcommand_init(command: Callable) -> Callable:
             "Optionally specify the root directory containing your save data."
             " If no path is given, the current working directory will be used."
         ),
+    )(wrapped)
+
+    wrapped = click.option(
+        "--verbose",
+        "-v",
+        count=True,
+        help="Increase the amount of information that's printed.",
+    )(wrapped)
+
+    wrapped = click.option(
+        "--quiet",
+        "-q",
+        count=True,
+        help="Decrease the amount of information that's printed.",
     )(wrapped)
 
     return gsb.command()(wrapped)
