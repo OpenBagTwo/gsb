@@ -1,11 +1,14 @@
 """Configuration definition for an individual GSB-managed save"""
 import datetime as dt
 import json
+import logging
 import tomllib
 from pathlib import Path
 from typing import Any, NamedTuple, Self, TypeAlias
 
 from ._version import get_versions
+
+LOGGER = logging.getLogger(__name__)
 
 MANIFEST_NAME = ".gsb_manifest"
 
@@ -47,6 +50,7 @@ class Manifest(NamedTuple):
         OSError
             If the file does not exist or cannot otherwise be read
         """
+        LOGGER.debug("Loading %s from %s", MANIFEST_NAME, repo_root)
         as_dict: dict[str, Any] = {"root": repo_root}
         contents: _ManifestDict = tomllib.loads((repo_root / MANIFEST_NAME).read_text())
         for key, value in contents.items():
@@ -86,6 +90,7 @@ class Manifest(NamedTuple):
 
         as_toml = _to_toml(as_dict)
 
+        LOGGER.debug("Writing %s to %s", MANIFEST_NAME, self.root)
         (self.root / MANIFEST_NAME).write_text(as_toml)
 
 
