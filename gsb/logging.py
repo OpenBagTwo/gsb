@@ -1,7 +1,7 @@
 """Common logging utilities"""
 import logging
 
-IMPORTANT = 25  # INFO logs that should still be displayed on "-q"
+IMPORTANT = 25  # INFO logs that should be displayed even without "-v"
 logging.addLevelName(IMPORTANT, "INFO")
 
 
