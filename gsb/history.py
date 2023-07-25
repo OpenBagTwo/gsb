@@ -1,9 +1,13 @@
 """Functionality for tracking and managing revision history"""
 import datetime as dt
+import logging
 from pathlib import Path
 from typing import TypedDict
 
 from . import _git
+from .logging import IMPORTANT
+
+LOGGER = logging.getLogger(__name__)
 
 
 class _Revision(TypedDict):
@@ -64,6 +68,7 @@ def get_history(
     tag_lookup = {
         tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
     }
+    LOGGER.debug("Retrieved %s tags", len(tag_lookup))
 
     revisions: list[_Revision] = []
     for commit in _git.log(repo_root):
@@ -83,6 +88,15 @@ def get_history(
             description = commit.message
         if not include_non_gsb and not is_gsb:
             continue
+        LOGGER.log(
+            IMPORTANT,
+            "%d. %s from %s",
+            len(revisions) + 1,
+            tag.name if tag else commit.hash[:8],
+            commit.timestamp.isoformat("-"),
+        )
+        LOGGER.debug("Full reference: %s", commit.hash)
+        LOGGER.info("%s", description)
         revisions.append(
             {
                 "identifier": identifier,
