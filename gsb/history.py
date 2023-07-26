@@ -83,7 +83,7 @@ def get_history(
         else:
             if tagged_only:
                 continue
-            identifier = commit.hash
+            identifier = commit.hash[:8]
             is_gsb = commit.gsb
             description = commit.message
         if not include_non_gsb and not is_gsb:
