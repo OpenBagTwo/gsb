@@ -1,7 +1,32 @@
 """Tests for restoring backups"""
+import subprocess
+
 import pytest
 
 from gsb import _git, backup, history, onboard, rewind
+
+
+@pytest.fixture
+def repo(tmp_path, patch_tag_naming):
+    my_game_data = tmp_path / "best game ever"
+    my_save_data = my_game_data / "save" / "data.txt"
+    my_save_data.parent.mkdir(parents=True)
+    my_save_data.touch()
+    onboard.create_repo(my_game_data, "save")
+
+    for i in range(10):
+        my_save_data.write_text(f"{i}\n")
+        if i % 2 == 0:
+            (my_save_data.parent / ".boop").touch()
+            (my_save_data.parent / ".beep").unlink(missing_ok=True)
+        else:
+            (my_save_data.parent / ".boop").unlink()
+            (my_save_data.parent / ".beep").touch()
+        backup.create_backup(my_game_data, None)
+        if i % 3 == 0:
+            backup.create_backup(my_game_data, "Checkpoint")
+    my_save_data.write_text("Sneaky sneaky\n")
+    yield my_game_data
 
 
 class TestRestoreBackup:
@@ -19,28 +44,6 @@ class TestRestoreBackup:
             reference = commit.hash
         with pytest.raises(OSError):
             rewind.restore_backup(random_folder, reference)
-
-    @pytest.fixture
-    def repo(self, tmp_path, patch_tag_naming):
-        my_game_data = tmp_path / "best game ever"
-        my_save_data = my_game_data / "save" / "data.txt"
-        my_save_data.parent.mkdir(parents=True)
-        my_save_data.touch()
-        onboard.create_repo(my_game_data, "save")
-
-        for i in range(10):
-            my_save_data.write_text(f"{i}\n")
-            if i % 2 == 0:
-                (my_save_data.parent / ".boop").touch()
-                (my_save_data.parent / ".beep").unlink(missing_ok=True)
-            else:
-                (my_save_data.parent / ".boop").unlink()
-                (my_save_data.parent / ".beep").touch()
-            backup.create_backup(my_game_data, None)
-            if i % 3 == 0:
-                backup.create_backup(my_game_data, "Checkpoint")
-        my_save_data.write_text("Sneaky sneaky\n")
-        yield my_game_data
 
     def test_raises_when_revision_is_invalid(self, repo):
         with pytest.raises(ValueError):
@@ -93,3 +96,127 @@ class TestRestoreBackup:
                 "description"
             ].lower()
         )
+
+
+class TestCLI:
+    def test_no_args_initiates_prompt_in_cwd(self, repo):
+        result = subprocess.run(
+            ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
+        )
+
+        assert (
+            "Select one by number or revision"
+            in result.stderr.decode().strip().splitlines()[-2]
+        )
+
+    def test_passing_in_a_custom_root(self, repo):
+        result = subprocess.run(
+            ["gsb", "rewind", "--path", repo.name],
+            cwd=repo.parent,
+            capture_output=True,
+            input="q\n".encode(),
+        )
+
+        assert (
+            "Select one by number or revision"
+            in result.stderr.decode().strip().splitlines()[-2]
+        )
+
+    def test_restoring_to_tag_by_argument(self, repo):
+        _ = subprocess.run(
+            ["gsb", "rewind", "gsb2023.07.12"], cwd=repo, capture_output=True
+        )
+
+        assert (repo / "save" / "data.txt").read_text() == "3\n"
+
+    @pytest.mark.parametrize("how", ("short", "full"))
+    def test_restoring_to_commit(self, repo, how):
+        some_commit = list(_git.log(repo))[-4].hash
+        if how == "short":
+            some_commit = some_commit[:8]
+
+        _ = subprocess.run(
+            ["gsb", "rewind", some_commit],
+            cwd=repo,
+            capture_output=True,
+        )
+
+        assert (repo / "save" / "data.txt").read_text() == "2\n"
+
+    @pytest.mark.parametrize("how", ("by_tag", "by_index"))
+    def test_restoring_by_prompt(self, repo, how):
+        if how == "by_tag":
+            choice = "gsb2023.07.13"
+        else:
+            choice = "2"
+
+        _ = subprocess.run(
+            ["gsb", "rewind"],
+            cwd=repo,
+            capture_output=True,
+            input=f"{choice}\n".encode(),
+        )
+
+        assert (repo / "save" / "data.txt").read_text() == "6\n"
+
+    @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
+    def test_unknown_revision_raises_error(self, repo, how):
+        args = ["gsb", "rewind"]
+        answers = [""]
+        if how == "by_argument":
+            args.append("not_a_thing")
+        else:
+            answers.insert(0, "not_a_thing")
+
+        result = subprocess.run(
+            args,
+            cwd=repo,
+            capture_output=True,
+            input="\n".join(answers).encode(),
+        )
+
+        assert result.returncode == 1
+        assert "Could not find" in result.stderr.decode().strip().splitlines()[-1]
+
+    def test_running_on_repo_with_no_tags_retrieves_gsb_commits(self, tmp_path):
+        """Like, I guess if the user deleted the initial backup"""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
+        _git.add(repo, [something.name])
+        hash = _git.commit(repo, "Hello").hash[:8]
+
+        result = subprocess.run(
+            ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
+        )
+        assert f"1. {hash}" in result.stderr.decode().strip().splitlines()[1]
+
+    def test_running_on_non_gsb_prompts_with_git_commits(self, tmp_path):
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
+        _git.add(repo, [something.name])
+        hash = _git.commit(repo, "Hello", _committer=("Testy", "Testy")).hash[:8]
+
+        result = subprocess.run(
+            ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
+        )
+        log_lines = result.stderr.decode().strip().splitlines()
+
+        assert "No gsb revisions found" in log_lines[1]
+        assert f"1. {hash}" in log_lines[2]
+
+    def test_running_on_empty_repo_raises(self, tmp_path):
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
+
+        result = subprocess.run(["gsb", "rewind"], cwd=repo, capture_output=True)
+        assert result.returncode == 1
+        assert "No revisions found" in result.stderr.decode().strip().splitlines()[-1]
