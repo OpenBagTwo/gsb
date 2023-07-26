@@ -1,7 +1,11 @@
 """Functionality for restoring to an old backup"""
+import logging
 from pathlib import Path
 
 from . import _git, backup
+from .logging import IMPORTANT
+
+LOGGER = logging.getLogger(__name__)
 
 
 def restore_backup(repo_root: Path, revision: str) -> str:
@@ -32,6 +36,9 @@ def restore_backup(repo_root: Path, revision: str) -> str:
     """
     _git.show(repo_root, revision)
 
+    LOGGER.log(
+        IMPORTANT, "Backing up any unsaved changes before rewinding to %s", revision
+    )
     orig_head = backup.create_backup(
         repo_root, f"Backing up state before rewinding to {revision}"
     )

@@ -12,7 +12,8 @@ from . import _version
 from . import backup as backup_
 from . import history as history_
 from . import onboard
-from .logging import CLIFormatter, verbosity_to_log_level
+from . import rewind as rewind_
+from .logging import IMPORTANT, CLIFormatter, verbosity_to_log_level
 
 LOGGER = logging.getLogger(__package__)
 
@@ -172,3 +173,60 @@ def history(
         kwargs["since"] = since
 
     history_.get_history(path_as_arg or repo_root, **kwargs)
+
+
+@click.argument(
+    "revision",
+    type=str,
+    required=False,
+)
+@_subcommand_init
+def rewind(repo_root: Path, revision: str | None):
+    """Restore a backup to the specified REVISION."""
+    if revision is None:
+        revision = _prompt_for_revision(repo_root)
+    try:
+        rewind_.restore_backup(repo_root, revision)
+    except ValueError as whats_that:
+        LOGGER.error(whats_that)
+        sys.exit(1)
+
+
+def _prompt_for_revision(repo_root) -> str:
+    """Select a revision from a prompt"""
+    LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
+    revisions = history_.get_history(repo_root, limit=10)
+    if len(revisions) == 0:
+        LOGGER.info("No tagged revisions found. Trying untagged.")
+        revisions = history_.get_history(
+            repo_root,
+            limit=10,
+            tagged_only=False,
+        )
+    if len(revisions) == 0:
+        LOGGER.warning("No gsb revisions found. Trying Git.")
+        revisions = history_.get_history(
+            repo_root,
+            limit=10,
+            tagged_only=False,
+            include_non_gsb=True,
+        )
+    LOGGER.log(
+        IMPORTANT,
+        "Select one by number or revision (or [q]uit and"
+        " call gsb history yourself to get more revisions).",
+    )
+    if len(revisions) == 0:
+        LOGGER.error("No revisions found!")
+        sys.exit(1)
+
+    choice: str = click.prompt(
+        "Select a revision", default="q", show_default=True, type=str
+    ).lower()
+
+    if choice.lower().strip() == "q":
+        LOGGER.error("Aborting.")
+        sys.exit(1)
+    if choice.strip() in [str(i + 1) for i in range(len(revisions))]:
+        return revisions[int(choice.strip()) - 1]["identifier"]
+    return choice
