@@ -2,6 +2,7 @@
 import datetime as dt
 import getpass
 import logging
+import re
 import socket
 from pathlib import Path
 from typing import Generator, Iterable, NamedTuple, Self
@@ -204,7 +205,7 @@ class Commit(NamedTuple):
         """Resolve from a pygit2 object"""
         try:
             gsb = commit_object.committer.name == "gsb"
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             gsb = False
         return cls(
             str(commit_object.id),
@@ -294,9 +295,14 @@ def log(repo_root: Path) -> Generator[Commit, None, None]:
     repo = _repo(repo_root)
 
     LOGGER.debug("git log")
-
-    for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
-        yield Commit.from_pygit2(commit_object)
+    try:
+        for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
+            yield Commit.from_pygit2(commit_object)
+    except pygit2.GitError as maybe_empty_history:
+        if re.search("reference (.*) not found", str(maybe_empty_history)):
+            # this is what pygit2 throws when there's no commits
+            return
+        raise  # pragma: no cover
 
 
 def ls_files(repo_root: Path) -> list[Path]:
@@ -359,7 +365,7 @@ class Tag(NamedTuple):
         if tag_object.type == pygit2.GIT_OBJ_TAG:
             try:
                 gsb = tag_object.tagger.name == "gsb"
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 gsb = False
             return cls(
                 tag_object.name,
