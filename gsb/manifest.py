@@ -127,8 +127,8 @@ def _to_toml(manifest: _ManifestDict) -> str:
             # it's honestly shocking how often I rely on json.dump for str escaping
             dumped += f"{json.dumps(value)}\n"
         else:
-            dumped += "[\n"
+            dumped += "["
             for entry in sorted(set(value)):
-                dumped += f"    {json.dumps(entry)},"
-            dumped += "]\n"
+                dumped += f"\n    {json.dumps(entry)},"
+            dumped += "\n]\n"
     return dumped
