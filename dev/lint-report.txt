@@ -1,18 +1,9 @@
-************* Module gsb.backup
-gsb/backup.py:63:21: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-************* Module gsb._git
-gsb/_git.py:609:28: E1101: Module 'pygit2' has no 'Tag' member (no-member)
-gsb/_git.py:615:21: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-gsb/_git.py:628:8: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-gsb/_git.py:632:27: E1101: Module 'pygit2' has no 'GIT_CHECKOUT_FORCE' member (no-member)
-gsb/_git.py:581:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
 ************* Module gsb.manifest
 gsb/manifest.py:33:4: C0103: Method name "of" doesn't conform to snake_case naming style (invalid-name)
 ************* Module gsb.cli
-gsb/cli.py:42:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
-gsb/cli.py:26:4: W0107: Unnecessary pass statement (unnecessary-pass)
-gsb/cli.py:153:0: R0913: Too many arguments (6/5) (too-many-arguments)
+gsb/cli.py:41:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
+gsb/cli.py:152:0: R0913: Too many arguments (6/5) (too-many-arguments)
 
 -----------------------------------
-Your code has been rated at 9.58/10
+Your code has been rated at 9.93/10
 
