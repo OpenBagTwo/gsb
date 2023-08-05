@@ -11,13 +11,13 @@
       
       
       
-        <link rel="prev" href="../logging/">
+        <link rel="prev" href="../backup/">
       
       
-        <link rel="next" href="../backup/">
+        <link rel="next" href="../manifest/">
       
       <link rel="icon" href="../../../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -389,8 +389,50 @@
   
   
     <li class="md-nav__item">
+      <a href="../onboard/" class="md-nav__link">
+        onboard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history/" class="md-nav__link">
+        history
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../logging/" class="md-nav__link">
         logging
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backup/" class="md-nav__link">
+        backup
       </a>
     </li>
   
@@ -474,50 +516,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../backup/" class="md-nav__link">
-        backup
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../history/" class="md-nav__link">
-        history
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../manifest/" class="md-nav__link">
         manifest
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../onboard/" class="md-nav__link">
-        onboard
       </a>
     </li>
   
@@ -631,7 +631,7 @@
 
 
 <h2 id="gsb.rewind.restore_backup" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">restore_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">restore_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">,</span> <span class="n">keep_gsb_files</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 </h2>
 
@@ -679,6 +679,22 @@
           </td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>keep_gsb_files</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>By default, <code>.gsb_manifest</code> and <code>.gitignore</code> <em>will not</em> be restored
+(that is, the latest versions will be kept). To override this behavior,
+pass in <code>keep_gsb_files = False</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
           </td>
         </tr>
     </tbody>
@@ -784,7 +800,12 @@
 <span class="normal"><a href="#__codelineno-0-46">46</a></span>
 <span class="normal"><a href="#__codelineno-0-47">47</a></span>
 <span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="k">def</span> <span class="nf">restore_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">revision</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="k">def</span> <span class="nf">restore_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">revision</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">keep_gsb_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Rewind to a previous backup state and create a new backup</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    Parameters</span>
@@ -793,36 +814,41 @@
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        The directory containing the GSB-managed repo</span>
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    revision : str</span>
 </span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        The commit hash or tag name of the backup to restore</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Returns</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    -------</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    str</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">        The tag name of the new restored backup</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    Notes</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    -----</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    Before creating the backup, any un-backed up changes will first be backed up</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    keep_gsb_files : bool, optional</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        By default, `.gsb_manifest` and `.gitignore` *will not* be restored</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">        (that is, the latest versions will be kept). To override this behavior,</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">        pass in `keep_gsb_files = False`.</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    Returns</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    -------</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    str</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">        The tag name of the new restored backup</span>
 </span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    Raises</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    ------</span>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    OSError</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">        If the specified repo does not exist or is not a gsb-managed repo</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    ValueError</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        If the specified revision does not exist</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">)</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">LOGGER</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">IMPORTANT</span><span class="p">,</span> <span class="s2">&quot;Backing up any unsaved changes before rewinding to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">revision</span>
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="p">)</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">orig_head</span> <span class="o">=</span> <span class="n">backup</span><span class="o">.</span><span class="n">create_backup</span><span class="p">(</span>
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="n">repo_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Backing up state before rewinding to </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>    <span class="p">)</span>
-</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a>
-</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">orig_head</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">return</span> <span class="n">backup</span><span class="o">.</span><span class="n">create_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Restored to </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    Notes</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    -----</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    Before creating the backup, any un-backed up changes will first be backed up</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    Raises</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    ------</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    OSError</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        If the specified repo does not exist or is not a gsb-managed repo</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    ValueError</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        If the specified revision does not exist</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">)</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="n">LOGGER</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">IMPORTANT</span><span class="p">,</span> <span class="s2">&quot;Backing up any unsaved changes before rewinding to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">revision</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="p">)</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">orig_head</span> <span class="o">=</span> <span class="n">backup</span><span class="o">.</span><span class="n">create_backup</span><span class="p">(</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="n">repo_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Backing up state before rewinding to </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="p">)</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">revision</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="n">_git</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">orig_head</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="k">if</span> <span class="n">keep_gsb_files</span><span class="p">:</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="n">_git</span><span class="o">.</span><span class="n">checkout_files</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">orig_head</span><span class="p">,</span> <span class="n">backup</span><span class="o">.</span><span class="n">REQUIRED_FILES</span><span class="p">)</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="k">return</span> <span class="n">backup</span><span class="o">.</span><span class="n">create_backup</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Restored to </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
           </details>
   </div>

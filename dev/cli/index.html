@@ -17,7 +17,7 @@
         <link rel="next" href="../reference/gsb/">
       
       <link rel="icon" href="../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
     
     
       
@@ -395,36 +395,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/logging/" class="md-nav__link">
-        logging
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/rewind/" class="md-nav__link">
-        rewind
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/backup/" class="md-nav__link">
-        backup
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        onboard
       </a>
     </li>
   
@@ -451,8 +423,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/manifest/" class="md-nav__link">
-        manifest
+      <a href="../reference/gsb/logging/" class="md-nav__link">
+        logging
       </a>
     </li>
   
@@ -465,8 +437,36 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/onboard/" class="md-nav__link">
-        onboard
+      <a href="../reference/gsb/backup/" class="md-nav__link">
+        backup
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/rewind/" class="md-nav__link">
+        rewind
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        manifest
       </a>
     </li>
   
@@ -590,12 +590,14 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>gsb rewind [OPTIONS] [REVISION]
 </span></code></pre></div>
 <p><strong>Options:</strong></p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  -q, --quiet       Decrease the amount of information that&#39;s printed.
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  -v, --verbose     Increase the amount of information that&#39;s printed.
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  --path SAVE_PATH  Optionally specify the root directory containing your save
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>                    data. If no path is given, the current working directory
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                    will be used.
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  --help            Show this message and exit.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  -q, --quiet             Decrease the amount of information that&#39;s printed.
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  -v, --verbose           Increase the amount of information that&#39;s printed.
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  --path SAVE_PATH        Optionally specify the root directory containing
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>                          your save data. If no path is given, the current
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                          working directory will be used.
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  --include_gsb_settings  Also revert the GSB configuration files (including
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>                          .gitignore)
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  --help                  Show this message and exit.
 </span></code></pre></div>
 <!--Leave the above two lines blank: https://github.com/DataDog/mkdocs-click/issues/50-->
 

@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_onboard_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-07-26 21:45 +0000
+            created at 2023-08-05 19:44 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -209,10 +209,10 @@
     <p class="pln"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">            <span class="com"># it's honestly shocking how often I rely on json.dump for str escaping</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t">            <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">f"{json.dumps(value)}\n"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">            <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">"[\n"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">            <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">"["</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">            <span class="key">for</span> <span class="nam">entry</span> <span class="key">in</span> <span class="nam">sorted</span><span class="op">(</span><span class="nam">set</span><span class="op">(</span><span class="nam">value</span><span class="op">)</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">                <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">f"    {json.dumps(entry)},"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">            <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">"]\n"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">                <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">f"\n    {json.dumps(entry)},"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">            <span class="nam">dumped</span> <span class="op">+=</span> <span class="str">"\n]\n"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">    <span class="key">return</span> <span class="nam">dumped</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
@@ -223,7 +223,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_onboard_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-07-26 21:45 +0000
+            created at 2023-08-05 19:44 +0000
         </p>
     </div>
 </footer>
