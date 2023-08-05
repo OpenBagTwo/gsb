@@ -8,7 +8,7 @@ from .logging import IMPORTANT
 LOGGER = logging.getLogger(__name__)
 
 
-def restore_backup(repo_root: Path, revision: str) -> str:
+def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) -> str:
     """Rewind to a previous backup state and create a new backup
 
     Parameters
@@ -17,6 +17,10 @@ def restore_backup(repo_root: Path, revision: str) -> str:
         The directory containing the GSB-managed repo
     revision : str
         The commit hash or tag name of the backup to restore
+    keep_gsb_files : bool, optional
+        By default, `.gsb_manifest` and `.gitignore` *will not* be restored
+        (that is, the latest versions will be kept). To override this behavior,
+        pass in `keep_gsb_files = False`.
 
     Returns
     -------
