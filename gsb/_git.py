@@ -31,7 +31,6 @@ def init(repo_root: Path) -> pygit2.Repository:
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
-    LOGGER.debug("git init %s", repo_root)
     return _repo(repo_root, new=True)
 
 
@@ -67,6 +66,7 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     if not repo_root.is_dir():
         raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
+        LOGGER.debug("git init %s", repo_root)
         return pygit2.init_repository(repo_root, initial_head="gsb")
     try:
         return pygit2.Repository(repo_root)
@@ -132,9 +132,8 @@ def add(repo_root: Path, patterns: Iterable[str]) -> pygit2.Index:
     """
     repo = _repo(repo_root)
     patterns = list(patterns)
+    LOGGER.debug("git add %s", " ".join([repr(pattern) for pattern in patterns]))
     repo.index.add_all(patterns)
-    for pattern in patterns:
-        LOGGER.debug("git add %s", pattern)
     repo.index.write()
     return repo.index
 
@@ -167,8 +166,8 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
     repo = _repo(repo_root)
     for path in files:
         try:
-            repo.index.add(path)
             LOGGER.debug("git add --force %s", path)
+            repo.index.add(path)
         except OSError as maybe_file_not_found:  # pragma: no cover
             if "No such file or directory" in str(maybe_file_not_found):
                 raise FileNotFoundError(maybe_file_not_found) from maybe_file_not_found
@@ -267,10 +266,11 @@ def commit(
         )
     else:
         committer = pygit2.Signature(*_committer)
+
+    LOGGER.debug("git commit -m %s", message)
     commit_id = repo.create_commit(
         ref, author, committer, message, repo.index.write_tree(), parents
     )
-    LOGGER.debug("git commit -m %s", message)
     return Commit.from_pygit2(repo[commit_id])
 
 
@@ -427,6 +427,7 @@ def tag(
         if not annotation.endswith("\n"):
             annotation += "\n"
 
+        LOGGER.debug("git tag %s -am %s", tag_name, annotation)
         repo.create_tag(
             tag_name,
             repo.head.target,
@@ -434,10 +435,9 @@ def tag(
             tagger,
             annotation,
         )
-        LOGGER.debug("git tag %s -am %s", tag_name, annotation)
     else:
-        repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
         LOGGER.debug("git tag %s", tag_name)
+        repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
 
     return Tag.from_repo_reference(tag_name, repo)
 
@@ -468,12 +468,41 @@ def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
     """
     repo = _repo(repo_root)
     tags: list[Tag] = []
+    LOGGER.debug("git tag")
     for reference in repo.references.iterator(pygit2.GIT_REFERENCES_TAGS):
         parsed_tag = Tag.from_repo_reference(reference, repo)
         if parsed_tag.annotation or not annotated_only:
             tags.append(parsed_tag)
-    LOGGER.debug("git tag")
     return sorted(tags)
+
+
+def _resolve_reference(reference: str, repo: pygit2.Repository) -> pygit2.Object:
+    """Attempt to resolve a reference
+
+    Parameters
+    ----------
+    reference : str
+        The reference to resolve
+    repo : Repository
+        The git repository
+
+    Returns
+    -------
+    pygit2.Object
+        The resolved reference
+
+    Raises
+    ------
+    ValueError
+        If the specified revision does not exist
+    """
+    try:
+        LOGGER.debug("git show %s", reference)
+        return repo.revparse_single(reference)
+    except KeyError as no_rev:
+        raise ValueError(
+            f"Could not find a revision named {repr(reference)}"
+        ) from no_rev
 
 
 def show(repo_root: Path, reference: str) -> Commit | Tag:
@@ -500,13 +529,7 @@ def show(repo_root: Path, reference: str) -> Commit | Tag:
         If the specified revision does not exist
     """
     repo = _repo(repo_root)
-    try:
-        revision = repo.revparse_single(reference)
-        LOGGER.debug("git show %s", reference)
-    except KeyError as no_rev:
-        raise ValueError(
-            f"Could not find a revision named {repr(reference)}"
-        ) from no_rev
+    revision = _resolve_reference(reference, repo)
     if revision.type == pygit2.GIT_OBJ_TAG:
         return Tag.from_repo_reference(str(revision.id), repo)
     if revision.type == pygit2.GIT_OBJ_COMMIT:
@@ -541,12 +564,9 @@ def reset(repo_root: Path, reference: str, hard: bool) -> None:
         If the specified revision does not exist
     """
     repo = _repo(repo_root)
-    try:
-        reference = repo.revparse_single(reference).id
-    except KeyError as no_rev:
-        raise ValueError(
-            f"Could not find a revision named {repr(reference)}"
-        ) from no_rev
+
+    # make sure revision exists
+    reference = _resolve_reference(reference, repo).id
 
     LOGGER.debug(f"git reset --{'hard' if hard else 'soft'} %s", reference)
     repo.reset(reference, pygit2.GIT_RESET_HARD if hard else pygit2.GIT_RESET_SOFT)
