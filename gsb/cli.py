@@ -23,7 +23,6 @@ LOGGER = logging.getLogger(__package__)
 @click.version_option(_version.get_versions()["version"], "--version", "-v", "-V")
 def gsb():
     """CLI for managing incremental backups of your save states using Git!"""
-    pass
 
 
 def _subcommand_init(command: Callable) -> Callable:
