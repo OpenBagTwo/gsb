@@ -175,18 +175,23 @@ def history(
     history_.get_history(path_as_arg or repo_root, **kwargs)
 
 
+@click.option(
+    "--include_gsb_settings",
+    is_flag=True,
+    help="Also revert the GSB configuration files (including .gitignore)",
+)
 @click.argument(
     "revision",
     type=str,
     required=False,
 )
 @_subcommand_init
-def rewind(repo_root: Path, revision: str | None):
+def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
     """Restore a backup to the specified REVISION."""
     if revision is None:
         revision = _prompt_for_revision(repo_root)
     try:
-        rewind_.restore_backup(repo_root, revision)
+        rewind_.restore_backup(repo_root, revision, not include_gsb_settings)
     except ValueError as whats_that:
         LOGGER.error(whats_that)
         sys.exit(1)
