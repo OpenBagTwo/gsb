@@ -49,5 +49,5 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
 
     _git.reset(repo_root, revision, hard=True)
     _git.reset(repo_root, orig_head, hard=False)
-
+    _git.checkout_files(repo_root, orig_head, backup.REQUIRED_FILES)
     return backup.create_backup(repo_root, f"Restored to {revision}")
