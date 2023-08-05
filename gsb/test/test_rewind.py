@@ -97,6 +97,21 @@ class TestRestoreBackup:
             ].lower()
         )
 
+    def test_gsb_manifest_and_gitignore_are_not_rewound(self, repo):
+        with (repo / ".gitignore").open("a") as ignore:
+            ignore.write("nothingtosee\n")
+        with (repo / ".gsb_manifest").open("a") as ignore:
+            ignore.write("# it's a comment\n")
+
+        rewind.restore_backup(repo, "gsb2023.07.10")
+
+        with pytest.raises(ValueError, match="othing to"):
+            _git.add(repo, ["saves"])
+            _git.commit(repo, "Test")
+
+        assert "nothingtosee" in (repo / ".gitignore").read_text().splitlines()
+        assert "# it's a comment" in (repo / ".gsb_manifest").read_text().splitlines()
+
 
 class TestCLI:
     def test_no_args_initiates_prompt_in_cwd(self, repo):
