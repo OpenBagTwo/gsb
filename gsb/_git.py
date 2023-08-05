@@ -612,7 +612,7 @@ def checkout_files(repo_root: Path, reference: str, paths: Iterable[Path]) -> No
     paths = list(paths)
 
     for path in paths:
-        LOGGER.debug(f"git reset %s -- %s", reference, path)
+        LOGGER.debug("git reset %s -- %s", reference, path)
         try:
             repo.index.remove(path)
         except OSError:
@@ -625,8 +625,9 @@ def checkout_files(repo_root: Path, reference: str, paths: Iterable[Path]) -> No
 
     repo.index.write()
     LOGGER.debug(
-        f"git checkout %s -- %s",
+        "git checkout %s -- %s",
         reference,
         " ".join((repr(str(path)) for path in paths)),
     )
     repo.checkout(strategy=pygit2.GIT_CHECKOUT_FORCE, paths=paths)
+    return None

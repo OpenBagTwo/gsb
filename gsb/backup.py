@@ -60,7 +60,7 @@ def create_backup(repo_root: Path, tag: str | None = None) -> str:
     _git.force_add(repo_root, REQUIRED_FILES)
     try:
         identifier = _git.commit(repo_root, tag or "Manual backup").hash
-        logging.info(f"Changes committed with hash %s", identifier)
+        logging.info("Changes committed with hash %s", identifier)
     except ValueError:
         if not tag:
             raise
