@@ -132,7 +132,10 @@ def add(repo_root: Path, patterns: Iterable[str]) -> pygit2.Index:
     """
     repo = _repo(repo_root)
     patterns = list(patterns)
-    LOGGER.debug("git add %s", " ".join([repr(pattern) for pattern in patterns]))
+    LOGGER.debug(
+        "git add %s",
+        " ".join([repr(pattern) for pattern in patterns]),
+    )
     repo.index.add_all(patterns)
     repo.index.write()
     return repo.index
@@ -419,7 +422,10 @@ def tag(
 
     config = _config()
     if _tagger is None:
-        tagger = pygit2.Signature(config["committer.name"], config["committer.email"])
+        tagger = pygit2.Signature(
+            config["committer.name"],
+            config["committer.email"],
+        )
     else:
         tagger = pygit2.Signature(*_tagger)
 
@@ -570,3 +576,57 @@ def reset(repo_root: Path, reference: str, hard: bool) -> None:
 
     LOGGER.debug(f"git reset --{'hard' if hard else 'soft'} %s", reference)
     repo.reset(reference, pygit2.GIT_RESET_HARD if hard else pygit2.GIT_RESET_SOFT)
+
+
+def checkout_files(repo_root: Path, reference: str, paths: Iterable[Path]) -> None:
+    """Check out the versions of the specified files that existed at the specified
+    revision, equivalent to running
+    `git reset <revision> -- <paths...> && git checkout <revision> -- <paths...>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    reference : str
+        A unique descriptor of the tag or commit
+    paths : list of Paths
+        The files to reset
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the specified revision does not exist
+    """
+    repo = _repo(repo_root)
+
+    revision = _resolve_reference(reference, repo)
+    if isinstance(revision, pygit2.Tag):
+        return checkout_files(repo_root, str(revision.target), paths)
+
+    paths = list(paths)
+
+    for path in paths:
+        LOGGER.debug(f"git reset %s -- %s", reference, path)
+        try:
+            repo.index.remove(path)
+        except OSError:
+            pass  # possible that the file no longer exists
+        try:
+            past_file = revision.tree[path]
+            repo.index.add(pygit2.IndexEntry(path, past_file.id, past_file.filemode))
+        except KeyError:
+            pass  # possible that the file doesn't exist at the time of the revision
+
+    repo.index.write()
+    LOGGER.debug(
+        f"git checkout %s -- %s",
+        reference,
+        " ".join((repr(str(path)) for path in paths)),
+    )
+    repo.checkout(strategy=pygit2.GIT_CHECKOUT_FORCE, paths=paths)

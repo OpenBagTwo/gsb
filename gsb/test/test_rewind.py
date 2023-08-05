@@ -4,6 +4,7 @@ import subprocess
 import pytest
 
 from gsb import _git, backup, history, onboard, rewind
+from gsb.manifest import MANIFEST_NAME
 
 
 @pytest.fixture
@@ -12,6 +13,13 @@ def repo(tmp_path, patch_tag_naming):
     my_save_data = my_game_data / "save" / "data.txt"
     my_save_data.parent.mkdir(parents=True)
     my_save_data.touch()
+    _git.init(my_game_data)
+    _git.add(my_game_data, my_save_data.name)
+    _git.commit(
+        my_game_data,
+        "Back when the world was new",
+        _committer=("Old Man", "old@man"),
+    )
     onboard.create_repo(my_game_data, "save")
 
     for i in range(10):
@@ -100,8 +108,8 @@ class TestRestoreBackup:
     def test_gsb_manifest_and_gitignore_are_not_rewound(self, repo):
         with (repo / ".gitignore").open("a") as ignore:
             ignore.write("nothingtosee\n")
-        with (repo / ".gsb_manifest").open("a") as ignore:
-            ignore.write("# it's a comment\n")
+        with (repo / MANIFEST_NAME).open("a") as manifest:
+            manifest.write("# it's a comment\n")
 
         rewind.restore_backup(repo, "gsb2023.07.10")
 
@@ -110,7 +118,16 @@ class TestRestoreBackup:
             _git.commit(repo, "Test")
 
         assert "nothingtosee" in (repo / ".gitignore").read_text().splitlines()
-        assert "# it's a comment" in (repo / ".gsb_manifest").read_text().splitlines()
+        assert "# it's a comment" in (repo / MANIFEST_NAME).read_text().splitlines()
+
+    def test_can_rewind_to_pre_gsb_state(self, repo):
+        first_commit = history.get_history(
+            repo, tagged_only=False, include_non_gsb=True
+        )[-1]
+
+        rewind.restore_backup(repo, first_commit["identifier"])
+
+        assert (repo / MANIFEST_NAME).exists()
 
 
 class TestCLI:
@@ -146,7 +163,7 @@ class TestCLI:
 
     @pytest.mark.parametrize("how", ("short", "full"))
     def test_restoring_to_commit(self, repo, how):
-        some_commit = list(_git.log(repo))[-4].hash
+        some_commit = list(_git.log(repo))[-5].hash
         if how == "short":
             some_commit = some_commit[:8]
 
