@@ -120,6 +120,21 @@ class TestRestoreBackup:
         assert "nothingtosee" in (repo / ".gitignore").read_text().splitlines()
         assert "# it's a comment" in (repo / MANIFEST_NAME).read_text().splitlines()
 
+    def test_gsb_manifest_and_gitignore_can_be_rewound(self, repo):
+        with (repo / ".gitignore").open("a") as ignore:
+            ignore.write("nothingtosee\n")
+        with (repo / MANIFEST_NAME).open("a") as manifest:
+            manifest.write("# it's a comment\n")
+
+        rewind.restore_backup(repo, "gsb2023.07.10", keep_gsb_files=False)
+
+        with pytest.raises(ValueError, match="othing to"):
+            _git.add(repo, ["saves"])
+            _git.commit(repo, "Test")
+
+        assert "nothingtosee" not in (repo / ".gitignore").read_text()
+        assert "# it's a comment" not in (repo / MANIFEST_NAME).read_text()
+
     def test_can_rewind_to_pre_gsb_state(self, repo):
         first_commit = history.get_history(
             repo, tagged_only=False, include_non_gsb=True
@@ -252,3 +267,15 @@ class TestCLI:
         result = subprocess.run(["gsb", "rewind"], cwd=repo, capture_output=True)
         assert result.returncode == 1
         assert "No revisions found" in result.stderr.decode().strip().splitlines()[-1]
+
+    def test_force_rewind_of_required_files(self, repo):
+        with (repo / MANIFEST_NAME).open("a") as manifest:
+            manifest.write("# it's a comment\n")
+
+        _ = subprocess.run(
+            ["gsb", "rewind", "gsb2023.07.12", "--include_gsb_settings"],
+            cwd=repo,
+            capture_output=False,
+        )
+
+        assert "# it's a comment" not in (repo / MANIFEST_NAME).read_text()
