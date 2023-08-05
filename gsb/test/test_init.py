@@ -64,6 +64,13 @@ class TestFreshInit:
         expected = {root / "game.sav", root / MANIFEST_NAME, root / ".gitignore"}
         assert expected == expected.intersection(index)
 
+    def test_pattern_with_no_matches_does_not_error(self, root):
+        (root / "game.sav").write_text("poke\n")
+        _ = onboard.create_repo(root, "save.game")
+        index = _git.ls_files(root)
+        expected = {root / MANIFEST_NAME, root / ".gitignore"}
+        assert expected == expected.intersection(index)
+
     def test_initial_add_respects_gitignore(self, root):
         (root / ".dot_dot").write_text("dash\n")
         _ = onboard.create_repo(root, ignore=[".*"])
