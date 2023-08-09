@@ -1,0 +1,9 @@
+************* Module gsb.manifest
+gsb/manifest.py:33:4: C0103: Method name "of" doesn't conform to snake_case naming style (invalid-name)
+************* Module gsb.cli
+gsb/cli.py:41:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
+gsb/cli.py:152:0: R0913: Too many arguments (6/5) (too-many-arguments)
+
+-----------------------------------
+Your code has been rated at 9.93/10
+
