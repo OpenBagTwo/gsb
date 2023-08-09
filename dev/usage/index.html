@@ -274,9 +274,75 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Quick-Start Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Quick-Start Guide
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#locating-your-save-data" class="md-nav__link">
+    Locating Your Save Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-tracking-with-gsb-init" class="md-nav__link">
+    Start tracking with gsb init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-backup-with-gsb-backup" class="md-nav__link">
+    Create a backup with gsb backup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-your-backups-using-gsb-history" class="md-nav__link">
+    List your backups using gsb history
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restore-a-backup-with-gsb-rewind" class="md-nav__link">
+    Restore a backup with gsb rewind
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-hisoty-management-directly-with-git" class="md-nav__link">
+    Advanced Hisoty Management directly with Git
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -506,6 +572,56 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#locating-your-save-data" class="md-nav__link">
+    Locating Your Save Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-tracking-with-gsb-init" class="md-nav__link">
+    Start tracking with gsb init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-backup-with-gsb-backup" class="md-nav__link">
+    Create a backup with gsb backup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-your-backups-using-gsb-history" class="md-nav__link">
+    List your backups using gsb history
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restore-a-backup-with-gsb-rewind" class="md-nav__link">
+    Restore a backup with gsb rewind
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-hisoty-management-directly-with-git" class="md-nav__link">
+    Advanced Hisoty Management directly with Git
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -520,7 +636,74 @@
 
 
 <h1 id="using-gsb">Using <code>gsb</code></h1>
-<p>Coming soon!</p>
+<div class="admonition warning">
+<p class="admonition-title">PSA</p>
+<p>These are instructions for the pre-MVP release
+of <code>gsb</code>. Explicitly: these instructions require
+you to explicitly navigate to or the specify the
+path of every save file you want to manage, every
+time you run any command. By v0.1 this should no
+longer be required.</p>
+</div>
+<h2 id="locating-your-save-data">Locating Your Save Data</h2>
+<p>Before setting up <code>gsb</code> to manage your game saves, you'll
+first need to know where your save data is located. This
+will, of course, vary wildly based on platform and title, but
+many games have
+<a href="https://help.minecraft.net/hc/en-us/articles/4409159214605-Managing-Data-and-Game-Storage-in-Minecraft-Java-Edition-#h_01FGA90Z06DE00GT8E81SWX9SE">support pages</a>
+that will tell you where to look,
+and many game launchers provide <a href="https://yuzu-emu.org/wiki/faq/#how-do-i-add-a-save-to-my-game">menu options to open your
+save folder</a>
+in a file explorer.</p>
+<h2 id="start-tracking-with-gsb-init">Start tracking with <code>gsb init</code></h2>
+<p>Once you've located a game you want to save, open a command-line and navigate
+to the folder containing your save and run the command <a href="../cli/#init"><code>gsb init</code></a>.
+By default, all files in the folder will be tracked, so if you only want to track
+certain files or subfolders, specify that using the <code>--track</code> flag (or if you
+want to ignore nay files matching a certain pattern, use <code>--ignore</code>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Pro Tip</p>
+<p>While <code>gsb</code> does not currently support the ability to separately manage individual
+files located in the same folder,
+<a href="https://github.com/OpenBagTwo/gsb/issues/29">this feature is planned.</a>.
+In the meantime, for games where each save is located within a subfolder (<em>e.g.</em>
+Minecraft worlds), if you want to manage your saves separately, run <code>gsb init</code>
+<em>inside</em> each world folder rather than in your "saves" folder.</p>
+</div>
+<h2 id="create-a-backup-with-gsb-backup">Create a backup with <code>gsb backup</code></h2>
+<p>When you ran <code>gsb init</code> it automatically created your first backup. When you're ready
+to create your next one, navigate back to the folder where your save is stored and
+run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create another.</p>
+<p>Note that <code>gsb</code> has two kinds of backups:</p>
+<ol>
+<li>"Untagged" backups (created by default) are good for just "checking in" regular gameplay
+   where you might want to restore to the last state if, say, a creeper blows up your base.</li>
+<li>"Tagged" backups (created by supplying the <code>--tag</code> argument along with a message) are
+   meant to denote specific points you might want to return to later (right before an epic
+   boss fight or right before a story branch).</li>
+</ol>
+<h2 id="list-your-backups-using-gsb-history">List your backups using <code>gsb history</code></h2>
+<p>You can view your list of available backups at any time by navigating to your save's folder
+and running <a href="../cli/#history"><code>gsb history</code></a>. By default, this will show the identifiers and
+dates of all tagged <code>gsb</code>-managed backups, so have a look at the various command-line
+options to customize both the list of what you see and the amount of information you get
+on each backup.</p>
+<h2 id="restore-a-backup-with-gsb-rewind">Restore a backup with <code>gsb rewind</code></h2>
+<p>If you want to restore a backup, you can do so via <a href="../cli/#rewind"><code>gsb rewind</code></a>.</p>
+<details class="info">
+<summary>Technical Details</summary>
+<p>In order to keep your backup history linear, technically what happens when you
+"rewind" your save state is that the files at that revision are restored and
+then played forward as a <em>new</em> commit. That way all of your changes since the
+point you rewound to are still in your history (future versions of <code>gsb</code> will
+let you clean this up later).</p>
+</details>
+<p>If you don't provide a restore point, the command will prompt you to choose from a list
+of recent backups.</p>
+<h2 id="advanced-hisoty-management-directly-with-git">Advanced Hisoty Management directly with Git</h2>
+<p>Behind the curtain, <code>gsb</code> runs on <a href="https://git-scm.com/">Git</a> meaning you can run
+any advanced commands you wish on a <code>gsb</code>-managed save repo directly via the
+<code>git</code> CLI or  any general-purpose Git tool.</p>
 
 
 
