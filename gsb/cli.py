@@ -128,7 +128,7 @@ def init(
     is_flag=True,
     help="Include backups created directly with Git / outside of gsb.",
 )
-@click.option("--all", "-a", "all_", is_flag=True, help="Include non-tagged commits.")
+@click.option("--all", "-a", "all_", is_flag=True, help="Include non-tagged backups.")
 @click.option(
     "--since",
     type=click.DateTime(),
