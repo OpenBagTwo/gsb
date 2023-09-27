@@ -52,15 +52,15 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
     raise NotImplementedError
 
 
-def delete_backup(repo_root: Path, revision: str) -> str:
-    """Delete the specified backup
+def delete_backups(repo_root: Path, *revisions: str) -> str:
+    """Delete the specified backups
 
     Parameters
     ----------
     repo_root : Path
         The directory containing the GSB-managed repo
-    revision : str
-        The commit hash or tag name of the backup to delete
+    *revisions : str
+        The commit hashes and tag names of the backups to delete
 
     Returns
     -------
@@ -73,6 +73,7 @@ def delete_backup(repo_root: Path, revision: str) -> str:
     - The current repo state will always be kept (and, in the case that there
       are un-backed-up changes, those changes will be backed up before the
       history is rewritten).
+    - Deleting the initial backup is not currently supported.
 
     Raises
     ------
@@ -81,23 +82,30 @@ def delete_backup(repo_root: Path, revision: str) -> str:
     ValueError
         If the specified revision does not exist
     """
-    # TODO: only pull as far back as the specified revision + 1
-    revisions = history.get_history(repo_root, tagged_only=False, include_non_gsb=True)
-    for i, rev in enumerate(revisions):
-        if revision == rev["identifier"] or (
-            revision == rev["identifier"][:8] and not revision.startswith("gsb")
+    all_revs = history.get_history(repo_root, tagged_only=False, include_non_gsb=True)
+    not_found: set[str] = set(revisions)
+    to_keep: list[str] = []
+    for i, rev in enumerate(reversed(all_revs)):
+        if rev["identifier"] in not_found or (
+            rev["identifier"][:8] in not_found
+            and not rev["identifier"].startswith("gsb")
         ):
+            if len(to_keep) == 0:
+                if i == 0:
+                    raise NotImplementedError(
+                        "Deleting the initial backup is not currently supported."
+                    )
+                to_keep.append(all_revs[i - 1]["identifier"])
             try:
-                return rewrite_history(
-                    repo_root,
-                    revisions[i + 1]["identifier"],
-                    *[revisions[j]["identifier"] for j in range(i - 1, -1, -1)],
-                )
-            except IndexError as thats_the_first:
-                raise NotImplementedError(
-                    "Deleting the first revision is not currently supported."
-                )
-    raise ValueError(
-        f"Could not find a backup named {revision}."
-        "\nRun gsb history to get a list of valid backups."
-    )
+                not_found.remove(rev["identifier"])
+            except KeyError:
+                not_found.remove(rev["identifier"][:8])
+        else:
+            to_keep.append(rev["identifier"])
+    if len(not_found) > 0:
+        raise ValueError(
+            "Could not find the following backups:\n"
+            + "\n".join([f"  - {rev}" for rev in not_found])
+            + "\nRun gsb history -ga to get a list of valid backup IDs."
+        )
+    return rewrite_history(repo_root, *to_keep)
