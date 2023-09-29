@@ -86,21 +86,16 @@ def delete_backups(repo_root: Path, *revisions: str) -> str:
     not_found: set[str] = set(revisions)
     to_keep: list[str] = []
     for i, rev in enumerate(reversed(all_revs)):
-        if rev["identifier"] in not_found or (
-            rev["identifier"][:8] in not_found
-            and not rev["identifier"].startswith("gsb")
-        ):
+        # TODO: delete a tag or commit by its full hash
+        if rev["identifier"] in not_found:
             if len(to_keep) == 0:
                 if i == 0:
                     raise NotImplementedError(
                         "Deleting the initial backup is not currently supported."
                     )
-                to_keep.append(all_revs[i - 1]["identifier"])
-            try:
-                not_found.remove(rev["identifier"])
-            except KeyError:
-                not_found.remove(rev["identifier"][:8])
-        else:
+                to_keep.append(all_revs[-i]["identifier"])
+            not_found.remove(rev["identifier"])
+        elif len(to_keep) > 0:
             to_keep.append(rev["identifier"])
     if len(not_found) > 0:
         raise ValueError(
