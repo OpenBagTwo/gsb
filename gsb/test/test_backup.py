@@ -53,7 +53,7 @@ class TestCreateBackup:
             Path(repo_root) / entry.path for entry in repo.index
         ]
 
-        backup.create_backup(repo_root, tag="You're it" if tagged else None)
+        backup.create_backup(repo_root, tag_message="You're it" if tagged else None)
 
         repo = _git._repo(repo_root, new=False)
         assert repo_root / "my world" / "new file" in [
@@ -62,7 +62,7 @@ class TestCreateBackup:
 
     @pytest.mark.parametrize("tagged", (True, False), ids=("tagged", "untagged"))
     def test_backup_respects_gitignore(self, repo_root, tagged):
-        backup.create_backup(repo_root, tag="You're it" if tagged else None)
+        backup.create_backup(repo_root, tag_message="You're it" if tagged else None)
 
         repo = _git._repo(repo_root, new=False)
         assert repo_root / "my world" / "ignore me" / "content.txt" not in [

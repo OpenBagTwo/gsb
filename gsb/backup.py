@@ -30,17 +30,25 @@ def _generate_tag_name() -> str:
     return dt.datetime.now().strftime("gsb%Y.%m.%d+%H%M%S")
 
 
-def create_backup(repo_root: Path, tag: str | None = None) -> str:
+def create_backup(
+    repo_root: Path, tag_message: str | None = None, commit_message: str | None = None
+) -> str:
     """Create a new backup
 
     Parameters
     ----------
     repo_root : Path
         The directory containing the GSB-managed repo
-    tag : str, optional
+    tag_message : str, optional
         By default, this method just creates an "untagged" backup with a default
         commit message. To tag this backup, provide a description of the backup
         to use for both the commit message and the tag annotation.
+    commit_message : str, optional
+        By default, the commit message will match the `tag_message`, if one
+        is provided. Provide a value to this argument to explicitly set the
+        commit message. If neither a `tag` nor a `commit_message` is provided,
+        the default value will be "GSB-managed commit"
+
 
     Returns
     -------
@@ -59,13 +67,13 @@ def create_backup(repo_root: Path, tag: str | None = None) -> str:
     _git.add(repo_root, manifest.patterns)
     _git.force_add(repo_root, REQUIRED_FILES)
     try:
-        identifier = _git.commit(repo_root, tag or "Manual backup").hash
+        identifier = _git.commit(repo_root, tag_message or "GSB-managed commit").hash
         logging.info("Changes committed with hash %s", identifier)
     except ValueError:
-        if not tag:
+        if not tag_message:
             raise
         logging.info("Nothing new to commit--all files are up-to-date.")
-    if tag:
-        identifier = _git.tag(repo_root, _generate_tag_name(), tag).name
+    if tag_message:
+        identifier = _git.tag(repo_root, _generate_tag_name(), tag_message).name
         logging.log(IMPORTANT, "Created new tagged backup: %s", identifier)
     return identifier
