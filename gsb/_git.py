@@ -270,7 +270,7 @@ def commit(
     else:
         committer = pygit2.Signature(*_committer)
 
-    LOGGER.debug("git commit -m %s", message)
+    LOGGER.debug("git commit -m %s", repr(message))
     commit_id = repo.create_commit(
         ref, author, committer, message, repo.index.write_tree(), parents
     )
@@ -387,6 +387,7 @@ def tag(
     repo_root: Path,
     tag_name: str,
     annotation: str | None,
+    target: str | None = None,
     _tagger: tuple[str, str] | None = None,
 ) -> Tag:
     """Create a tag at the current HEAD, equivalent to running
@@ -401,7 +402,10 @@ def tag(
     annotation : str or None
         The annotation to give the tag. If None is provided, a lightweight tag
         will be created
-    _tagger : (str, str) tuple
+    target : str, optional
+        The commit to assign the tag. If None is given, the current HEAD will
+        be used.
+    _tagger : (str, str) tuple, optional
         By default this method uses "gsb" as the tagger. This should not
         be overridden outside of testing, but to do so, pass in both the
         username and email address.
@@ -414,7 +418,8 @@ def tag(
     Raises
     ------
     ValueError
-        If there is already a tag with the provided name
+        If there is already a tag with the provided name, or if `target` is
+        provided and can't be resolved
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
@@ -429,25 +434,53 @@ def tag(
     else:
         tagger = pygit2.Signature(*_tagger)
 
+    reference = _resolve_reference(target, repo).id if target else repo.head.target
+    ref_short = str(reference)[:8] if target else "HEAD"
+
     if annotation:
         if not annotation.endswith("\n"):
             annotation += "\n"
 
-        LOGGER.debug("git tag %s -am %s", tag_name, annotation)
+        LOGGER.debug("git tag %s -am %s %s", tag_name, repr(annotation), ref_short)
         repo.create_tag(
             tag_name,
-            repo.head.target,
+            reference,
             pygit2.GIT_OBJ_COMMIT,
             tagger,
             annotation,
         )
     else:
-        LOGGER.debug("git tag %s", tag_name)
-        repo.create_reference(f"refs/tags/{tag_name}", repo.head.target)
+        LOGGER.debug("git tag %s %s", tag_name, ref_short)
+        repo.create_reference(f"refs/tags/{tag_name}", reference)
 
     return Tag.from_repo_reference(tag_name, repo)
 
     # PSA: pygit2.AlreadyExistsError subclasses ValueError
+
+
+def delete_tag(repo_root: Path, tag_name: str) -> None:
+    """Delete a tag, equivalent to running `git tag -d <tag_name>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    tag_name : str
+        The name to the tag to delete
+
+    Raises
+    ------
+    ValueError
+        If there is no tag with the provided name
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    """
+    repo = _repo(repo_root)
+    try:
+        LOGGER.debug("git tag -d %s", tag_name)
+        repo.references[f"refs/tags/{tag_name}"].delete()
+    except KeyError as tag_not_found:
+        raise ValueError(f"No such tag: {tag_name}") from tag_not_found
 
 
 def get_tags(repo_root: Path, annotated_only: bool) -> list[Tag]:
@@ -631,3 +664,67 @@ def checkout_files(repo_root: Path, reference: str, paths: Iterable[Path]) -> No
     )
     repo.checkout(strategy=pygit2.GIT_CHECKOUT_FORCE, paths=paths)
     return None
+
+
+def checkout_branch(repo_root: Path, branch_name: str, target: str | None) -> None:
+    """Check out a branch, either new or existing, equivalent to calling
+    `git checkout [-b] <branch_name> [<target>]`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    branch_name : str
+        The name for the branch
+    target : str or None
+        When a reference is provided, this method will attempt to create a new
+        branch at that reference point. When None is provided, this method will
+        attempt to check out an existing branch at that branch's head.
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the specified `target` does not exist, if the `branch_name` is taken
+        (when `target` is specified) or if the `branch_name` _does not_ exist
+        (when `target=None`)
+    """
+    repo = _repo(repo_root)
+    if target is not None:
+        LOGGER.debug("git checkout -b %s %s", branch_name, target)
+        reference = _resolve_reference(target, repo)
+        if isinstance(reference, pygit2.Tag):
+            reference = _resolve_reference(str(reference.target), repo)
+        repo.branches.local.create(branch_name, reference)
+    try:
+        LOGGER.debug("git checkout %s", branch_name)
+        repo.checkout(repo.branches.local[branch_name])
+    except KeyError as no_such_branch:
+        raise ValueError(no_such_branch)
+
+
+def delete_branch(repo_root: Path, branch_name: str) -> None:
+    """Delete a branch, equivalent to running `git branch -D <branch_name>`
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    branch_name : str
+        The name of the branch
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed
+    ValueError
+        If the specified branch does not exist or if the specified branch is
+        currently checked out
+    """
+    repo = _repo(repo_root)
+    try:
+        LOGGER.debug("git branch -D %s", branch_name)
+        repo.branches.local.delete(branch_name)
+    except KeyError as no_such_branch:
+        raise ValueError(no_such_branch)
