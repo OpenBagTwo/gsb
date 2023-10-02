@@ -32,6 +32,7 @@ class TestDeleteBackups:
             "gsb1.0",
         ]
 
+    @pytest.mark.usefixtures("patch_tag_naming")
     def test_deleting_a_backup_doesnt_mess_up_subsequent_backups(self, cloned_root):
         fastforward.delete_backups(cloned_root, "gsb1.1")
         restore_backup(cloned_root, "gsb1.2")  # TODO: replace with export-backup
@@ -39,11 +40,9 @@ class TestDeleteBackups:
             (
                 "sauropods",
                 "therapods",
-                "raptors",
-                "pliosaurs",
                 "plesiosaurs",
-                "mosasaurs",
                 "pterosaurs",
+                "squids",
             )
         ) + "\n"
 
