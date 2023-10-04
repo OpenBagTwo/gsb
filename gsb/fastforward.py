@@ -69,27 +69,25 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
                 case _git.Commit():
                     _git.reset(repo_root, revision.hash, hard=True)
                     _git.reset(repo_root, head, hard=False)
-                    new_hash = backup.create_backup(
+                    new_hash = _git.commit(
                         repo_root,
-                        tag_message=None,
-                        commit_message=(
+                        message=(
                             revision.message + "\n\n" + f"rebase of {revision.hash}"
                         ),
-                    )
+                    ).hash
                     head = new_hash
                 case _git.Tag():
                     _git.reset(repo_root, revision.target.hash, hard=True)
                     _git.reset(repo_root, head, hard=False)
-                    new_hash = backup.create_backup(
+                    new_hash = _git.commit(
                         repo_root,
-                        tag_message=None,
-                        commit_message=(
+                        message=(
                             (revision.annotation or revision.name)
                             + "\n\n"
                             + f"rebase of {revision.target.hash}"
                             + f' ("{revision.target.message}")'
                         ),
-                    )
+                    ).hash
                     tags_to_update.append((revision, new_hash))
                     head = new_hash
                 case _:  # pragma: no cover
@@ -108,6 +106,9 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
             _git.checkout_branch(repo_root, "gsb", None)
         _git.checkout_branch(repo_root, "gsb", head)
         return head
+    except Exception as something_went_wrong:
+        _git.reset(repo_root, head, hard=True)
+        raise something_went_wrong
     finally:
         _git.checkout_branch(repo_root, "gsb", None)
         _git.delete_branch(repo_root, branch_name)
