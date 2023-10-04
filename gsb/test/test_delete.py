@@ -6,6 +6,7 @@ import subprocess
 import pytest
 
 from gsb import _git, fastforward
+from gsb.backup import create_backup
 from gsb.history import get_history
 from gsb.manifest import Manifest
 from gsb.rewind import restore_backup
@@ -98,7 +99,7 @@ class TestDeleteBackups:
                 revision["identifier"]
                 for revision in all_backups[:-1]
                 if not revision["identifier"].startswith(("gsb", "0."))
-            )
+            ),
         )
         assert [
             backup["identifier"]
@@ -156,14 +157,38 @@ class TestCLI:
         )
 
     def test_prompt_includes_all_commits_since_last_tag(self, cloned_root):
+        (cloned_root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+        Manifest.of(cloned_root)._replace(
+            patterns=("species", "continents", "oceans")
+        ).write()
+        create_backup(cloned_root)
+        (cloned_root / "oceans").write_text(
+            "\n".join(
+                (
+                    "pacific",
+                    "tethys",
+                )
+            )
+            + "\n"
+        )
+        create_backup(cloned_root)
+
         result = subprocess.run(
             ["gsb", "delete"],
             cwd=cloned_root,
             capture_output=True,
             input="q\n".encode(),
         )
-
-        assert False
+        # there should be two untagged backups after the latest tagged backup
+        assert "gsb1.3" in result.stderr.decode().strip().splitlines()[-3 - 2]
 
     def test_passing_in_a_custom_root(self, cloned_root):
         result = subprocess.run(
@@ -183,7 +208,14 @@ class TestCLI:
             ["gsb", "delete", "gsb1.1"], cwd=cloned_root, capture_output=True
         )
 
-        assert False
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=True, limit=3)
+        ] == [
+            "gsb1.3",
+            "gsb1.2",
+            "gsb1.0",
+        ]
 
     @pytest.mark.parametrize(
         "how",
@@ -193,7 +225,7 @@ class TestCLI:
         ),
     )
     def test_deleting_by_commit(self, cloned_root, how):
-        some_commit = list(_git.log(cloned_root))[-5].hash
+        some_commit = list(_git.log(cloned_root))[-2].hash
         if how == "short":
             some_commit = some_commit[:8]
 
@@ -203,28 +235,128 @@ class TestCLI:
             capture_output=True,
         )
 
-        assert False
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=False, limit=3)[::2]
+        ] == [
+            "gsb1.3",
+            "gsb1.2",
+        ]
 
     def test_deleting_by_prompt(self, cloned_root):
-        assert False
+        _ = subprocess.run(
+            ["gsb", "delete"],
+            cwd=cloned_root,
+            capture_output=True,
+            input="gsb1.0\n".encode(),
+        )
+
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=True)
+        ] == [
+            "gsb1.3",
+            "gsb1.2",
+            "0.2",
+        ]
 
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
     def test_unknown_revision_raises_error(self, cloned_root, how):
-        assert False
+        arguments = ["gsb", "delete"]
+        response = ""
+        if how == "by_argument":
+            arguments.append("gsb1.4")
+        else:  # if how == "by_prompt"
+            response = "gsb1.4\n"
+
+        result = subprocess.run(
+            arguments,
+            cwd=cloned_root,
+            capture_output=True,
+            input=response.encode(),
+        )
+
+        assert result.returncode == 1
+        assert "Could not find" in result.stderr.decode().strip().splitlines()[-1]
 
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
     def test_multi_delete(self, cloned_root, how):
-        assert False
+        arguments = ["gsb", "delete"]
+        response = ""
+        if how == "by_argument":
+            arguments.extend(["gsb1.0", "gsb1.1", "gsb1.2"])
+        else:  # if how == "by_prompt"
+            response = "gsb1.0, gsb1.1,gsb1.2\n"
+
+        _ = subprocess.run(
+            arguments,
+            cwd=cloned_root,
+            capture_output=True,
+            input=response.encode(),
+        )
+
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=True)
+        ] == [
+            "gsb1.3",
+            "0.2",
+        ]
 
     def test_running_on_repo_with_no_tags_retrieves_gsb_commits(self, tmp_path):
         """Like, I guess if the user deleted the initial backup"""
-        assert False
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
+        _git.add(repo, [something.name])
+        commit_hash = _git.commit(repo, "Hello").hash[:8]
+
+        result = subprocess.run(
+            ["gsb", "delete"], cwd=repo, capture_output=True, input="q\n".encode()
+        )
+        assert f"{commit_hash}" in result.stderr.decode().strip().splitlines()[1]
 
     def test_running_on_non_gsb_prompts_with_git_commits(self, tmp_path):
-        assert False
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
+        _git.add(repo, [something.name])
+        commit_hash = _git.commit(repo, "Hello", _committer=("Testy", "Testy")).hash[:8]
+
+        result = subprocess.run(
+            ["gsb", "delete"], cwd=repo, capture_output=True, input="q\n".encode()
+        )
+        log_lines = result.stderr.decode().strip().splitlines()
+
+        assert "No gsb revisions found" in log_lines[1]
+        assert f"{commit_hash}" in log_lines[2]
 
     def test_running_on_empty_repo_raises(self, tmp_path):
-        assert False
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        something = repo / "file"
+        something.touch()
+        _git.init(repo)
 
-    def test_deleting_tells_you_to_run_git_gc_when_done(self, cloned_root, caplog):
-        assert False
+        result = subprocess.run(["gsb", "delete"], cwd=repo, capture_output=True)
+        assert result.returncode == 1
+        assert "No revisions found" in result.stderr.decode().strip().splitlines()[-1]
+
+    def test_deleting_tells_you_to_run_git_gc_when_done(self, cloned_root):
+        result = subprocess.run(
+            ["gsb", "delete", "gsb1.1"], cwd=cloned_root, capture_output=True
+        )
+
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=True, limit=3)
+        ] == [
+            "gsb1.3",
+            "gsb1.2",
+            "gsb1.0",
+        ]
+        assert "git gc" in result.stderr.decode().strip().splitlines()[-1]
