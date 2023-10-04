@@ -10,6 +10,7 @@ import click
 
 from . import _version
 from . import backup as backup_
+from . import fastforward
 from . import history as history_
 from . import onboard
 from . import rewind as rewind_
@@ -188,7 +189,7 @@ def history(
 def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
     """Restore a backup to the specified REVISION."""
     if revision is None:
-        revision = _prompt_for_revision(repo_root)
+        revision = _prompt_for_a_recent_revision(repo_root)
     try:
         rewind_.restore_backup(repo_root, revision, not include_gsb_settings)
     except ValueError as whats_that:
@@ -196,8 +197,8 @@ def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
         sys.exit(1)
 
 
-def _prompt_for_revision(repo_root) -> str:
-    """Select a revision from a prompt"""
+def _prompt_for_a_recent_revision(repo_root) -> str:
+    """Select a recent revision from a prompt"""
     LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
     revisions = history_.get_history(repo_root, limit=10)
     if len(revisions) == 0:
@@ -234,3 +235,25 @@ def _prompt_for_revision(repo_root) -> str:
     if choice.strip() in [str(i + 1) for i in range(len(revisions))]:
         return revisions[int(choice.strip()) - 1]["identifier"]
     return choice
+
+
+@click.argument(
+    "revisions", type=str, required=False, nargs=-1, metavar="[BACKUP_ID]..."
+)
+@_subcommand_init
+def delete(repo_root: Path, revisions: tuple[str]):
+    """Delete one or more backups"""
+    if not revisions:
+        revisions = _prompt_for_revisions_to_delete(repo_root)
+    try:
+        fastforward.delete_backups(repo_root, *revisions)
+        LOGGER.log(
+            IMPORTANT, "To permanently delete these backups, run the command:\n  git gc"
+        )
+    except ValueError as whats_that:
+        LOGGER.error(whats_that)
+        sys.exit(1)
+
+
+def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str]:
+    raise NotImplementedError
