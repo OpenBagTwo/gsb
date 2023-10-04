@@ -48,7 +48,7 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
     """
     _ = _git.show(repo_root, starting_point)  # ensure starting point is valid
     tag_lookup = {
-        tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
+        tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=False)
     }
     new_history: list[_git.Tag | _git.Commit] = []
 
