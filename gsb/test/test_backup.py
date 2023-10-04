@@ -87,11 +87,11 @@ class TestCreateBackup:
             backup.create_backup(repo_root)
 
     def test_tagging_a_previously_untagged_backup(self, repo_root):
-        hash = backup.create_backup(repo_root)
+        commit_hash = backup.create_backup(repo_root)
         tag_name = backup.create_backup(repo_root, "You're it")
 
         repo = _git._repo(repo_root, new=False)
-        assert str(repo.revparse_single(tag_name).target) == hash
+        assert str(repo.revparse_single(tag_name).target) == commit_hash
 
 
 class TestCLI:
