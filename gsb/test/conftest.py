@@ -6,6 +6,7 @@ from typing import Generator
 import pytest
 
 from gsb import _git, backup
+from gsb.manifest import Manifest
 
 
 @pytest.fixture(autouse=True)
@@ -36,7 +37,7 @@ def patch_tag_naming(monkeypatch):
 def _repo_with_history(tmp_path_factory):
     root = tmp_path_factory.mktemp("saves") / "fossil record"
     root.mkdir()
-    _git.init(root)
+    _git._repo(root, new=True, initial_branch="main")
 
     (root / ".touched").touch()
     _git.add(root, [".touched"])
@@ -74,7 +75,7 @@ def _repo_with_history(tmp_path_factory):
     _git.add(root, ["species"])
     _git.commit(root, "Oh no! Everyone's dead!", _committer=("you-ser", "me@computer"))
 
-    (root / ".gsb_manifest").write_text('patterns = ["species"]\n')
+    Manifest(root, ("species",)).write()
     (root / ".gitignore").touch()
     _git.add(root, ["species", ".gsb_manifest", ".gitignore"])
     _git.tag(root, "gsb1.0", "Start of gsb tracking")
