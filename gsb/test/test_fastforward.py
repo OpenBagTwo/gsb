@@ -1,4 +1,5 @@
 """Tests for rewriting repo histories"""
+import logging
 import shutil
 
 import pytest
@@ -112,3 +113,18 @@ class TestDeleteBackups:
             len(get_history(cloned_root, tagged_only=False, include_non_gsb=True))
             == len(all_backups) - 1
         )
+
+    def test_branch_post_ff_is_gsb(self, cloned_root, caplog):
+        fastforward.delete_backups(cloned_root, "gsb1.0")
+        assert _git._repo(cloned_root).head.shorthand == "gsb"
+        assert "Could not delete branch" in "\n".join(
+            [
+                record.message
+                for record in caplog.records
+                if record.levelno == logging.WARNING
+            ]
+        )
+
+    def test_original_non_gsb_branch_is_not_deleted(self, cloned_root):
+        fastforward.delete_backups(cloned_root, "0.2")
+        assert "main" in _git._repo(cloned_root).branches.local
