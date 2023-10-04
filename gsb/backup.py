@@ -67,7 +67,9 @@ def create_backup(
     _git.add(repo_root, manifest.patterns)
     _git.force_add(repo_root, REQUIRED_FILES)
     try:
-        identifier = _git.commit(repo_root, tag_message or "GSB-managed commit").hash
+        identifier = _git.commit(
+            repo_root, commit_message or tag_message or "GSB-managed commit"
+        ).hash
         logging.info("Changes committed with hash %s", identifier)
     except ValueError:
         if not tag_message:
