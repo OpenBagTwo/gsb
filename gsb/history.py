@@ -34,6 +34,7 @@ def get_history(
     include_non_gsb: bool = False,
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
+    since_last_tagged_backup: bool = False,
 ) -> list[_Revision]:
     """Retrieve a list of GSB-managed versions
 
@@ -53,6 +54,10 @@ def get_history(
     since : date or timestamp, optional
         By default, this method returns the entire history. To return only
         revisions made on or after a certain date, pass in `since=<start_date>`.
+    since_last_tagged_backup: bool, optional
+        False by default. To return only revisions made since the last tagged
+        backup, pass in `since_last_tagged_backup=True` (and, presumably,
+        `tagged_only=False`). This flag is compatible with all other filters.
 
     Returns
     -------
@@ -77,6 +82,8 @@ def get_history(
         if commit.timestamp < since:
             break
         if tag := tag_lookup.get(commit):
+            if since_last_tagged_backup:
+                break
             identifier = tag.name
             is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
             description = tag.annotation or commit.message

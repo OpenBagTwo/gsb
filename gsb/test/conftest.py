@@ -1,5 +1,6 @@
 """Common fixtures for use across the test package"""
 import datetime as dt
+import shutil
 import time
 from typing import Generator
 
@@ -138,9 +139,14 @@ def _repo_with_history(tmp_path_factory):
     yield root, jurassic.timestamp
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def root(_repo_with_history):
-    yield _repo_with_history[0]
+    """Because the repo-with-history setup is so expensive, we want to perform our
+    tests (some of which may rewrite the history) on a copy"""
+    destination = _repo_with_history[0].parent / "cloney"
+    shutil.copytree(_repo_with_history[0], destination)
+    yield destination
+    shutil.rmtree(destination)
 
 
 @pytest.fixture(scope="module")
