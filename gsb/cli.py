@@ -200,7 +200,13 @@ def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
 def _prompt_for_a_recent_revision(repo_root) -> str:
     """Select a recent revision from a prompt"""
     LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
-    revisions = history_.get_history(repo_root, limit=10)
+    revisions = history_.get_history(
+        repo_root,
+        tagged_only=False,
+        include_non_gsb=True,
+        limit=1,
+        since_last_tagged_backup=True,
+    ) + history_.get_history(repo_root, limit=10)
     if len(revisions) == 0:
         LOGGER.info("No tagged revisions found. Trying untagged.")
         revisions = history_.get_history(
