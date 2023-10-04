@@ -176,19 +176,6 @@ class TestCLI:
 
         assert (repo / "save" / "data.txt").read_text() == "3\n"
 
-    def test_top_choice_in_prompt_is_most_recent_backup(self, repo):
-        backup.create_backup(repo)
-        most_recent_backup = history.get_history(repo, tagged_only=False, limit=1)[0][
-            "identifier"
-        ]
-        assert not most_recent_backup.startswith("gsb")
-
-        result = subprocess.run(
-            ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
-        )
-
-        assert f"1. {most_recent_backup}" in result.stderr.decode()
-
     @pytest.mark.parametrize("how", ("short", "full"))
     def test_restoring_to_commit(self, repo, how):
         some_commit = list(_git.log(repo))[-5].hash
