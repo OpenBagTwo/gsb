@@ -192,15 +192,17 @@ class TestCLI:
 
     def test_passing_in_a_custom_root(self, cloned_root):
         result = subprocess.run(
-            ["gsb", "delete", "--path", cloned_root.name],
+            ["gsb", "delete", "--path", cloned_root.name, "0.2"],
             cwd=cloned_root.parent,
             capture_output=True,
             input="q\n".encode(),
         )
 
         assert (
-            "Select one by identifier, or multiple separated by commas"
-            in result.stderr.decode().strip().splitlines()[-2]
+            get_history(cloned_root, tagged_only=True, include_non_gsb=True)[-2][
+                "identifier"
+            ]
+            == "gsb1.0"
         )
 
     def test_deleting_tag_by_argument(self, cloned_root):
@@ -221,11 +223,17 @@ class TestCLI:
         "how",
         (
             "short",
-            pytest.param("full", marks=pytest.mark.xfail(reason="Not implemented")),
+            "full",
         ),
     )
     def test_deleting_by_commit(self, cloned_root, how):
-        some_commit = list(_git.log(cloned_root))[-2].hash
+        some_commit = list(_git.log(cloned_root))[2].hash
+
+        # meta-test to make sure I didn't grab a tag
+        assert some_commit not in {
+            tag.target for tag in _git.get_tags(cloned_root, annotated_only=True)
+        }
+
         if how == "short":
             some_commit = some_commit[:8]
 
@@ -277,7 +285,7 @@ class TestCLI:
         )
 
         assert result.returncode == 1
-        assert "gsb1.4" in result.stderr.decode().strip().splitlines()[-2]
+        assert "gsb1.4" in result.stderr.decode().strip().splitlines()[-1]
 
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
     def test_multi_delete(self, cloned_root, how):
