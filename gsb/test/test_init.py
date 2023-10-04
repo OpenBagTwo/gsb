@@ -105,13 +105,17 @@ class TestFreshInit:
 
         assert [tag.annotation for tag in tags] == ["Start of gsb tracking\n"]
 
+    def test_branch_name_is_gsb_for_fresh_repo(self, root):
+        _ = onboard.create_repo(root)
+        assert _git._repo(root).head.shorthand == "gsb"
+
 
 class TestInitExistingGitRepo:
     @pytest.fixture
     def existing_repo(self, tmp_path):
         root = tmp_path / "roto-rooter"
         root.mkdir()
-        _git.init(root)
+        _git._repo(root, new=True, initial_branch="main")
         (root / ".gitignore").write_text(
             """# cruft
 cruft
@@ -165,6 +169,10 @@ stuff
             "Checkpoint\n",
             "Initial commit\n",
         ]
+
+    def test_init_does_not_change_branch_name(self, repo_with_history):
+        _ = onboard.create_repo(repo_with_history)
+        assert _git._repo(repo_with_history).head.shorthand == "main"
 
     @pytest.mark.parametrize(
         "include_lightweight", (True, False), ids=("all", "annotated")
