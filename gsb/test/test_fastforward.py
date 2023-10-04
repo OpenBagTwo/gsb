@@ -56,11 +56,15 @@ class TestDeleteBackups:
                 if not revision["identifier"].startswith(("gsb", "0."))
             )
         )
-        assert get_history(cloned_root, tagged_only=False)[:-1] == [
+        assert [
+            backup["identifier"]
+            for backup in get_history(cloned_root, tagged_only=False)[:-1]
+        ] == [
             "gsb1.3",
             "gsb1.2",
             "gsb1.1",
             "gsb1.0",
+            "0.2",
         ]
 
     def test_raise_value_error_on_invalid_backup(self, cloned_root):
