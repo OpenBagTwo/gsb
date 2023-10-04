@@ -3,7 +3,7 @@ import datetime as dt
 import logging
 from pathlib import Path
 
-from . import _git, backup, history
+from . import _git, backup
 from .logging import IMPORTANT
 
 LOGGER = logging.getLogger(__name__)
@@ -47,9 +47,16 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
         If any of the specified revisions do not exist
     """
     _ = _git.show(repo_root, starting_point)  # ensure starting point is valid
-    new_history: list[_git.Tag | _git.Commit] = [
-        _git.show(repo_root, revision) for revision in revisions
-    ]
+    tag_lookup = {
+        tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
+    }
+    new_history: list[_git.Tag | _git.Commit] = []
+
+    for reference in revisions:
+        revision: _git.Tag | _git.Commit = _git.show(repo_root, reference)
+        if revision in tag_lookup.keys():
+            revision = tag_lookup[revision]  # type: ignore[index]
+        new_history.append(revision)
 
     try:
         head = backup.create_backup(repo_root)
@@ -145,25 +152,35 @@ def delete_backups(repo_root: Path, *revisions: str) -> str:
     ValueError
         If the specified revision does not exist
     """
-    all_revs = history.get_history(repo_root, tagged_only=False, include_non_gsb=True)
-    not_found: set[str] = set(revisions)
+    to_delete: dict[_git.Commit, str] = {}
+    for revision in revisions:
+        match reference := _git.show(repo_root, revision):
+            case _git.Commit():
+                # keep the link back to the revision in case we need to raise
+                # an error about it later
+                to_delete[reference] = revision
+            case _git.Tag():
+                to_delete[reference.target] = revision
+            case _:  # pragma: no cover
+                raise NotImplementedError(f"Don't know how to handle {type(reference)}")
+
     to_keep: list[str] = []
-    for i, rev in enumerate(reversed(all_revs)):
-        # TODO: delete a tag or commit by its full hash
-        if rev["identifier"] in not_found:
-            if len(to_keep) == 0:
-                if i == 0:
-                    raise NotImplementedError(
-                        "Deleting the initial backup is not currently supported."
-                    )
-                to_keep.append(all_revs[-i]["identifier"])
-            not_found.remove(rev["identifier"])
-        elif len(to_keep) > 0:
-            to_keep.append(rev["identifier"])
-    if len(not_found) > 0:
-        raise ValueError(
-            "Could not find the following backups:\n"
-            + "\n".join([f"  - {rev}" for rev in not_found])
-            + "\nRun gsb history -ga to get a list of valid backup IDs."
-        )
+    for commit in _git.log(repo_root):
+        if commit in to_delete.keys():
+            del to_delete[commit]
+        else:
+            to_keep.insert(0, commit.hash)
+            if len(to_delete) == 0:
+                break
+    else:
+        if len(to_delete) == 0:
+            raise NotImplementedError(
+                "Deleting the initial backup is not currently supported."
+            )
+        else:
+            raise ValueError(
+                "The following revisions exist, but they are not within"
+                " the linear commit history:\n"
+                + "\n".join((f"  - {revision}" for revision in to_delete.values()))
+            )
     return rewrite_history(repo_root, *to_keep)
