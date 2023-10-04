@@ -79,6 +79,16 @@ class TestDeleteBackups:
             )
         ) + "\n"
 
+    @pytest.mark.usefixtures("patch_tag_naming")
+    def test_deleting_a_backup_preserves_subsequent_backup_timestamps(
+        self, cloned_root, jurassic_timestamp
+    ):
+        fastforward.delete_backups(cloned_root, "gsb1.0")
+        assert [
+            revision["identifier"]
+            for revision in get_history(cloned_root, since=jurassic_timestamp)
+        ] == ["gsb1.3", "gsb1.2"]
+
     def test_deleting_multiple_backups(self, cloned_root, all_backups):
         # frequent workflow: deleting all non-tagged backups
         fastforward.delete_backups(
