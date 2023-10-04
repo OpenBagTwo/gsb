@@ -34,7 +34,9 @@ def init(repo_root: Path) -> pygit2.Repository:
     return _repo(repo_root, new=True)
 
 
-def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
+def _repo(
+    repo_root: Path, new: bool = False, initial_branch: str = "gsb"
+) -> pygit2.Repository:
     """Load a git repository from the specified location
 
     Parameters
@@ -44,6 +46,10 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     new : bool, optional
         By default, this method loads existing repositories. To initialize a new
         repo, pass in `new=True`
+    initial_branch : str, optional
+        By default, if a new repo is to be created, it will be given the initial
+        branch name "gsb." To override this behavior (say, for testing) provide
+        a different value to this argument.
 
     Returns
     -------
@@ -66,8 +72,10 @@ def _repo(repo_root: Path, new: bool = False) -> pygit2.Repository:
     if not repo_root.is_dir():
         raise NotADirectoryError(f"{repo_root} is not a directory")
     if new:
-        LOGGER.debug("git init %s", repo_root)
-        return pygit2.init_repository(repo_root, initial_head="gsb")
+        LOGGER.debug(
+            "git init %s --initial-branch=%s", repr(str(repo_root)), initial_branch
+        )
+        return pygit2.init_repository(repo_root, initial_head=initial_branch)
     try:
         return pygit2.Repository(repo_root)
     except pygit2.GitError as maybe_no_git:
@@ -169,7 +177,7 @@ def force_add(repo_root: Path, files: Iterable[Path]) -> pygit2.Index:
     repo = _repo(repo_root)
     for path in files:
         try:
-            LOGGER.debug("git add --force %s", path)
+            LOGGER.debug("git add --force %s", repr(str(path)))
             repo.index.add(path)
         except OSError as maybe_file_not_found:  # pragma: no cover
             if "No such file or directory" in str(maybe_file_not_found):
@@ -250,7 +258,7 @@ def commit(
         ref = repo.head.name
         parents = [repo.head.target]
     except pygit2.GitError as headless:
-        if "reference 'refs/heads/gsb' not found" in str(headless):
+        if re.search(r"reference 'refs/heads/(.*)' not found", str(headless)):
             ref = "HEAD"
             parents = []
         else:
@@ -645,7 +653,7 @@ def checkout_files(repo_root: Path, reference: str, paths: Iterable[Path]) -> No
     paths = list(paths)
 
     for path in paths:
-        LOGGER.debug("git reset %s -- %s", reference, path)
+        LOGGER.debug("git reset %s -- %s", reference, repr(str(path)))
         try:
             repo.index.remove(path)
         except OSError:

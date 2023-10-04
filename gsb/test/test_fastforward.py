@@ -3,8 +3,9 @@ import shutil
 
 import pytest
 
-from gsb import fastforward
+from gsb import _git, fastforward
 from gsb.history import get_history
+from gsb.manifest import Manifest
 from gsb.rewind import restore_backup
 
 
@@ -31,6 +32,37 @@ class TestDeleteBackups:
             "gsb1.2",
             "gsb1.0",
         ]
+
+    def test_modified_files_are_automatically_backed_up(self, cloned_root):
+        cretaceous_continents = (
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+
+        (cloned_root / "continents").write_text(cretaceous_continents)
+        Manifest.of(cloned_root)._replace(patterns=("species", "continents")).write()
+        fastforward.delete_backups(cloned_root, "gsb1.3")
+
+        # make sure the backup was deleted
+        assert [
+            revision["identifier"] for revision in get_history(cloned_root, limit=2)
+        ] == [
+            "gsb1.2",
+            "gsb1.1",
+        ]
+
+        # make sure there's nothing to commit post-ff
+        _git.add(cloned_root, ["continents"])
+        with pytest.raises(ValueError, match="Nothing to commit"):
+            _git.commit(cloned_root, "Oh no! Continents weren't being tracked!")
+
+        # make sure that the unsaved contents were backed up (and preserved)
+        assert (cloned_root / "continents").read_text("utf-8") == cretaceous_continents
 
     @pytest.mark.usefixtures("patch_tag_naming")
     def test_deleting_a_backup_doesnt_mess_up_subsequent_backups(self, cloned_root):
