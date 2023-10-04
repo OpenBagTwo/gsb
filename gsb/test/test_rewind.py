@@ -233,12 +233,12 @@ class TestCLI:
         something.touch()
         _git.init(repo)
         _git.add(repo, [something.name])
-        hash = _git.commit(repo, "Hello").hash[:8]
+        commit_hash = _git.commit(repo, "Hello").hash[:8]
 
         result = subprocess.run(
             ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
         )
-        assert f"1. {hash}" in result.stderr.decode().strip().splitlines()[1]
+        assert f"1. {commit_hash}" in result.stderr.decode().strip().splitlines()[1]
 
     def test_running_on_non_gsb_prompts_with_git_commits(self, tmp_path):
         repo = tmp_path / "repo"
@@ -247,7 +247,7 @@ class TestCLI:
         something.touch()
         _git.init(repo)
         _git.add(repo, [something.name])
-        hash = _git.commit(repo, "Hello", _committer=("Testy", "Testy")).hash[:8]
+        commit_hash = _git.commit(repo, "Hello", _committer=("Testy", "Testy")).hash[:8]
 
         result = subprocess.run(
             ["gsb", "rewind"], cwd=repo, capture_output=True, input="q\n".encode()
@@ -255,7 +255,7 @@ class TestCLI:
         log_lines = result.stderr.decode().strip().splitlines()
 
         assert "No gsb revisions found" in log_lines[1]
-        assert f"1. {hash}" in log_lines[2]
+        assert f"1. {commit_hash}" in log_lines[2]
 
     def test_running_on_empty_repo_raises(self, tmp_path):
         repo = tmp_path / "repo"
