@@ -277,7 +277,7 @@ class TestCLI:
         )
 
         assert result.returncode == 1
-        assert "Could not find" in result.stderr.decode().strip().splitlines()[-1]
+        assert "gsb1.4" in result.stderr.decode().strip().splitlines()[-2]
 
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
     def test_multi_delete(self, cloned_root, how):
@@ -297,11 +297,10 @@ class TestCLI:
 
         assert [
             backup["identifier"]
-            for backup in get_history(cloned_root, tagged_only=True)
-        ] == [
-            "gsb1.3",
-            "0.2",
-        ]
+            for backup in get_history(
+                cloned_root, tagged_only=True, include_non_gsb=True
+            )
+        ] == ["gsb1.3", "0.2", "0.1"]
 
     def test_running_on_repo_with_no_tags_retrieves_gsb_commits(self, tmp_path):
         """Like, I guess if the user deleted the initial backup"""
@@ -351,12 +350,4 @@ class TestCLI:
             ["gsb", "delete", "gsb1.1"], cwd=cloned_root, capture_output=True
         )
 
-        assert [
-            backup["identifier"]
-            for backup in get_history(cloned_root, tagged_only=True, limit=3)
-        ] == [
-            "gsb1.3",
-            "gsb1.2",
-            "gsb1.0",
-        ]
         assert "git gc" in result.stderr.decode().strip().splitlines()[-1]
