@@ -4,6 +4,8 @@ import subprocess
 import pytest
 
 from gsb import history
+from gsb.backup import create_backup
+from gsb.manifest import Manifest
 
 
 class TestGetHistory:
@@ -70,6 +72,38 @@ class TestGetHistory:
             "Cretaceous (my gracious!)",
             "It's my ancestors!",
         ]
+
+    def test_getting_revisions_since_last_tagged_backup(self, root):
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+        create_backup(root)
+        (root / "oceans").write_text(
+            "\n".join(
+                (
+                    "pacific",
+                    "tethys",
+                )
+            )
+            + "\n"
+        )
+        create_backup(root)
+
+        assert (
+            len(
+                history.get_history(
+                    root, tagged_only=False, since_last_tagged_backup=True
+                )
+            )
+            == 2
+        )
 
 
 class TestCLI:
