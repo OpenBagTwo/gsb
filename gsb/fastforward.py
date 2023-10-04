@@ -103,10 +103,9 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
             # this can happen if you onboarded an existing repo to gsb, in
             # which case the active branch won't necessarily be gsb
             LOGGER.warning("Could not delete branch %s:\n    %s", "gsb", delete_fail)
-            _git.checkout_branch(repo_root, "gsb", None)
         _git.checkout_branch(repo_root, "gsb", head)
         return head
-    except Exception as something_went_wrong:
+    except Exception as something_went_wrong:  # pragma: no cover
         _git.reset(repo_root, head, hard=True)
         raise something_went_wrong
     finally:
