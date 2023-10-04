@@ -1,6 +1,7 @@
 """Tests for rewriting repo histories"""
 import logging
 import shutil
+import subprocess
 
 import pytest
 
@@ -138,3 +139,92 @@ class TestDeleteBackups:
     def test_original_non_gsb_branch_is_not_deleted(self, cloned_root):
         fastforward.delete_backups(cloned_root, "0.2")
         assert "main" in _git._repo(cloned_root).branches.local
+
+
+class TestCLI:
+    def test_no_args_initiates_prompt_in_cwd(self, cloned_root):
+        result = subprocess.run(
+            ["gsb", "delete"],
+            cwd=cloned_root,
+            capture_output=True,
+            input="q\n".encode(),
+        )
+
+        assert (
+            "Select one by identifier, or multiple separated by commas"
+            in result.stderr.decode().strip().splitlines()[-2]
+        )
+
+    def test_prompt_includes_all_commits_since_last_tag(self, cloned_root):
+        result = subprocess.run(
+            ["gsb", "delete"],
+            cwd=cloned_root,
+            capture_output=True,
+            input="q\n".encode(),
+        )
+
+        assert False
+
+    def test_passing_in_a_custom_root(self, cloned_root):
+        result = subprocess.run(
+            ["gsb", "delete", "--path", cloned_root.name],
+            cwd=cloned_root.parent,
+            capture_output=True,
+            input="q\n".encode(),
+        )
+
+        assert (
+            "Select one by identifier, or multiple separated by commas"
+            in result.stderr.decode().strip().splitlines()[-2]
+        )
+
+    def test_deleting_tag_by_argument(self, cloned_root):
+        _ = subprocess.run(
+            ["gsb", "delete", "gsb1.1"], cwd=cloned_root, capture_output=True
+        )
+
+        assert False
+
+    @pytest.mark.parametrize(
+        "how",
+        (
+            "short",
+            pytest.param("full", marks=pytest.mark.xfail(reason="Not implemented")),
+        ),
+    )
+    def test_deleting_by_commit(self, cloned_root, how):
+        some_commit = list(_git.log(cloned_root))[-5].hash
+        if how == "short":
+            some_commit = some_commit[:8]
+
+        _ = subprocess.run(
+            ["gsb", "delete", some_commit],
+            cwd=cloned_root,
+            capture_output=True,
+        )
+
+        assert False
+
+    def test_deleting_by_prompt(self, cloned_root):
+        assert False
+
+    @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
+    def test_unknown_revision_raises_error(self, cloned_root, how):
+        assert False
+
+    @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
+    def test_multi_delete(self, cloned_root, how):
+        assert False
+
+    def test_running_on_repo_with_no_tags_retrieves_gsb_commits(self, tmp_path):
+        """Like, I guess if the user deleted the initial backup"""
+        assert False
+
+    def test_running_on_non_gsb_prompts_with_git_commits(self, tmp_path):
+        assert False
+
+    def test_running_on_empty_repo_raises(self, tmp_path):
+        assert False
+
+    def test_deleting_tells_you_to_run_git_gc_when_done(self, cloned_root, caplog):
+        assert False
