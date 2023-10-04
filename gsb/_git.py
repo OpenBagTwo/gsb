@@ -5,7 +5,7 @@ import logging
 import re
 import socket
 from pathlib import Path
-from typing import Generator, Iterable, NamedTuple, Self
+from typing import Any, Generator, Iterable, NamedTuple, Self
 
 import pygit2
 
@@ -226,7 +226,10 @@ class Commit(NamedTuple):
 
 
 def commit(
-    repo_root: Path, message: str, _committer: tuple[str, str] | None = None
+    repo_root: Path,
+    message: str,
+    timestamp: dt.datetime | None = None,
+    _committer: tuple[str, str] | None = None,
 ) -> Commit:
     """Commit staged changes, equivalent to running `git commit -m <message>`
 
@@ -236,7 +239,11 @@ def commit(
         The root directory of the git repo
     message : str
         The commit message
-    _committer : (str, str) tuple
+    timestamp : dt.datetime, optional
+        By default, commits are created using the current timestamp. Use this
+        argument to provide a custom timestamp (as you would when calling
+        `git commit --date <timestamp>`)
+    _committer : (str, str) tuple, optional
         By default this method uses "gsb" as the committer. This should not
         be overridden outside of testing, but to do so, pass in both the
         username and email address.
@@ -271,12 +278,15 @@ def commit(
 
     config = _config()
     author = pygit2.Signature(config["user.name"], config["user.email"])
+    signature_kwargs: dict[str, Any] = {}
+    if timestamp is not None:
+        signature_kwargs = {"time": int(timestamp.timestamp())}
     if _committer is None:
         committer = pygit2.Signature(
-            config["committer.name"], config["committer.email"]
+            config["committer.name"], config["committer.email"], **signature_kwargs
         )
     else:
-        committer = pygit2.Signature(*_committer)
+        committer = pygit2.Signature(*_committer, **signature_kwargs)
 
     LOGGER.debug("git commit -m %s", repr(message))
     commit_id = repo.create_commit(

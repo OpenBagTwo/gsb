@@ -74,6 +74,7 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
                         message=(
                             revision.message + "\n\n" + f"rebase of {revision.hash}"
                         ),
+                        timestamp=revision.timestamp,
                     ).hash
                     head = new_hash
                 case _git.Tag():
@@ -87,6 +88,7 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
                             + f"rebase of {revision.target.hash}"
                             + f' ("{revision.target.message}")'
                         ),
+                        timestamp=revision.target.timestamp,
                     ).hash
                     tags_to_update.append((revision, new_hash))
                     head = new_hash
