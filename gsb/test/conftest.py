@@ -140,13 +140,12 @@ def _repo_with_history(tmp_path_factory):
 
 
 @pytest.fixture
-def root(_repo_with_history):
+def root(_repo_with_history, tmp_path):
     """Because the repo-with-history setup is so expensive, we want to perform our
     tests (some of which may rewrite the history) on a copy"""
-    destination = _repo_with_history[0].parent / "cloney"
+    destination = tmp_path / "cloney"
     shutil.copytree(_repo_with_history[0], destination)
     yield destination
-    shutil.rmtree(destination)
 
 
 @pytest.fixture(scope="module")
