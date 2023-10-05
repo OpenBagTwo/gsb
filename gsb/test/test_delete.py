@@ -127,6 +127,11 @@ class TestDeleteBackups:
         fastforward.delete_backups(root, "0.2")
         assert "main" in _git._repo(root).branches.local
 
+    def test_cant_delete_backup_from_outside_history(self, root):
+        _git.checkout_branch(root, "gsb", "gsb1.1")
+        with pytest.raises(ValueError, match="not within the linear commit history"):
+            fastforward.delete_backups(root, "gsb1.2")
+
 
 class TestCLI:
     def test_no_args_initiates_prompt_in_cwd(self, root):
