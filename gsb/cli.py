@@ -241,11 +241,11 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
 
 
 @click.argument(
-    "revisions", type=str, required=False, nargs=-1, metavar="[BACKUP_ID]..."
+    "revisions", type=str, required=False, nargs=-1, metavar="[REVISION]..."
 )
 @_subcommand_init
 def delete(repo_root: Path, revisions: tuple[str, ...]):
-    """Delete one or more backups"""
+    """Delete one or more backups."""
     if not revisions:
         revisions = _prompt_for_revisions_to_delete(repo_root)
     try:
