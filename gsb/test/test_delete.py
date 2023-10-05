@@ -138,8 +138,8 @@ class TestCLI:
         )
 
         assert (
-            "Select one by identifier, or multiple separated by commas"
-            in result.stderr.decode().strip().splitlines()[-2]
+            "Select a revision or revisions"
+            in result.stdout.decode().strip().splitlines()[-1]
         )
 
     def test_prompt_includes_all_commits_since_last_tag(self, root):
@@ -153,7 +153,7 @@ class TestCLI:
             + "\n"
         )
         Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-        create_backup(root)
+        post_tag_backup_1 = create_backup(root)
         (root / "oceans").write_text(
             "\n".join(
                 (
@@ -163,7 +163,7 @@ class TestCLI:
             )
             + "\n"
         )
-        create_backup(root)
+        post_tag_backup_2 = create_backup(root)
 
         result = subprocess.run(
             ["gsb", "delete"],
@@ -171,11 +171,17 @@ class TestCLI:
             capture_output=True,
             input="q\n".encode(),
         )
-        # there should be two untagged backups after the latest tagged backup
-        assert "gsb1.3" in result.stderr.decode().strip().splitlines()[-3 - 2]
+        assert [
+            f"- {post_tag_backup_2[:8]}",
+            f"- {post_tag_backup_1[:8]}",
+            "- gsb1.3",
+        ] == [
+            line.split("from")[0].strip()
+            for line in result.stderr.decode().strip().splitlines()[1:4]
+        ]
 
     def test_passing_in_a_custom_root(self, root):
-        result = subprocess.run(
+        _ = subprocess.run(
             ["gsb", "delete", "--path", root.name, "0.2"],
             cwd=root.parent,
             capture_output=True,
@@ -236,7 +242,7 @@ class TestCLI:
             ["gsb", "delete"],
             cwd=root,
             capture_output=True,
-            input="gsb1.0\n".encode(),
+            input="gsb1.1\n".encode(),
         )
 
         assert [
@@ -244,7 +250,7 @@ class TestCLI:
         ] == [
             "gsb1.3",
             "gsb1.2",
-            "0.2",
+            "gsb1.0",
         ]
 
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
