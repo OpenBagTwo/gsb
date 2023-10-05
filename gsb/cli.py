@@ -117,7 +117,10 @@ def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None):
 )
 @_subcommand_init
 def init(
-    repo_root: Path, track_args: tuple[str], track: tuple[str], ignore: tuple[str]
+    repo_root: Path,
+    track_args: tuple[str, ...],
+    track: tuple[str, ...],
+    ignore: tuple[str, ...],
 ):
     """Start tracking a save."""
     onboard.create_repo(repo_root, *track_args, *track, ignore=ignore)
@@ -241,7 +244,7 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
     "revisions", type=str, required=False, nargs=-1, metavar="[BACKUP_ID]..."
 )
 @_subcommand_init
-def delete(repo_root: Path, revisions: tuple[str]):
+def delete(repo_root: Path, revisions: tuple[str, ...]):
     """Delete one or more backups"""
     if not revisions:
         revisions = _prompt_for_revisions_to_delete(repo_root)
@@ -255,5 +258,34 @@ def delete(repo_root: Path, revisions: tuple[str]):
         sys.exit(1)
 
 
-def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str]:
-    raise NotImplementedError
+def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
+    """Offer a history of revisions to delete. Unlike similar prompts, this
+    is a multiselect and requires the user to type in each entry (in order to guard
+    against accidental deletions)."""
+    LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
+    revisions = history_.get_history(
+        repo_root, tagged_only=False, since_last_tagged_backup=True, numbering=None
+    )
+    revisions.extend(history_.get_history(repo_root, limit=3, numbering=None))
+    if len(revisions) == 0:
+        LOGGER.warning("No gsb revisions found. Trying Git.")
+        revisions = history_.get_history(
+            repo_root, limit=10, tagged_only=False, include_non_gsb=True, numbering=None
+        )
+    LOGGER.log(
+        IMPORTANT,
+        "Select a backup to delete by identifier, or multiple separated by commas."
+        "\nAlternatively, [q]uit and call gsb history yourself to get more revisions.",
+    )
+    if len(revisions) == 0:
+        LOGGER.error("No revisions found!")
+        sys.exit(1)
+
+    choices: str = click.prompt(
+        "Select a revision or revisions", default="q", show_default=True, type=str
+    ).lower()
+
+    if choices.lower().strip() == "q":
+        LOGGER.error("Aborting.")
+        sys.exit(1)
+    return tuple(choice.strip() for choice in choices.strip().split(","))
