@@ -35,6 +35,7 @@ def get_history(
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
     since_last_tagged_backup: bool = False,
+    numbering: int | None = 1,
 ) -> list[_Revision]:
     """Retrieve a list of GSB-managed versions
 
@@ -58,6 +59,10 @@ def get_history(
         False by default. To return only revisions made since the last tagged
         backup, pass in `since_last_tagged_backup=True` (and, presumably,
         `tagged_only=False`). This flag is compatible with all other filters.
+    numbering: int or None, optional
+        When displaying the versions, the default behavior is to number the
+        results, starting at 1. To set a different starting number, provide that.
+        To use "-" instead of numbers, pass in `numbering=None`.
 
     Returns
     -------
@@ -95,13 +100,21 @@ def get_history(
             description = commit.message
         if not include_non_gsb and not is_gsb:
             continue
-        LOGGER.log(
-            IMPORTANT,
-            "%d. %s from %s",
-            len(revisions) + 1,
-            tag.name if tag else commit.hash[:8],
-            commit.timestamp.isoformat("-"),
-        )
+        if numbering is None:
+            LOGGER.log(
+                IMPORTANT,
+                "- %s from %s",
+                tag.name if tag else commit.hash[:8],
+                commit.timestamp.isoformat("-"),
+            )
+        else:
+            LOGGER.log(
+                IMPORTANT,
+                "%d. %s from %s",
+                len(revisions) + numbering,
+                tag.name if tag else commit.hash[:8],
+                commit.timestamp.isoformat("-"),
+            )
         LOGGER.debug("Full reference: %s", commit.hash)
         LOGGER.info("%s", description)
         revisions.append(
