@@ -251,7 +251,10 @@ def delete(repo_root: Path, revisions: tuple[str, ...]):
     try:
         fastforward.delete_backups(repo_root, *revisions)
         LOGGER.log(
-            IMPORTANT, "To permanently delete these backups, run the command:\n  git gc"
+            IMPORTANT,
+            'Deleted backups are now marked as "loose."'
+            " To delete them immediately, run the command:"
+            "\n  git gc --aggressive --prune=now",
         )
     except ValueError as whats_that:
         LOGGER.error(whats_that)
