@@ -2,7 +2,7 @@
 import datetime as dt
 import logging
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from . import _git
 from .logging import IMPORTANT
@@ -16,7 +16,9 @@ class _Revision(TypedDict):
     Parameters
     ----------
     identifier : str
-        A unique identifier for the revision
+        A short, unique identifier for the revision
+    commit_hash : str
+        The full hexadecimal hash associated with the revision
     description : str
         A description of the version
     timestamp : dt.datetime
@@ -28,6 +30,7 @@ class _Revision(TypedDict):
     """
 
     identifier: str
+    commit_hash: str
     description: str
     timestamp: dt.datetime
     tagged: bool
@@ -41,7 +44,6 @@ def get_history(
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
     since_last_tagged_backup: bool = False,
-    numbering: int | None = 1,
 ) -> list[_Revision]:
     """Retrieve a list of GSB-managed versions
 
@@ -65,10 +67,6 @@ def get_history(
         False by default. To return only revisions made since the last tagged
         backup, pass in `since_last_tagged_backup=True` (and, presumably,
         `tagged_only=False`). This flag is compatible with all other filters.
-    numbering: int or None, optional
-        When displaying the versions, the default behavior is to number the
-        results, starting at 1. To set a different starting number, provide that.
-        To use "-" instead of numbers, pass in `numbering=None`.
 
     Returns
     -------
@@ -108,26 +106,10 @@ def get_history(
             description = commit.message
         if not include_non_gsb and not is_gsb:
             continue
-        if numbering is None:
-            LOGGER.log(
-                IMPORTANT,
-                "- %s from %s",
-                tag.name if tag else commit.hash[:8],
-                commit.timestamp.isoformat("-"),
-            )
-        else:
-            LOGGER.log(
-                IMPORTANT,
-                "%d. %s from %s",
-                len(revisions) + numbering,
-                tag.name if tag else commit.hash[:8],
-                commit.timestamp.isoformat("-"),
-            )
-        LOGGER.debug("Full reference: %s", commit.hash)
-        LOGGER.info("%s", description)
         revisions.append(
             {
                 "identifier": identifier,
+                "commit_hash": commit.hash,
                 "description": description.strip(),
                 "timestamp": commit.timestamp,
                 "tagged": tagged,
@@ -135,3 +117,75 @@ def get_history(
             }
         )
     return revisions
+
+
+def log_revision(revision: _Revision, idx: int | None) -> None:
+    """Print (log) a revision
+
+    Parameters
+    ----------
+    revision : dict
+        Metadata for the revision
+    idx : int | None
+        The index to give to the revision. If None is specified, the revision
+        will be displayed with a "-" instead of a numbering.
+
+    Notes
+    -----
+    - The version identifiers and dates are logged at the IMPORTANT (verbose=0) level
+    - The version descriptions are logged at the INFO (verbose=1) level
+    - The full version hashes are logged at the DEBUG (verbose=2) level
+    """
+    args: list[Any] = [revision["identifier"], revision["timestamp"].isoformat("-")]
+    if idx is None:
+        format_string = "- %s from %s"
+    else:
+        format_string = "%d. %s from %s"
+        args.insert(0, idx)
+
+    LOGGER.log(IMPORTANT, format_string, *args)
+
+    LOGGER.debug("Full reference: %s", revision["commit_hash"])
+    LOGGER.info("%s", revision["description"])
+
+
+def show_history(
+    repo_root: Path,
+    numbering: int | None = 1,
+    **kwargs,
+) -> list[_Revision]:
+    """Fetch and print (log) the list of versions for the specified repo matching
+    the given specs
+
+    Parameters
+    ----------
+    repo_root : Path
+        The directory containing the GSB-managed repo
+    numbering: int or None, optional
+        When displaying the versions, the default behavior is to number the
+        results, starting at 1. To set a different starting number, provide that.
+        To use "-" instead of numbers, pass in `numbering=None`.
+    **kwargs
+        Any other options will be passed directly to the lower-level `get_history()`
+        method
+
+    Notes
+    -----
+    See the documentation for `log_revision()` for details about what information
+    is logged to each log level
+
+    Returns
+    -------
+    list of dict
+        metadata on the requested revisions, sorted in reverse-chronological
+        order
+
+    Raises
+    ------
+    OSError
+        If the specified repo does not exist or is not a git repo
+    """
+    history = get_history(repo_root, **kwargs)
+    for i, revision in enumerate(history):
+        log_revision(revision, i + numbering if numbering is not None else None)
+    return history
