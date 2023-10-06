@@ -171,3 +171,118 @@ class TestCLI:
         )
 
         assert tags[-1].annotation == "Hello World\n"
+
+    def test_squash_with_last_commit(self, root):
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+        backup.create_backup(root)
+
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+
+        result = subprocess.run(["gsb", "backup", "-vc"], cwd=root, capture_output=True)
+        commit_id = result.stderr.decode().splitlines()[-1].split("hash")[-1].strip()
+
+        assert [
+            revision["identifier"]
+            for revision in history.get_history(
+                root, tagged_only=False, include_non_gsb=True, limit=2
+            )
+        ] == [commit_id, "gsb1.3"]
+
+    def test_squash_with_last_tag_requires_confirmation(self, root):
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+
+        result = subprocess.run(
+            ["gsb", "backup", "-c"], cwd=root, capture_output=True, input="q\n".encode()
+        )
+
+        assert result.stderr.decode().splitlines()[-1].strip() == "Aborted"
+
+        assert (
+            history.get_history(root, tagged_only=False, include_non_gsb=True, limit=1)[
+                0
+            ]["identifier"]
+            == "gsb1.3"
+        )
+
+    def test_squash_all_since_last_tag(self, root):
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+        backup.create_backup(root)
+
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+        backup.create_backup(root)
+
+        (root / "oceans").write_text(
+            "\n".join(
+                (
+                    "pacific",
+                    "tethys",
+                )
+            )
+            + "\n"
+        )
+        backup.create_backup(root)
+        # this is also testing that -cc works even when all we're doing is squashing
+
+        result = subprocess.run(
+            ["gsb", "backup", "-vcc"], cwd=root, capture_output=True
+        )
+        commit_id = result.stderr.decode().splitlines()[-1].split("hash")[-1].strip()
+
+        assert [
+            revision["identifier"]
+            for revision in history.get_history(
+                root, tagged_only=False, include_non_gsb=True, limit=2
+            )
+        ] == [commit_id, "gsb1.3"]
+
+    def test_squash_all_since_last_tag_is_silent_when_theres_nothing_to_squash(
+        self, root
+    ):
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+
+        result = subprocess.run(["gsb", "backup", "-cc"], cwd=root, capture_output=True)
+
+        assert not result.stderr.decode()
+
+        assert (
+            history.get_history(root, tagged_only=False, include_non_gsb=True, limit=2)[
+                -1
+            ]["identifier"]
+            == "gsb1.3"
+        )

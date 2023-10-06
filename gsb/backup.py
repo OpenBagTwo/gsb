@@ -81,12 +81,13 @@ def create_backup(
         identifier = _git.commit(
             repo_root, commit_message or tag_message or "GSB-managed commit"
         ).hash
-        logging.info("Changes committed with hash %s", identifier)
+        LOGGER.info("Changes committed with hash %s", identifier[:8])
+        LOGGER.debug("Full hash: %s", identifier)
     except ValueError:
         if not tag_message:
             raise
-        logging.info("Nothing new to commit--all files are up-to-date.")
+        LOGGER.info("Nothing new to commit--all files are up-to-date.")
     if tag_message:
         identifier = _git.tag(repo_root, _generate_tag_name(), tag_message).name
-        logging.log(IMPORTANT, "Created new tagged backup: %s", identifier)
+        LOGGER.log(IMPORTANT, "Created new tagged backup: %s", identifier)
     return identifier
