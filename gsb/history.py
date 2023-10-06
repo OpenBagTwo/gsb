@@ -21,11 +21,17 @@ class _Revision(TypedDict):
         A description of the version
     timestamp : dt.datetime
         The time at which the version was created
+    tagged : bool
+        Whether or not this is a tagged revision
+    gsb : bool
+        Whether or not this is a GSB-created revision
     """
 
     identifier: str
     description: str
     timestamp: dt.datetime
+    tagged: bool
+    gsb: bool
 
 
 def get_history(
@@ -89,12 +95,14 @@ def get_history(
         if tag := tag_lookup.get(commit):
             if since_last_tagged_backup:
                 break
+            tagged = True
             identifier = tag.name
             is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
             description = tag.annotation or commit.message
         else:
             if tagged_only:
                 continue
+            tagged = False
             identifier = commit.hash[:8]
             is_gsb = commit.gsb
             description = commit.message
@@ -122,6 +130,8 @@ def get_history(
                 "identifier": identifier,
                 "description": description.strip(),
                 "timestamp": commit.timestamp,
+                "tagged": tagged,
+                "gsb": is_gsb,
             }
         )
     return revisions
