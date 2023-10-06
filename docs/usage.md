@@ -50,6 +50,14 @@ Note that `gsb` has two kinds of backups:
    meant to denote specific points you might want to return to later (right before an epic
    boss fight or right before a story branch).
 
+!!! danger "Pro Tip"
+    You can overwrite a previous backup using the `--combine` / `-c` flag. And if when
+    making a new tagged backup you want to delete all of the untagged backups you've made
+    since the last time you used the `--tag` flag, you can use `-cc`, _e.g._
+    ```bash
+    gsb backup -cc --tag "A backup that's actually important"
+    ```
+
 ## List your backups using `gsb history`
 
 You can view your list of available backups at any time by navigating to your save's folder
@@ -72,8 +80,24 @@ If you want to restore a backup, you can do so via [`gsb rewind`](../cli/#rewind
 If you don't provide a restore point, the command will prompt you to choose from a list
 of recent backups.
 
-## Advanced Hisoty Management directly with Git
+## Deleting a backup with `gsb delete`
+
+Use [`gsb delete`](../cli/#delete) to delete any backups you no longer need. Note
+that this command doesn't _actually_ delete anything on its own (so you won't
+recover any disk space immediately). What it does instead is rewrites your history
+to exclude those restore points, thus marking them as "loose." To permanently
+delete these backups, you will need to download and install a full
+[Git client](https://git-scm.com/downloads) and run a "garbage collect" to prune
+these loose objects.
+
+??? danger "Pruning via the Git CLI"
+    If you have the Git command-line utility installed, the command to run is:
+    ```bash
+    git gc --aggressive --prune=now
+    ```
+
+## Advanced History Management directly with Git
 
 Behind the curtain, `gsb` runs on [Git](https://git-scm.com/) meaning you can run
 any advanced commands you wish on a `gsb`-managed save repo directly via the
-`git` CLI or  any general-purpose Git tool.
+`git` CLI or any general-purpose Git tool.
