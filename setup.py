@@ -18,7 +18,7 @@ setup(
         "gsb",
         "gsb.test",
     ],
-    package_data={},
+    package_data={"gsb": ["py.typed"]},
     entry_points={
         "console_scripts": [
             "gsb = gsb.cli:gsb",
