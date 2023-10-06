@@ -6,7 +6,8 @@ from pathlib import Path
 import pygit2
 import pytest
 
-from gsb import _git, backup, history, onboard
+from gsb import _git, backup, onboard
+from gsb.history import get_history
 from gsb.manifest import Manifest
 
 
@@ -108,7 +109,7 @@ class TestCreateBackup:
         identifier = backup.create_backup(root, parent="gsb1.2")
         assert [
             revision["identifier"]
-            for revision in history.get_history(
+            for revision in get_history(
                 root, tagged_only=False, include_non_gsb=True, limit=2
             )
         ] == [identifier[:8], "gsb1.2"]
@@ -191,7 +192,7 @@ class TestCLI:
 
         assert [
             revision["identifier"]
-            for revision in history.get_history(
+            for revision in get_history(
                 root, tagged_only=False, include_non_gsb=True, limit=2
             )
         ] == [commit_id, "gsb1.3"]
@@ -225,9 +226,9 @@ class TestCLI:
             assert "Aborting" in result.stderr.decode().splitlines()[-1]
 
             assert (
-                history.get_history(
-                    root, tagged_only=False, include_non_gsb=True, limit=1
-                )[0]["identifier"]
+                get_history(root, tagged_only=False, include_non_gsb=True, limit=1)[0][
+                    "identifier"
+                ]
                 == "gsb1.3"
             )
 
@@ -265,7 +266,7 @@ class TestCLI:
 
         assert [
             revision["identifier"]
-            for revision in history.get_history(
+            for revision in get_history(
                 root, tagged_only=False, include_non_gsb=True, limit=2
             )
         ] == [commit_id, "gsb1.3"]
@@ -285,13 +286,15 @@ class TestCLI:
             + "\n"
         )
 
-        result = subprocess.run(["gsb", "backup", "-cc"], cwd=root, capture_output=True)
+        result = subprocess.run(
+            ["gsb", "backup", "-qcc"], cwd=root, capture_output=True
+        )
 
         assert not result.stderr.decode()
 
         assert (
-            history.get_history(root, tagged_only=False, include_non_gsb=True, limit=2)[
-                -1
-            ]["identifier"]
+            get_history(root, tagged_only=False, include_non_gsb=True, limit=2)[-1][
+                "identifier"
+            ]
             == "gsb1.3"
         )
