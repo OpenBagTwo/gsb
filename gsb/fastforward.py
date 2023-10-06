@@ -93,7 +93,7 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
                             (revision.annotation or revision.name)
                             + "\n\n"
                             + f"rebase of {revision.target.hash}"
-                            + f' ("{revision.target.message}")'
+                            + f' ("{revision.target.message.strip()}")'
                         ),
                         timestamp=revision.target.timestamp,
                     ).hash
