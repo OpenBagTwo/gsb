@@ -31,7 +31,10 @@ def _generate_tag_name() -> str:
 
 
 def create_backup(
-    repo_root: Path, tag_message: str | None = None, commit_message: str | None = None
+    repo_root: Path,
+    tag_message: str | None = None,
+    commit_message: str | None = None,
+    parent: str | None = None,
 ) -> str:
     """Create a new backup
 
@@ -48,7 +51,10 @@ def create_backup(
         is provided. Provide a value to this argument to explicitly set the
         commit message. If neither a `tag` nor a `commit_message` is provided,
         the default value will be "GSB-managed commit"
-
+    parent: str, optional
+        By default, this new backup will be created as an incremental commit
+        off of the current head. To instead reset to a specific revision,
+        pass in an ID for that revision to this argument.
 
     Returns
     -------
@@ -61,9 +67,14 @@ def create_backup(
     OSError
         If the specified repo does not exist or is not a gsb-managed repo
     ValueError
-        If there are no changes to commit and no tag message was provided
+        If there are no changes to commit and no tag message was provided, or
+        if the specified "parent" could not be resolved.
     """
     manifest = Manifest.of(repo_root)
+
+    if parent is not None:
+        _git.reset(repo_root, parent, hard=False)
+
     _git.add(repo_root, manifest.patterns)
     _git.force_add(repo_root, REQUIRED_FILES)
     try:
