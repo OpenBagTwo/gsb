@@ -196,7 +196,8 @@ class TestCLI:
             )
         ] == [commit_id, "gsb1.3"]
 
-    def test_squash_with_last_tag_requires_confirmation(self, root):
+    @pytest.mark.parametrize("confirm", (False, True), ids=("abort", "confirm"))
+    def test_squash_with_last_tag_requires_confirmation(self, root, confirm):
         Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
 
         (root / "continents").write_text(
@@ -210,17 +211,25 @@ class TestCLI:
         )
 
         result = subprocess.run(
-            ["gsb", "backup", "-c"], cwd=root, capture_output=True, input="q\n".encode()
+            ["gsb", "backup", "-c"],
+            cwd=root,
+            capture_output=True,
+            input=("y\n" if confirm else "\n").encode(),
         )
 
-        assert result.stderr.decode().splitlines()[-1].strip() == "Aborted"
+        if confirm:
+            assert "gsb1.3" not in {
+                tag.name for tag in _git.get_tags(root, annotated_only=False)
+            }
+        else:
+            assert "Aborting" in result.stderr.decode().splitlines()[-1]
 
-        assert (
-            history.get_history(root, tagged_only=False, include_non_gsb=True, limit=1)[
-                0
-            ]["identifier"]
-            == "gsb1.3"
-        )
+            assert (
+                history.get_history(
+                    root, tagged_only=False, include_non_gsb=True, limit=1
+                )[0]["identifier"]
+                == "gsb1.3"
+            )
 
     def test_squash_all_since_last_tag(self, root):
         Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
