@@ -111,11 +111,10 @@ def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: 
             sys.exit(1)
         LOGGER.log(IMPORTANT, "Combining with %s", combine_me["identifier"])
         if combine_me["tagged"]:
+            LOGGER.warning("Are you sure you want to overwrite a tagged backup?")
+            history_.log_revision(combine_me, None)
             confirmed: bool = click.confirm(
-                (
-                    "Are you sure you want to overwrite tagged backup"
-                    f' {repr(combine_me["identifier"])}?'
-                ),
+                "",
                 default=False,
                 show_default=True,
             )
@@ -131,12 +130,11 @@ def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: 
             LOGGER.error("There are no previous tagged backups.")
             sys.exit(1)
         LOGGER.log(IMPORTANT, "Combining with the following backups:")
-        combining = history_.get_history(
+        combining = history_.show_history(
             repo_root,
             tagged_only=False,
             include_non_gsb=True,
             since_last_tagged_backup=True,
-            numbering=None,
         )
         if not combining:
             LOGGER.log(IMPORTANT, "(no backups to combine)")
@@ -228,7 +226,7 @@ def history(
     if since is not None:
         kwargs["since"] = since
 
-    history_.get_history(path_as_arg or repo_root, **kwargs)
+    history_.show_history(path_as_arg or repo_root, **kwargs)
 
 
 @click.option(
@@ -256,17 +254,17 @@ def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
 def _prompt_for_a_recent_revision(repo_root) -> str:
     """Select a recent revision from a prompt"""
     LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
-    revisions = history_.get_history(repo_root, limit=10)
+    revisions = history_.show_history(repo_root, limit=10)
     if len(revisions) == 0:
         LOGGER.info("No tagged revisions found. Trying untagged.")
-        revisions = history_.get_history(
+        revisions = history_.show_history(
             repo_root,
             limit=10,
             tagged_only=False,
         )
     if len(revisions) == 0:
         LOGGER.warning("No gsb revisions found. Trying Git.")
-        revisions = history_.get_history(
+        revisions = history_.show_history(
             repo_root,
             limit=10,
             tagged_only=False,
@@ -319,13 +317,13 @@ def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
     is a multiselect and requires the user to type in each entry (in order to guard
     against accidental deletions)."""
     LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
-    revisions = history_.get_history(
+    revisions = history_.show_history(
         repo_root, tagged_only=False, since_last_tagged_backup=True, numbering=None
     )
-    revisions.extend(history_.get_history(repo_root, limit=3, numbering=None))
+    revisions.extend(history_.show_history(repo_root, limit=3, numbering=None))
     if len(revisions) == 0:
         LOGGER.warning("No gsb revisions found. Trying Git.")
-        revisions = history_.get_history(
+        revisions = history_.show_history(
             repo_root, limit=10, tagged_only=False, include_non_gsb=True, numbering=None
         )
     LOGGER.log(

@@ -3,7 +3,8 @@ import subprocess
 
 import pytest
 
-from gsb import _git, backup, history, onboard, rewind
+from gsb import _git, backup, onboard, rewind
+from gsb.history import get_history
 from gsb.manifest import MANIFEST_NAME
 
 
@@ -62,7 +63,7 @@ class TestRestoreBackup:
         assert (repo / "save" / "data.txt").read_text() == "6\n"
 
     def test_restores_file_content_to_a_previous_commit(self, repo):
-        commit_two = list(history.get_history(repo, tagged_only=False))[-4]
+        commit_two = list(get_history(repo, tagged_only=False))[-4]
         assert not commit_two["identifier"].startswith("gsb")  # not a tag
         rewind.restore_backup(repo, commit_two["identifier"])
         assert (repo / "save" / "data.txt").read_text() == "2\n"
@@ -78,11 +79,11 @@ class TestRestoreBackup:
         assert not (repo / "save" / ".beep").exists()
 
     def test_unstaged_changes_are_commited_before_restore(self, repo):
-        last_backup = next(iter(history.get_history(repo, tagged_only=False)))
+        last_backup = get_history(repo, tagged_only=False, limit=1)[0]
         assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
         rewind.restore_backup(repo, last_backup["identifier"])
         assert (repo / "save" / "data.txt").read_text() == "9\n"
-        all_backups = list(history.get_history(repo, tagged_only=False))
+        all_backups = list(get_history(repo, tagged_only=False))
 
         assert all_backups[2] == last_backup  # because reverse-chronological
 
@@ -100,9 +101,7 @@ class TestRestoreBackup:
 
         assert (
             "restore"
-            in next(iter(history.get_history(repo, tagged_only=False)))[
-                "description"
-            ].lower()
+            in next(iter(get_history(repo, tagged_only=False)))["description"].lower()
         )
 
     def test_gsb_manifest_and_gitignore_are_not_rewound(self, repo):
@@ -136,9 +135,7 @@ class TestRestoreBackup:
         assert "# it's a comment" not in (repo / MANIFEST_NAME).read_text()
 
     def test_can_rewind_to_pre_gsb_state(self, repo):
-        first_commit = history.get_history(
-            repo, tagged_only=False, include_non_gsb=True
-        )[-1]
+        first_commit = get_history(repo, tagged_only=False, include_non_gsb=True)[-1]
 
         rewind.restore_backup(repo, first_commit["identifier"])
 
