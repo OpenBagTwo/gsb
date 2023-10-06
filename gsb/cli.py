@@ -106,9 +106,9 @@ def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: 
         except ValueError as probably_not_enough_values:
             if "not enough values to unpack" in str(probably_not_enough_values):
                 LOGGER.error("Cannot combine with the very first backup.")
-            else:
-                LOGGER.error(probably_not_enough_values)
-            sys.exit(1)
+                sys.exit(1)
+            raise probably_not_enough_values  # pragma: no-cover
+
         LOGGER.log(IMPORTANT, "Combining with %s", combine_me["identifier"])
         if combine_me["tagged"]:
             LOGGER.warning("Are you sure you want to overwrite a tagged backup?")
