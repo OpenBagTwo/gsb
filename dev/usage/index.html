@@ -366,8 +366,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#advanced-hisoty-management-directly-with-git" class="md-nav__link">
-    Advanced Hisoty Management directly with Git
+  <a href="#deleting-a-backup-with-gsb-delete" class="md-nav__link">
+    Deleting a backup with gsb delete
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-history-management-directly-with-git" class="md-nav__link">
+    Advanced History Management directly with Git
   </a>
   
 </li>
@@ -734,8 +741,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#advanced-hisoty-management-directly-with-git" class="md-nav__link">
-    Advanced Hisoty Management directly with Git
+  <a href="#deleting-a-backup-with-gsb-delete" class="md-nav__link">
+    Deleting a backup with gsb delete
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-history-management-directly-with-git" class="md-nav__link">
+    Advanced History Management directly with Git
   </a>
   
 </li>
@@ -802,6 +816,14 @@ run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create a
    meant to denote specific points you might want to return to later (right before an epic
    boss fight or right before a story branch).</li>
 </ol>
+<div class="admonition danger">
+<p class="admonition-title">Pro Tip</p>
+<p>You can overwrite a previous backup using the <code>--combine</code> / <code>-c</code> flag. And if when
+making a new tagged backup you want to delete all of the untagged backups you've made
+since the last time you used the <code>--tag</code> flag, you can use <code>-cc</code>, <em>e.g.</em>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gsb<span class="w"> </span>backup<span class="w"> </span>-cc<span class="w"> </span>--tag<span class="w"> </span><span class="s2">&quot;A backup that&#39;s actually important&quot;</span>
+</span></code></pre></div></p>
+</div>
 <h2 id="list-your-backups-using-gsb-history">List your backups using <code>gsb history</code></h2>
 <p>You can view your list of available backups at any time by navigating to your save's folder
 and running <a href="../cli/#history"><code>gsb history</code></a>. By default, this will show the identifiers and
@@ -820,10 +842,24 @@ let you clean this up later).</p>
 </details>
 <p>If you don't provide a restore point, the command will prompt you to choose from a list
 of recent backups.</p>
-<h2 id="advanced-hisoty-management-directly-with-git">Advanced Hisoty Management directly with Git</h2>
+<h2 id="deleting-a-backup-with-gsb-delete">Deleting a backup with <code>gsb delete</code></h2>
+<p>Use <a href="../cli/#delete"><code>gsb delete</code></a> to delete any backups you no longer need. Note
+that this command doesn't <em>actually</em> delete anything on its own (so you won't
+recover any disk space immediately). What it does instead is rewrites your history
+to exclude those restore points, thus marking them as "loose." To permanently
+delete these backups, you will need to download and install a full
+<a href="https://git-scm.com/downloads">Git client</a> and run a "garbage collect" to prune
+these loose objects.</p>
+<details class="danger">
+<summary>Pruning via the Git CLI</summary>
+<p>If you have the Git command-line utility installed, the command to run is:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>gc<span class="w"> </span>--aggressive<span class="w"> </span>--prune<span class="o">=</span>now
+</span></code></pre></div></p>
+</details>
+<h2 id="advanced-history-management-directly-with-git">Advanced History Management directly with Git</h2>
 <p>Behind the curtain, <code>gsb</code> runs on <a href="https://git-scm.com/">Git</a> meaning you can run
 any advanced commands you wish on a <code>gsb</code>-managed save repo directly via the
-<code>git</code> CLI or  any general-purpose Git tool.</p>
+<code>git</code> CLI or any general-purpose Git tool.</p>
 
 
 

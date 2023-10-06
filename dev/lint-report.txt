@@ -6,10 +6,11 @@ gsb/fastforward.py:169:21: C0201: Consider iterating the dictionary directly ins
 gsb/fastforward.py:176:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
 gsb/fastforward.py:186:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
 ************* Module gsb.history
-gsb/history.py:31:0: R0913: Too many arguments (7/5) (too-many-arguments)
+gsb/history.py:40:0: R0913: Too many arguments (6/5) (too-many-arguments)
 ************* Module gsb.cli
 gsb/cli.py:42:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
-gsb/cli.py:156:0: R0913: Too many arguments (6/5) (too-many-arguments)
+gsb/cli.py:103:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 87 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
+gsb/cli.py:207:0: R0913: Too many arguments (6/5) (too-many-arguments)
 
 -----------------------------------
 Your code has been rated at 9.78/10
