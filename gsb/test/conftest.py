@@ -34,7 +34,7 @@ def patch_tag_naming(monkeypatch):
     monkeypatch.setattr(backup, "_generate_tag_name", mock_tag_namer)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def _repo_with_history(tmp_path_factory):
     root = tmp_path_factory.mktemp("saves") / "fossil record"
     root.mkdir()
@@ -129,7 +129,7 @@ def _repo_with_history(tmp_path_factory):
     _git.commit(root, "It's my ancestors!", _committer=("you-ser", "me@computer"))
 
     with (root / "species").open("a") as f:
-        f.write("\n".join(("birds", "insects", "shark", "squids")) + "\n")
+        f.write("\n".join(("birds", "insects", "sharks", "squids")) + "\n")
 
     _git.add(root, ["species"])
     _git.commit(root, "Autocommit")
@@ -148,6 +148,6 @@ def root(_repo_with_history, tmp_path):
     yield destination
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def jurassic_timestamp(_repo_with_history):
     yield _repo_with_history[1]

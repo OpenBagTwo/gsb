@@ -6,7 +6,8 @@ from pathlib import Path
 import pygit2
 import pytest
 
-from gsb import _git, backup, onboard
+from gsb import _git, backup, history, onboard
+from gsb.manifest import Manifest
 
 
 @pytest.fixture
@@ -92,6 +93,30 @@ class TestCreateBackup:
 
         repo = _git._repo(repo_root, new=False)
         assert str(repo.revparse_single(tag_name).target) == commit_hash
+
+    def test_combining_with_previous_backup(self, root):
+        (root / "continents").write_text(
+            "\n".join(
+                (
+                    "laurasia",
+                    "gondwana",
+                )
+            )
+            + "\n"
+        )
+        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+        identifier = backup.create_backup(root, parent="gsb1.2")
+        assert [
+            revision["identifier"]
+            for revision in history.get_history(
+                root, tagged_only=False, include_non_gsb=True, limit=2
+            )
+        ] == [identifier[:8], "gsb1.2"]
+
+        # ensure that the squash kept all file changes
+        assert (root / "continents").read_text("utf-8").startswith("laurasia")
+        assert "continents" in Manifest.of(root).patterns
+        assert (root / "species").read_text("utf-8").strip().endswith("sharks\nsquids")
 
 
 class TestCLI:
