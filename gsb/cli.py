@@ -8,7 +8,7 @@ from typing import Any, Callable
 
 import click
 
-from . import _version
+from . import _git, _version
 from . import backup as backup_
 from . import fastforward
 from . import history as history_
@@ -70,7 +70,6 @@ def _subcommand_init(command: Callable) -> Callable:
         count=True,
         help="Decrease the amount of information that's printed.",
     )(wrapped)
-
     return gsb.command()(wrapped)
 
 
@@ -80,6 +79,15 @@ def _subcommand_init(command: Callable) -> Callable:
     help='Specify a description for this backup and "tag" it for future reference.',
     metavar='"MESSAGE"',
 )
+@click.option(
+    "--combine",
+    "-c",
+    count=True,
+    help=(
+        "Combine this backup and the last backup,"
+        " or use -cc to combine ALL backups since the last tagged backup."
+    ),
+)
 @click.argument(
     "path_as_arg",
     type=Path,
@@ -87,9 +95,54 @@ def _subcommand_init(command: Callable) -> Callable:
     metavar="[SAVE_PATH]",
 )
 @_subcommand_init
-def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None):
+def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: int):
     """Create a new backup."""
-    backup_.create_backup(path_as_arg or repo_root, tag)
+    parent_hash = None
+    if combine == 1:
+        try:
+            combine_me, parent = history_.get_history(
+                repo_root, tagged_only=False, include_non_gsb=True, limit=2
+            )
+        except ValueError as probably_not_enough_values:
+            if "not enough values to unpack" in str(probably_not_enough_values):
+                LOGGER.error("Cannot combine with the very first backup.")
+            else:
+                LOGGER.error(probably_not_enough_values)
+            sys.exit(1)
+        LOGGER.log(IMPORTANT, "Combining with %s", combine_me["identifier"])
+        if combine_me["tagged"]:
+            confirmed: bool = click.confirm(
+                (
+                    "Are you sure you want to overwrite tagged backup"
+                    f' {repr(combine_me["identifier"])}?'
+                ),
+                default=False,
+                show_default=True,
+            )
+            if not confirmed:
+                LOGGER.error("Aborting.")
+                sys.exit(1)
+            _git.delete_tag(repo_root, combine_me["identifier"])
+        parent_hash = parent["identifier"]
+    if combine > 1:
+        try:
+            last_tag = history_.get_history(repo_root, tagged_only=True, limit=1)[0]
+        except IndexError:
+            LOGGER.error("There are no previous tagged backups.")
+            sys.exit(1)
+        LOGGER.log(IMPORTANT, "Combining with the following backups:")
+        combining = history_.get_history(
+            repo_root,
+            tagged_only=False,
+            include_non_gsb=True,
+            since_last_tagged_backup=True,
+            numbering=None,
+        )
+        if not combining:
+            LOGGER.log(IMPORTANT, "(no backups to combine)")
+        parent_hash = last_tag["identifier"]
+
+    backup_.create_backup(path_as_arg or repo_root, tag, parent=parent_hash)
 
 
 @click.option(
