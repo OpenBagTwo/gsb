@@ -232,6 +232,17 @@ class TestCLI:
                 == "gsb1.3"
             )
 
+    @pytest.mark.xfail(reason="not implemented")
+    def test_squashing_with_the_first_backup(self, tmp_path):
+        repo = tmp_path / "fresh"
+        repo.mkdir()
+        onboard.create_repo(repo, "something")
+        result = subprocess.run(
+            ["gsb", "backup", "-c"], cwd=repo, capture_output=True, input="y\n".encode()
+        )
+        assert result.returncode == 0
+        assert len(get_history(repo, tagged_only=False)) == 1
+
     def test_squash_all_since_last_tag(self, root):
         Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
         backup.create_backup(root)
@@ -271,7 +282,7 @@ class TestCLI:
             )
         ] == [commit_id, "gsb1.3"]
 
-    def test_squash_all_since_last_tag_is_silent_when_theres_nothing_to_squash(
+    def test_squash_all_since_last_tag_is_quiet_when_theres_nothing_to_squash(
         self, root
     ):
         Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
@@ -298,3 +309,16 @@ class TestCLI:
             ]
             == "gsb1.3"
         )
+
+    def test_squash_all_since_last_tag_raises_when_there_are_no_tags(self, tmp_path):
+        repo = tmp_path / "fresh"
+        repo.mkdir()
+        _git.init(repo)
+        (repo / ".gitignore").touch()
+        Manifest(repo, ("something",)).write()
+        backup.create_backup(repo)
+        (repo / "something").write_text("it's not nothing\n")
+        backup.create_backup(repo)
+        result = subprocess.run(["gsb", "backup", "-cc"], cwd=repo, capture_output=True)
+        assert result.returncode == 1
+        assert len(get_history(repo, tagged_only=False)) == 2
