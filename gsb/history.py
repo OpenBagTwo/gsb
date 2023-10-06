@@ -10,7 +10,7 @@ from .logging import IMPORTANT
 LOGGER = logging.getLogger(__name__)
 
 
-class _Revision(TypedDict):
+class Revision(TypedDict):
     """Metadata on a GSB-managed version
 
     Parameters
@@ -44,7 +44,7 @@ def get_history(
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
     since_last_tagged_backup: bool = False,
-) -> list[_Revision]:
+) -> list[Revision]:
     """Retrieve a list of GSB-managed versions
 
     Parameters
@@ -84,7 +84,7 @@ def get_history(
     }
     LOGGER.debug("Retrieved %s tags", len(tag_lookup))
 
-    revisions: list[_Revision] = []
+    revisions: list[Revision] = []
     for commit in _git.log(repo_root):
         if len(revisions) == limit:
             break
@@ -119,7 +119,7 @@ def get_history(
     return revisions
 
 
-def log_revision(revision: _Revision, idx: int | None) -> None:
+def log_revision(revision: Revision, idx: int | None) -> None:
     """Print (log) a revision
 
     Parameters
@@ -153,7 +153,7 @@ def show_history(
     repo_root: Path,
     numbering: int | None = 1,
     **kwargs,
-) -> list[_Revision]:
+) -> list[Revision]:
     """Fetch and print (log) the list of versions for the specified repo matching
     the given specs
 
@@ -166,13 +166,13 @@ def show_history(
         results, starting at 1. To set a different starting number, provide that.
         To use "-" instead of numbers, pass in `numbering=None`.
     **kwargs
-        Any other options will be passed directly to the lower-level `get_history()`
+        Any other options will be passed directly to `get_history()`
         method
 
     Notes
     -----
-    See the documentation for `log_revision()` for details about what information
-    is logged to each log level
+    See `log_revision()` for details about what information is logged to each
+    log level
 
     Returns
     -------
