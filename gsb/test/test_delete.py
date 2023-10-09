@@ -10,11 +10,6 @@ from gsb.history import get_history
 from gsb.rewind import restore_backup
 
 
-@pytest.fixture(scope="module")
-def all_backups(_repo_with_history):
-    yield get_history(_repo_with_history[0], tagged_only=False, include_non_gsb=True)
-
-
 class TestDeleteBackups:
     def test_deleting_a_backup(self, root):
         fastforward.delete_backups(root, "gsb1.1")
