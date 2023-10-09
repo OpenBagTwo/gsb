@@ -265,21 +265,26 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
             tagged_only=False,
         )
     if len(revisions) == 0:
-        LOGGER.warning("No gsb revisions found. Trying Git.")
+        LOGGER.warning("No GSB revisions found. Trying Git.")
         revisions = history_.show_history(
             repo_root,
             limit=10,
             tagged_only=False,
             include_non_gsb=True,
         )
-    LOGGER.log(
-        IMPORTANT,
-        "Select one by number or revision (or [q]uit and"
-        " call gsb history yourself to get more revisions).",
-    )
     if len(revisions) == 0:
         LOGGER.error("No revisions found!")
         sys.exit(1)
+    LOGGER.log(IMPORTANT, "\nMost recent backup:")
+    most_recent_backup = history_.show_history(
+        repo_root, limit=1, always_include_latest=True, numbering=0
+    )[0]
+
+    LOGGER.log(
+        IMPORTANT,
+        "\nSelect one by number or revision (or [q]uit and"
+        " call gsb history yourself to get more revisions).",
+    )
 
     choice: str = click.prompt(
         "Select a revision", default="q", show_default=True, type=str
@@ -288,6 +293,8 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
     if choice.lower().strip() == "q":
         LOGGER.error("Aborting.")
         sys.exit(1)
+    if choice.strip() == "0":
+        return most_recent_backup["identifier"]
     if choice.strip() in [str(i + 1) for i in range(len(revisions))]:
         return revisions[int(choice.strip()) - 1]["identifier"]
     return choice
@@ -318,19 +325,19 @@ def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
     """Offer a history of revisions to delete. Unlike similar prompts, this
     is a multiselect and requires the user to type in each entry (in order to guard
     against accidental deletions)."""
-    LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
+    LOGGER.log(IMPORTANT, "Here is a list of recent GSB-created backups:")
     revisions = history_.show_history(
         repo_root, tagged_only=False, since_last_tagged_backup=True, numbering=None
     )
     revisions.extend(history_.show_history(repo_root, limit=3, numbering=None))
     if len(revisions) == 0:
-        LOGGER.warning("No gsb revisions found. Trying Git.")
+        LOGGER.warning("No GSB revisions found. Trying Git.")
         revisions = history_.show_history(
             repo_root, limit=10, tagged_only=False, include_non_gsb=True, numbering=None
         )
     LOGGER.log(
         IMPORTANT,
-        "Select a backup to delete by identifier, or multiple separated by commas."
+        "\nSelect a backup to delete by identifier, or multiple separated by commas."
         "\nAlternatively, [q]uit and call gsb history yourself to get more revisions.",
     )
     if len(revisions) == 0:
