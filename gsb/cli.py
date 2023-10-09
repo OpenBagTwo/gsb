@@ -226,7 +226,9 @@ def history(
     if since is not None:
         kwargs["since"] = since
 
-    history_.show_history(path_as_arg or repo_root, **kwargs)
+    history_.show_history(
+        path_as_arg or repo_root, **kwargs, always_include_latest=True
+    )
 
 
 @click.option(

@@ -6,7 +6,7 @@ from typing import Generator
 
 import pytest
 
-from gsb import _git, backup
+from gsb import _git, backup, history
 from gsb.manifest import MANIFEST_NAME, Manifest
 
 
@@ -176,3 +176,10 @@ def root(_repo_with_history, tmp_path):
 @pytest.fixture(scope="session")
 def jurassic_timestamp(_repo_with_history):
     yield _repo_with_history[1]
+
+
+@pytest.fixture(scope="session")
+def all_backups(_repo_with_history):
+    yield history.get_history(
+        _repo_with_history[0], tagged_only=False, include_non_gsb=True
+    )

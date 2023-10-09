@@ -85,14 +85,40 @@ class TestGetHistory:
             == 2
         )
 
+    def test_always_include_latest_ignores_limit(self, root, all_backups):
+        assert (
+            history.get_history(root, limit=0, always_include_latest=True)
+            == all_backups[0:1]
+        )
+
 
 class TestCLI:
+    @pytest.fixture
+    def last_backup(self, all_backups):
+        assert not all_backups[0]["tagged"]  # meta-test
+        yield f'1. {all_backups[0]["identifier"]}'
+
     def test_default_options_returns_all_gsb_tags_for_the_cwd(self, root):
         result = subprocess.run(["gsb", "history"], cwd=root, capture_output=True)
         backups = [
             line.split(" from ")[0] for line in result.stderr.decode().splitlines()
-        ]
-        assert backups == ["1. gsb1.3", "2. gsb1.2", "3. gsb1.1", "4. gsb1.0"]
+        ][1:]
+        assert backups == ["2. gsb1.3", "3. gsb1.2", "4. gsb1.1", "5. gsb1.0"]
+
+    def test_most_recent_backup_is_always_at_the_top(self, root, last_backup):
+        result = subprocess.run(["gsb", "history"], cwd=root, capture_output=True)
+        assert (
+            result.stderr.decode().splitlines()[0].split(" from ")[0].strip()
+            == last_backup
+        )
+
+    def test_even_a_non_gsb_backup_will_be_shown(self, root, last_backup):
+        commit_hash = create_backup(root)
+        result = subprocess.run(["gsb", "history"], cwd=root, capture_output=True)
+        assert (
+            result.stderr.decode().splitlines()[0].split(" from ")[0].strip()
+            == f"1. {commit_hash[:8]}"
+        )
 
     @pytest.mark.parametrize("how", ("by_argument", "by_option"))
     def test_passing_in_a_custom_root(self, root, how):
@@ -102,20 +128,20 @@ class TestCLI:
 
         result = subprocess.run(args, capture_output=True)
 
-        assert result.stderr.decode().splitlines()[0].startswith("1. gsb1.3")
+        assert result.stderr.decode().splitlines()[1].strip().startswith("2. gsb1.3")
 
-    @pytest.mark.parametrize("flag", ("--limit", "-n", "-n1"))
-    def test_setting_a_limit(self, root, flag):
+    @pytest.mark.parametrize("flag", ("--limit", "-n", "-n2"))
+    def test_setting_a_limit(self, root, last_backup, flag):
         args = ["gsb", "history", flag]
-        if flag != "-n1":
-            args.append("1")
+        if flag != "-n2":
+            args.append("2")
 
         result = subprocess.run(args, capture_output=True, cwd=root)
 
         backups = [
             line.split(" from ")[0] for line in result.stderr.decode().splitlines()
         ]
-        assert backups == ["1. gsb1.3"]
+        assert backups == [last_backup, "2. gsb1.3"]
 
     @pytest.mark.parametrize("flag", ("--limit", "-n", "-n0"))
     def test_raise_when_an_invalid_limit_is_set(self, root, flag):
@@ -127,7 +153,7 @@ class TestCLI:
 
         assert "Limit must be a positive integer" in result.stderr.decode()
 
-    def test_setting_since(self, root, jurassic_timestamp):
+    def test_setting_since(self, root, jurassic_timestamp, last_backup):
         args = ["gsb", "history", "--since", jurassic_timestamp.isoformat()]
 
         result = subprocess.run(args, capture_output=True, cwd=root)
@@ -135,10 +161,10 @@ class TestCLI:
         backups = [
             line.split(" from ")[0] for line in result.stderr.decode().splitlines()
         ]
-        assert backups == ["1. gsb1.3", "2. gsb1.2"]
+        assert backups == [last_backup, "2. gsb1.3", "3. gsb1.2"]
 
     @pytest.mark.parametrize("flag", ("--include_non_gsb", "-g"))
-    def test_including_non_gsb(self, root, flag):
+    def test_including_non_gsb(self, root, last_backup, flag):
         args = ["gsb", "history", flag]
 
         result = subprocess.run(args, capture_output=True, cwd=root)
@@ -147,12 +173,13 @@ class TestCLI:
             line.split(" from ")[0] for line in result.stderr.decode().splitlines()
         ]
         assert backups == [
-            "1. gsb1.3",
-            "2. gsb1.2",
-            "3. gsb1.1",
-            "4. gsb1.0",
-            "5. 0.2",
-            "6. 0.1",
+            last_backup,
+            "2. gsb1.3",
+            "3. gsb1.2",
+            "4. gsb1.1",
+            "5. gsb1.0",
+            "6. 0.2",
+            "7. 0.1",
         ]
 
     @pytest.mark.parametrize("flag", ("--all", "-a"))
