@@ -295,13 +295,19 @@ def commit(
     return Commit.from_pygit2(repo[commit_id])
 
 
-def log(repo_root: Path) -> Generator[Commit, None, None]:
+def log(
+    repo_root: Path, starting_point: str | None = None
+) -> Generator[Commit, None, None]:
     """Return metadata about commits such as you'd get by running `git log`
 
     Parameters
     ----------
     repo_root : Path
         The root directory of the git repo
+    starting_point : str, optional
+        The default behavior is to walk backwards from the current repo HEAD.
+        To specify a different starting point, provide an identifier for this
+        variable.
 
     Returns
     -------
@@ -310,14 +316,20 @@ def log(repo_root: Path) -> Generator[Commit, None, None]:
 
     Raises
     ------
+    ValueError
+        If `starting_point` is provided and can't be resolved
     OSError
         If `repo_root` does not exist, is not a directory or cannot be accessed
     """
     repo = _repo(repo_root)
-
-    LOGGER.debug("git log")
     try:
-        for commit_object in repo.walk(repo[repo.head.target].id, pygit2.GIT_SORT_NONE):
+        if starting_point is not None:
+            LOGGER.debug("git log %s", starting_point)
+            head = _resolve_reference(starting_point, repo).id
+        else:
+            LOGGER.debug("git log")
+            head = repo[repo.head.target].id
+        for commit_object in repo.walk(head, pygit2.GIT_SORT_NONE):
             yield Commit.from_pygit2(commit_object)
     except pygit2.GitError as maybe_empty_history:
         if re.search("reference (.*) not found", str(maybe_empty_history)):
