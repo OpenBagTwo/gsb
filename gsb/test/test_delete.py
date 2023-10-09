@@ -7,7 +7,6 @@ import pytest
 from gsb import _git, fastforward
 from gsb.backup import create_backup
 from gsb.history import get_history
-from gsb.manifest import Manifest
 from gsb.rewind import restore_backup
 
 
@@ -26,18 +25,6 @@ class TestDeleteBackups:
         ]
 
     def test_modified_files_are_automatically_backed_up(self, root):
-        cretaceous_continents = (
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-
-        (root / "continents").write_text(cretaceous_continents)
-        Manifest.of(root)._replace(patterns=("species", "continents")).write()
         fastforward.delete_backups(root, "gsb1.3")
 
         # make sure the backup was deleted
@@ -47,12 +34,17 @@ class TestDeleteBackups:
         ]
 
         # make sure there's nothing to commit post-ff
-        _git.add(root, ["continents"])
+        _git.add(root, ["oceans"])
         with pytest.raises(ValueError, match="Nothing to commit"):
             _git.commit(root, "Oh no! Continents weren't being tracked!")
 
         # make sure that the unsaved contents were backed up (and preserved)
-        assert (root / "continents").read_text("utf-8") == cretaceous_continents
+        assert [
+            line.strip() for line in (root / "oceans").read_text("utf-8").splitlines()
+        ] == [
+            "pacific",
+            "tethys",
+        ]
 
     @pytest.mark.usefixtures("patch_tag_naming")
     def test_deleting_a_backup_doesnt_mess_up_subsequent_backups(self, root):
@@ -79,23 +71,26 @@ class TestDeleteBackups:
         ] == ["gsb1.3", "gsb1.2"]
 
     def test_deleting_multiple_backups(self, root, all_backups):
+        _git.reset(root, "gsb1.3", hard=True)
+
         # frequent workflow: deleting all non-tagged backups
         fastforward.delete_backups(
             root,
             *(
                 revision["identifier"]
-                for revision in all_backups[:-1]
+                for revision in all_backups[1:-1]
                 if not revision["identifier"].startswith(("gsb", "0."))
             ),
         )
         assert [
-            backup["identifier"] for backup in get_history(root, tagged_only=False)[:-1]
+            backup["identifier"] for backup in get_history(root, tagged_only=False)
         ] == [
             "gsb1.3",
             "gsb1.2",
             "gsb1.1",
             "gsb1.0",
             "0.2",
+            "0.1",
         ]
 
     def test_raise_value_error_on_invalid_backup(self, root):
@@ -147,28 +142,9 @@ class TestCLI:
             in result.stdout.decode().strip().splitlines()[-1]
         )
 
-    def test_prompt_includes_all_commits_since_last_tag(self, root):
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-        post_tag_backup_1 = create_backup(root)
-        (root / "oceans").write_text(
-            "\n".join(
-                (
-                    "pacific",
-                    "tethys",
-                )
-            )
-            + "\n"
-        )
-        post_tag_backup_2 = create_backup(root)
+    def test_prompt_includes_all_commits_since_last_tag(self, root, all_backups):
+        post_tag_backup_1 = all_backups[0]["identifier"]
+        post_tag_backup_2 = create_backup(root)[:8]
 
         result = subprocess.run(
             ["gsb", "delete"],
@@ -177,8 +153,8 @@ class TestCLI:
             input="q\n".encode(),
         )
         assert [
-            f"- {post_tag_backup_2[:8]}",
-            f"- {post_tag_backup_1[:8]}",
+            f"- {post_tag_backup_2}",
+            f"- {post_tag_backup_1}",
             "- gsb1.3",
         ] == [
             line.split("from")[0].strip()
@@ -217,16 +193,17 @@ class TestCLI:
             "full",
         ),
     )
-    def test_deleting_by_commit(self, root, how):
-        some_commit = list(_git.log(root))[2].hash
+    def test_deleting_by_commit(self, root, how, all_backups):
+        _git.reset(root, "gsb1.3", hard=True)  # reset to just after tagged bkp
+        some_backup = all_backups[2]
 
         # meta-test to make sure I didn't grab a tag
-        assert some_commit not in {
-            tag.target for tag in _git.get_tags(root, annotated_only=True)
-        }
+        assert not some_backup["tagged"]
 
         if how == "short":
-            some_commit = some_commit[:8]
+            some_commit = some_backup["identifier"]
+        else:
+            some_commit = some_backup["commit_hash"]
 
         _ = subprocess.run(
             ["gsb", "delete", some_commit],
