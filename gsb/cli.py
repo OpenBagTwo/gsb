@@ -282,7 +282,7 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
 
     LOGGER.log(
         IMPORTANT,
-        "\nSelect one by number or revision (or [q]uit and"
+        "\nSelect one by number or identifier (or [q]uit and"
         " call gsb history yourself to get more revisions).",
     )
 

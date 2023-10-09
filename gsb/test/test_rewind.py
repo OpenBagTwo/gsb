@@ -150,7 +150,7 @@ class TestCLI:
         )
 
         assert (
-            "Select one by number or revision"
+            "Select one by number or identifier"
             in result.stderr.decode().strip().splitlines()[-2]
         )
 
@@ -163,7 +163,7 @@ class TestCLI:
         )
 
         assert (
-            "Select one by number or revision"
+            "Select one by number or identifier"
             in result.stderr.decode().strip().splitlines()[-2]
         )
 
