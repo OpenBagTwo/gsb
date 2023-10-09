@@ -1,6 +1,6 @@
 """Tests for restoring backups"""
 import subprocess
-from pathlib import Path
+import time
 
 import pytest
 
@@ -141,6 +141,18 @@ class TestRestoreBackup:
         rewind.restore_backup(repo, first_commit["identifier"])
 
         assert (repo / MANIFEST_NAME).exists()
+
+    def test_rewind_tag_naming_doesnt_cause_conflicts(self, tmp_path):
+        repo_root = tmp_path / "repossess"
+        repo_root.mkdir()
+        onboard.create_repo(repo_root, "furniture")
+        restore_point = get_history(repo_root, limit=1)[0]
+        (repo_root / "furniture").mkdir()
+        (repo_root / "furniture" / "sofa").write_text("I'm the king!")
+        backup.create_backup(repo_root)
+        time.sleep(1)  # blergh
+        rewind.restore_backup(repo_root, restore_point["identifier"])
+        assert not (repo_root / "furniture" / "sofa").exists()
 
 
 class TestCLI:
