@@ -1,5 +1,6 @@
 """Tests for restoring backups"""
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -203,6 +204,27 @@ class TestCLI:
 
         assert (repo / "save" / "data.txt").read_text() == "6\n"
 
+    @pytest.mark.parametrize("is_gsb", (True, False), ids=("gsb", "non-gsb"))
+    def test_most_recent_backup_is_a_choice(self, repo, is_gsb):
+        if is_gsb:
+            commit_hash = backup.create_backup(repo)
+        else:
+            _git.force_add(repo, (Path("save") / "data.txt",))
+            commit_hash = _git.commit(
+                repo, "Sneakier and Sneakier", _committer=("you-ser", "me@computer")
+            ).hash
+
+        (repo / "save" / "data.txt").write_text("Unsaved changes!\n")
+
+        result = subprocess.run(
+            ["gsb", "rewind"], cwd=repo, capture_output=True, input="0\n".encode()
+        )
+
+        assert f"0. {commit_hash[:8]}" in result.stderr.decode()
+
+        # check that the contents were restored
+        assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
+
     @pytest.mark.parametrize("how", ("by_argument", "by_prompt"))
     def test_unknown_revision_raises_error(self, repo, how):
         args = ["gsb", "rewind"]
@@ -251,7 +273,7 @@ class TestCLI:
         )
         log_lines = result.stderr.decode().strip().splitlines()
 
-        assert "No gsb revisions found" in log_lines[1]
+        assert "No GSB revisions found" in log_lines[1]
         assert f"1. {commit_hash}" in log_lines[2]
 
     def test_running_on_empty_repo_raises(self, tmp_path):
