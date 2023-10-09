@@ -5,7 +5,6 @@ import pytest
 
 from gsb import history
 from gsb.backup import create_backup
-from gsb.manifest import Manifest
 
 
 class TestGetHistory:
@@ -41,6 +40,7 @@ class TestGetHistory:
             revision["description"]
             for revision in history.get_history(root, tagged_only=False)
         ] == [
+            "Autocommit",
             "Cretaceous (my gracious!)",
             "Autocommit",
             "Jurassic",
@@ -66,36 +66,16 @@ class TestGetHistory:
         assert [
             revision["description"]
             for revision in history.get_history(
-                root, tagged_only=False, include_non_gsb=True, limit=2
+                root, tagged_only=False, include_non_gsb=True, limit=3
             )
         ] == [
+            "Autocommit",
             "Cretaceous (my gracious!)",
             "It's my ancestors!",
         ]
 
     def test_getting_revisions_since_last_tagged_backup(self, root):
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
         create_backup(root)
-        (root / "oceans").write_text(
-            "\n".join(
-                (
-                    "pacific",
-                    "tethys",
-                )
-            )
-            + "\n"
-        )
-        create_backup(root)
-
         assert (
             len(
                 history.get_history(
@@ -183,11 +163,11 @@ class TestCLI:
 
         backups = [
             line.split(" from ")[0]
-            for line in [result.stderr.decode().splitlines()[i] for i in [0, 2, 4, 5]]
+            for line in [result.stderr.decode().splitlines()[i] for i in [1, 3, 5, 6]]
         ]
         assert backups == [
-            "1. gsb1.3",
-            "3. gsb1.2",
-            "5. gsb1.1",
-            "6. gsb1.0",
+            "2. gsb1.3",
+            "4. gsb1.2",
+            "6. gsb1.1",
+            "7. gsb1.0",
         ]

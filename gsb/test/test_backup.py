@@ -96,28 +96,18 @@ class TestCreateBackup:
         assert str(repo.revparse_single(tag_name).target) == commit_hash
 
     def test_combining_with_previous_backup(self, root):
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-        identifier = backup.create_backup(root, parent="gsb1.2")
+        identifier = backup.create_backup(root, parent="gsb1.3")
         assert [
             revision["identifier"]
             for revision in get_history(
                 root, tagged_only=False, include_non_gsb=True, limit=2
             )
-        ] == [identifier[:8], "gsb1.2"]
+        ] == [identifier[:8], "gsb1.3"]
 
         # ensure that the squash kept all file changes
         assert (root / "continents").read_text("utf-8").startswith("laurasia")
-        assert "continents" in Manifest.of(root).patterns
-        assert (root / "species").read_text("utf-8").strip().endswith("sharks\nsquids")
+        assert "oceans" in Manifest.of(root).patterns
+        assert (root / "oceans").read_text("utf-8").strip().endswith("tethys")
 
 
 class TestCLI:
@@ -174,19 +164,6 @@ class TestCLI:
         assert tags[-1].annotation == "Hello World\n"
 
     def test_squash_with_last_commit(self, root):
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-        backup.create_backup(root)
-
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-
         result = subprocess.run(["gsb", "backup", "-vc"], cwd=root, capture_output=True)
         commit_id = result.stderr.decode().splitlines()[-1].split("hash")[-1].strip()
 
@@ -199,17 +176,7 @@ class TestCLI:
 
     @pytest.mark.parametrize("confirm", (False, True), ids=("abort", "confirm"))
     def test_squash_with_last_tag_requires_confirmation(self, root, confirm):
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
+        _git.reset(root, "gsb1.3", hard=False)
 
         result = subprocess.run(
             ["gsb", "backup", "-c"],
@@ -244,31 +211,9 @@ class TestCLI:
         assert len(get_history(repo, tagged_only=False)) == 1
 
     def test_squash_all_since_last_tag(self, root):
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+        # commit unsaved changes, so we can test that -cc works
+        # even when all we're doing is squashing
         backup.create_backup(root)
-
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
-        backup.create_backup(root)
-
-        (root / "oceans").write_text(
-            "\n".join(
-                (
-                    "pacific",
-                    "tethys",
-                )
-            )
-            + "\n"
-        )
-        backup.create_backup(root)
-        # this is also testing that -cc works even when all we're doing is squashing
 
         result = subprocess.run(
             ["gsb", "backup", "-vcc"], cwd=root, capture_output=True
@@ -285,17 +230,7 @@ class TestCLI:
     def test_squash_all_since_last_tag_is_quiet_when_theres_nothing_to_squash(
         self, root
     ):
-        Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
-
-        (root / "continents").write_text(
-            "\n".join(
-                (
-                    "laurasia",
-                    "gondwana",
-                )
-            )
-            + "\n"
-        )
+        _git.reset(root, "gsb1.3", hard=False)
 
         result = subprocess.run(
             ["gsb", "backup", "-qcc"], cwd=root, capture_output=True
