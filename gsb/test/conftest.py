@@ -7,7 +7,7 @@ from typing import Generator
 import pytest
 
 from gsb import _git, backup
-from gsb.manifest import Manifest
+from gsb.manifest import MANIFEST_NAME, Manifest
 
 
 @pytest.fixture(autouse=True)
@@ -78,7 +78,7 @@ def _repo_with_history(tmp_path_factory):
 
     Manifest(root, ("species",)).write()
     (root / ".gitignore").touch()
-    _git.add(root, ["species", ".gsb_manifest", ".gitignore"])
+    _git.add(root, ["species", MANIFEST_NAME, ".gitignore"])
     _git.tag(root, "gsb1.0", "Start of gsb tracking")
 
     (root / "species").write_text(
@@ -135,6 +135,31 @@ def _repo_with_history(tmp_path_factory):
     _git.commit(root, "Autocommit")
 
     _git.tag(root, "gsb1.3", "Cretaceous (my gracious!)")
+
+    (root / "continents").write_text(
+        "\n".join(
+            (
+                "laurasia",
+                "gondwana",
+            )
+        )
+        + "\n"
+    )
+    Manifest.of(root)._replace(patterns=("species", "continents", "oceans")).write()
+    _git.add(root, ("continents",))
+    _git.force_add(root, (MANIFEST_NAME,))
+    _git.commit(root, "Autocommit")
+
+    # these contents are new since the last commit
+    (root / "oceans").write_text(
+        "\n".join(
+            (
+                "pacific",
+                "tethys",
+            )
+        )
+        + "\n"
+    )
 
     yield root, jurassic.timestamp
 
