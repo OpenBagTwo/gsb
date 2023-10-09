@@ -31,7 +31,7 @@ def patch_tag_naming(monkeypatch):
     def mock_tag_namer() -> str:
         return next(tag_namer)
 
-    monkeypatch.setattr(backup, "_generate_tag_name", mock_tag_namer)
+    monkeypatch.setattr(backup, "generate_tag_name", mock_tag_namer)
 
 
 @pytest.fixture(scope="session")
