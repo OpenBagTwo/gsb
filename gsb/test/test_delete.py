@@ -299,7 +299,7 @@ class TestCLI:
         )
         log_lines = result.stderr.decode().strip().splitlines()
 
-        assert "No gsb revisions found" in log_lines[1]
+        assert "No GSB revisions found" in log_lines[1]
         assert f"{commit_hash}" in log_lines[2]
 
     def test_running_on_empty_repo_raises(self, tmp_path):
