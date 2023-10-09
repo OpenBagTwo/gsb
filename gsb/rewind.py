@@ -8,6 +8,23 @@ from .logging import IMPORTANT
 LOGGER = logging.getLogger(__name__)
 
 
+def generate_restore_tag_name(revision: str) -> str:
+    """Generate a new calver-ish tag name
+
+    Parameters
+    ----------
+    revision : str
+        The commit hash or tag name of the backup to restore
+
+    Returns
+    -------
+    str
+        A tag name that indicates both the time a backup was restored and the
+        identifier of the original revision
+    """
+    return f"{backup.generate_tag_name()}.restore_of_{revision}"
+
+
 def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) -> str:
     """Rewind to a previous backup state and create a new backup
 
@@ -51,4 +68,8 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
     _git.reset(repo_root, orig_head, hard=False)
     if keep_gsb_files:
         _git.checkout_files(repo_root, orig_head, backup.REQUIRED_FILES)
-    return backup.create_backup(repo_root, f"Restored to {revision}")
+    return backup.create_backup(
+        repo_root,
+        f"Restored to {revision}",
+        tag_name=generate_restore_tag_name(revision),
+    )

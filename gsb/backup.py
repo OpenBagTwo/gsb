@@ -12,13 +12,13 @@ REQUIRED_FILES: tuple[Path, ...] = (Path(".gitignore"), Path(MANIFEST_NAME))
 LOGGER = logging.getLogger(__name__)
 
 
-def _generate_tag_name() -> str:
+def generate_tag_name() -> str:
     """Generate a new calver-ish tag name
 
     Returns
     -------
     str
-        A tag name that should hopefully be distinctly gsb and distinct
+        A tag name that should hopefully be distinctly GSB and distinct
         from any tags a user would manually create
 
     Notes
@@ -35,6 +35,7 @@ def create_backup(
     tag_message: str | None = None,
     commit_message: str | None = None,
     parent: str | None = None,
+    tag_name: str | None = None,
 ) -> str:
     """Create a new backup
 
@@ -55,6 +56,10 @@ def create_backup(
         By default, this new backup will be created as an incremental commit
         off of the current head. To instead reset to a specific revision,
         pass in an ID for that revision to this argument.
+    tag_name : str, optional
+        By default, tag names are automatically generated. Use this argument to
+        provide a custom tag name. This option is ignored when not creating
+        a tag.
 
     Returns
     -------
@@ -88,6 +93,8 @@ def create_backup(
             raise
         LOGGER.info("Nothing new to commit--all files are up-to-date.")
     if tag_message:
-        identifier = _git.tag(repo_root, _generate_tag_name(), tag_message).name
+        identifier = _git.tag(
+            repo_root, tag_name or generate_tag_name(), tag_message
+        ).name
         LOGGER.log(IMPORTANT, "Created new tagged backup: %s", identifier)
     return identifier

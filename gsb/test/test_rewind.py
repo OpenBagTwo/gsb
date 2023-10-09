@@ -63,6 +63,13 @@ class TestRestoreBackup:
         rewind.restore_backup(repo, "gsb2023.07.13")
         assert (repo / "save" / "data.txt").read_text() == "6\n"
 
+    def test_restore_tag_references_the_restored_version(self, repo):
+        rewind.restore_backup(repo, "gsb2023.07.10")
+        assert (
+            get_history(repo, limit=1)[0]["identifier"]
+            == "gsb2023.07.16.restore_of_gsb2023.07.10"
+        )
+
     def test_restores_file_content_to_a_previous_commit(self, repo):
         commit_two = list(get_history(repo, tagged_only=False))[-4]
         assert not commit_two["identifier"].startswith("gsb")  # not a tag
