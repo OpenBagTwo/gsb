@@ -44,6 +44,7 @@ def get_history(
     limit: int = -1,
     since: dt.date = dt.datetime(1970, 1, 1),
     since_last_tagged_backup: bool = False,
+    always_include_latest: bool = False,
 ) -> list[Revision]:
     """Retrieve a list of GSB-managed versions
 
@@ -67,6 +68,9 @@ def get_history(
         False by default. To return only revisions made since the last tagged
         backup, pass in `since_last_tagged_backup=True` (and, presumably,
         `tagged_only=False`). This flag is compatible with all other filters.
+    always_include_latest: bool, optional
+        Whether to always include the latest backup, whether or not it's
+        tagged or GSB-managed, and ignoring any other options. Default is False.
 
     Returns
     -------
@@ -78,6 +82,9 @@ def get_history(
     ------
     OSError
         If the specified repo does not exist or is not a git repo
+    ValueError
+        If called with `return_parent=True` `get_history` and the earliest commit
+        had no parent (being the initial commit, itself).
     """
     tag_lookup = {
         tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
@@ -85,11 +92,13 @@ def get_history(
     LOGGER.debug("Retrieved %s tags", len(tag_lookup))
 
     revisions: list[Revision] = []
+    defer_break = False
     for commit in _git.log(repo_root):
-        if len(revisions) == limit:
-            break
-        if commit.timestamp < since:
-            break
+        if len(revisions) == limit or commit.timestamp < since:
+            if always_include_latest:
+                defer_break = True
+            else:
+                break
         if tag := tag_lookup.get(commit):
             if since_last_tagged_backup:
                 break
@@ -98,13 +107,13 @@ def get_history(
             is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
             description = tag.annotation or commit.message
         else:
-            if tagged_only:
+            if tagged_only and not always_include_latest:
                 continue
             tagged = False
             identifier = commit.hash[:8]
             is_gsb = commit.gsb
             description = commit.message
-        if not include_non_gsb and not is_gsb:
+        if not include_non_gsb and not is_gsb and not always_include_latest:
             continue
         revisions.append(
             {
@@ -116,6 +125,10 @@ def get_history(
                 "gsb": is_gsb,
             }
         )
+        if always_include_latest:
+            if defer_break:
+                break
+            always_include_latest = False
     return revisions
 
 
