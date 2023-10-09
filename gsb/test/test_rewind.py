@@ -209,7 +209,7 @@ class TestCLI:
         if is_gsb:
             commit_hash = backup.create_backup(repo)
         else:
-            _git.force_add(repo, (Path("save") / "data.txt",))
+            _git.add(repo, ("save",))
             commit_hash = _git.commit(
                 repo, "Sneakier and Sneakier", _committer=("you-ser", "me@computer")
             ).hash
