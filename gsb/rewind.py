@@ -51,7 +51,7 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
     Raises
     ------
     OSError
-        If the specified repo does not exist or is not a gsb-managed repo
+        If the specified repo does not exist or is not a GSB-managed repo
     ValueError
         If the specified revision does not exist
     """
