@@ -76,7 +76,7 @@ def _repo_with_history(tmp_path_factory):
     _git.add(root, ["species"])
     _git.commit(root, "Oh no! Everyone's dead!", _committer=("you-ser", "me@computer"))
 
-    Manifest(root, ("species",)).write()
+    Manifest(root, "history of life", ("species",)).write()
     (root / ".gitignore").touch()
     _git.add(root, ["species", MANIFEST_NAME, ".gitignore"])
     _git.tag(root, "gsb1.0", "Start of gsb tracking")

@@ -1,5 +1,7 @@
 """Tests for creating new repos"""
+import os
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -30,6 +32,9 @@ class TestFreshInit:
     def test_no_pattern_means_add_all(self, root):
         manifest = onboard.create_repo(root)
         assert manifest.patterns == (".",)
+
+    def test_default_behavior_gets_name_from_directory(self, root):
+        assert onboard.create_repo(root).name == "rootabaga"
 
     def test_providing_patterns(self, root):
         manifest = onboard.create_repo(root, "savey_mcsavegame", "logs/")
@@ -203,6 +208,24 @@ class TestCLI:
     def test_passing_in_a_custom_root_by_option(self, root):
         subprocess.run(["gsb", "init", "--path", root.name], cwd=root.parent)
         assert (root / ".git").exists()
+
+    @pytest.mark.parametrize("where_is_root", ("absolute", "subdir", "pardir", "cwd"))
+    def test_name_resolves_successfully(self, root, where_is_root):
+        (root / "subdir").mkdir()
+        if where_is_root == "absolute":
+            cwd: Path | None = None
+            root_arg: str = os.path.abspath(root)
+        elif where_is_root == "subdir":
+            cwd = root.parent
+            root_arg = "froot"
+        elif where_is_root == "pardir":
+            cwd = root / "subdir"
+            root_arg = ".."
+        else:  # if where_is_root == "cwd"
+            cwd = root
+            root_arg = ""
+        subprocess.run(["gsb", "init", "--path", root_arg], cwd=cwd)
+        assert Manifest.of(root).name == "froot"
 
     @pytest.mark.parametrize(
         "how", ("by_argument", "by_option", "by_option_individually", "mixed")
