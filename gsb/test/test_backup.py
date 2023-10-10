@@ -250,7 +250,7 @@ class TestCLI:
         repo.mkdir()
         _git.init(repo)
         (repo / ".gitignore").touch()
-        Manifest(repo, ("something",)).write()
+        Manifest(repo, "blergh", ("something",)).write()
         backup.create_backup(repo)
         (repo / "something").write_text("it's not nothing\n")
         backup.create_backup(repo)
