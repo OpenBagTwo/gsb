@@ -22,11 +22,14 @@ class Manifest(NamedTuple):
     ----------
     root : Path
         The directory containing the save / repo
+    name : str
+        The name / alias of the repo
     patterns : tuple of str
         The glob match-patterns that determine which files get tracked
     """
 
     root: Path
+    name: str
     patterns: tuple[str, ...]
 
     @classmethod
@@ -58,6 +61,8 @@ class Manifest(NamedTuple):
                 if isinstance(value, list):
                     value = tuple(value)
                 as_dict[key] = value
+        if "name" not in as_dict:
+            as_dict["name"] = repo_root.resolve().name
         return cls(**as_dict)
 
     def write(self) -> None:

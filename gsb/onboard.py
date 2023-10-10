@@ -9,7 +9,10 @@ DEFAULT_IGNORE_LIST: tuple[str, ...] = ()
 
 
 def create_repo(
-    repo_root: Path, *patterns: str, ignore: Iterable[str] | None = None
+    repo_root: Path,
+    *patterns: str,
+    ignore: Iterable[str] | None = None,
+    name: str | None = None,
 ) -> Manifest:
     """Create a new `gsb`-managed git repo in the specified location
 
@@ -24,6 +27,9 @@ def create_repo(
     ignore : list of str, optional
         List of glob-patterns to *ignore*. If None are specified, then nothing
         will be ignored.
+    name : str, optional
+        An alias to assign to the repo. If None is provided, the `repo_root`
+        folder's name will be used.
 
     Returns
     -------
@@ -49,7 +55,7 @@ def create_repo(
     _update_gitignore(repo_root, ignore or ())
 
     # enforce round-trip
-    Manifest(repo_root, tuple(patterns)).write()
+    Manifest(repo_root, name or repo_root.resolve().name, tuple(patterns)).write()
     manifest = Manifest.of(repo_root)
 
     backup.create_backup(repo_root, "Start of gsb tracking")
