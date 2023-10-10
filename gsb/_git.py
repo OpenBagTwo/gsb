@@ -731,7 +731,7 @@ def checkout_branch(repo_root: Path, branch_name: str, target: str | None) -> No
         LOGGER.debug("git checkout %s", branch_name)
         repo.checkout(repo.branches.local[branch_name])
     except KeyError as no_such_branch:
-        raise ValueError(no_such_branch)
+        raise ValueError(no_such_branch) from no_such_branch
 
 
 def delete_branch(repo_root: Path, branch_name: str) -> None:
@@ -757,4 +757,4 @@ def delete_branch(repo_root: Path, branch_name: str) -> None:
         LOGGER.debug("git branch -D %s", branch_name)
         repo.branches.local.delete(branch_name)
     except KeyError as no_such_branch:
-        raise ValueError(no_such_branch)
+        raise ValueError(no_such_branch) from no_such_branch
