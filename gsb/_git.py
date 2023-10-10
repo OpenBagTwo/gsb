@@ -799,7 +799,7 @@ def archive(repo_root: Path, filename: Path, reference: str = "HEAD") -> None:
     LOGGER.debug("git archive -o %s %s", filename, reference)
 
     match tuple(suffix.lower() for suffix in filename.suffixes):
-        case ("",):
+        case ():
             raise ValueError(f"{filename} does not specify an extension.")
         case *_, ".tar":
             opener = partial(tarfile.open, mode="x:")

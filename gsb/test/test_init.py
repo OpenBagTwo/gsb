@@ -193,6 +193,19 @@ stuff
         assert {tag.annotation for tag in tags} == expected
 
 
+class TestBackwardsCompatibility:
+    def test_manifests_without_name_inherit_name_from_folder(self, tmp_path):
+        (tmp_path / MANIFEST_NAME).write_text(
+            """
+generated_by_gsb = "0.0.2-rc2"
+last_modified = "2023-08-05"
+patterns = [
+]
+"""
+        )
+        assert Manifest.of(tmp_path).name == tmp_path.name
+
+
 class TestCLI:
     @pytest.fixture
     def root(self, tmp_path):
