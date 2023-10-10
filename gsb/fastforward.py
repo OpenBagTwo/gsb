@@ -166,7 +166,7 @@ def delete_backups(repo_root: Path, *revisions: str) -> str:
 
     to_keep: list[str] = []
     for commit in _git.log(repo_root):
-        if commit in to_delete.keys():
+        if commit in to_delete:
             del to_delete[commit]
         else:
             to_keep.insert(0, commit.hash)
@@ -177,10 +177,9 @@ def delete_backups(repo_root: Path, *revisions: str) -> str:
             raise NotImplementedError(
                 "Deleting the initial backup is not currently supported."
             )
-        else:
-            raise ValueError(
-                "The following revisions exist, but they are not within"
-                " the linear commit history:\n"
-                + "\n".join((f"  - {revision}" for revision in to_delete.values()))
-            )
+        raise ValueError(
+            "The following revisions exist, but they are not within"
+            " the linear commit history:\n"
+            + "\n".join((f"  - {revision}" for revision in to_delete.values()))
+        )
     return rewrite_history(repo_root, *to_keep)
