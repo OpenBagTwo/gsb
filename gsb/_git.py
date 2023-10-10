@@ -4,11 +4,15 @@ import getpass
 import logging
 import re
 import socket
+import tarfile
+import zipfile
 from functools import partial
 from pathlib import Path
 from typing import Any, Generator, Iterable, NamedTuple, Self
 
 import pygit2
+
+from ._make_zip_archive import write_zip_archive
 
 LOGGER = logging.getLogger(__name__)
 
@@ -798,22 +802,19 @@ def archive(repo_root: Path, filename: Path, reference: str = "HEAD") -> None:
         case ("",):
             raise ValueError(f"{filename} does not specify an extension.")
         case *_, ".tar":
-            import tarfile
-
             opener = partial(tarfile.open, mode="x:")
         case (*_, ".tgz") | (*_, ".tar", ".gz"):
-            import tarfile
-
             opener = partial(tarfile.open, mode="x:gz")
         case (*_, ".tbz2" | ".tbz") | (*_, ".tar", (".bz2" | ".bz")):
-            import tarfile
-
             opener = partial(tarfile.open, mode="x:bz2")
         case (*_, ".txz" | ".tlzma", ".tlz") | (*_, ".tar", (".xz" | ".lzma" | ".lz")):
-            import tarfile
-
             opener = partial(tarfile.open, mode="x:xz")
-        # case ".zip":
+        case (*_, ".zip"):
+            with zipfile.ZipFile(
+                filename, "w", compression=zipfile.ZIP_DEFLATED
+            ) as zip_file:
+                write_zip_archive(repo, revision, zip_file)
+            return
         case _:
             raise NotImplementedError(f"{filename}: Archive format is not supported.")
 
