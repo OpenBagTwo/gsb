@@ -4,6 +4,7 @@ import getpass
 import logging
 import re
 import socket
+from functools import partial
 from pathlib import Path
 from typing import Any, Generator, Iterable, NamedTuple, Self
 
@@ -758,3 +759,63 @@ def delete_branch(repo_root: Path, branch_name: str) -> None:
         repo.branches.local.delete(branch_name)
     except KeyError as no_such_branch:
         raise ValueError(no_such_branch) from no_such_branch
+
+
+def archive(repo_root: Path, filename: Path, reference: str = "HEAD") -> None:
+    """Create a standalone archive containing the files in the repo at the
+    current HEAD
+
+    Parameters
+    ----------
+    repo_root : Path
+        The root directory of the git repo
+    filename : Path
+        The full path to the archive's location, including its extension
+    reference : str, optional
+        A unique descriptor of the tag or commit to archive. If None is given,
+        the default is to use the current HEAD.
+
+    Raises
+    ------
+    OSError
+        If `repo_root` does not exist, is not a directory or cannot be accessed,
+        or if the specified `filename` already exists or cannot be written to.
+    ValueError
+        If the specified `target` does not exist or if the given filename
+        does not have a valid extension
+    NotImplementedError
+        If the compression schema implied by the filename's extension is not
+        supported
+    """
+    repo = _repo(repo_root)
+    revision = _resolve_reference(reference, repo)
+    if filename.exists():
+        raise FileExistsError(f"Archive {filename} already exists.")
+
+    LOGGER.debug("git archive -o %s %s", filename, reference)
+
+    match tuple(suffix.lower() for suffix in filename.suffixes):
+        case ("",):
+            raise ValueError(f"{filename} does not specify an extension.")
+        case *_, ".tar":
+            import tarfile
+
+            opener = partial(tarfile.open, mode="x:")
+        case (*_, ".tgz") | (*_, ".tar", ".gz"):
+            import tarfile
+
+            opener = partial(tarfile.open, mode="x:gz")
+        case (*_, ".tbz2" | ".tbz") | (*_, ".tar", (".bz2" | ".bz")):
+            import tarfile
+
+            opener = partial(tarfile.open, mode="x:bz2")
+        case (*_, ".txz" | ".tlzma", ".tlz") | (*_, ".tar", (".xz" | ".lzma" | ".lz")):
+            import tarfile
+
+            opener = partial(tarfile.open, mode="x:xz")
+        # case ".zip":
+        case _:
+            raise NotImplementedError(f"{filename}: Archive format is not supported.")
+
+    with opener(filename) as archive_file:
+        repo.write_archive(revision, archive_file)
