@@ -223,7 +223,7 @@ class TestCLI:
         assert (root / ".git").exists()
 
     @pytest.mark.parametrize("where_is_root", ("absolute", "subdir", "pardir", "cwd"))
-    def test_name_resolves_successfully(self, root, where_is_root):
+    def test_name_resolves_successfully(self, root, where_is_root) -> None:
         (root / "subdir").mkdir()
         if where_is_root == "absolute":
             cwd: Path | None = None
