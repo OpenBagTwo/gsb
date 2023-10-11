@@ -10,11 +10,13 @@ import click
 
 from . import _git, _version
 from . import backup as backup_
+from . import export as export_
 from . import fastforward
 from . import history as history_
 from . import onboard
 from . import rewind as rewind_
 from .logging import IMPORTANT, CLIFormatter, verbosity_to_log_level
+from .manifest import Manifest
 
 LOGGER = logging.getLogger(__package__)
 
@@ -352,3 +354,103 @@ def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
         LOGGER.error("Aborting.")
         sys.exit(1)
     return tuple(choice.strip() for choice in choices.strip().split(","))
+
+
+@click.option(
+    "-J",
+    "xz_flag",
+    is_flag=True,
+    flag_value="tar.xz",
+    help="Export as a .tar.xz archive",
+)
+@click.option(
+    "-j",
+    "bz2_flag",
+    is_flag=True,
+    flag_value="tar.bz2",
+    help="Export as a .tar.bz2 archive",
+)
+@click.option(
+    "-z",
+    "gz_flag",
+    is_flag=True,
+    flag_value="tar.gz",
+    help="Export as a .tar.gz archive",
+)
+@click.option(
+    "-t",
+    "tar_flag",
+    is_flag=True,
+    flag_value="tar",
+    help="Export as an uncompressed .tar archive",
+)
+@click.option(
+    "-p",
+    "zip_flag",
+    is_flag=True,
+    flag_value="zip",
+    help="Export as a .zip archive",
+)
+@click.option(
+    "--format",
+    "archive_format",
+    type=str,
+    required=False,
+    help=(
+        "Format for the archived backup. If not specified,"
+        " an appropriate one will be chosen based on your OS."
+    ),
+)
+@click.option(
+    "--output",
+    "-o",
+    type=Path,
+    required=False,
+    help=(
+        "Explicitly specify a filename for the archived backup."
+        " The format of the archive will be inferred from the extension"
+        " unless a format flag is provided."
+    ),
+    metavar="FILENAME",
+)
+@click.argument(
+    "revision",
+    type=str,
+    required=False,
+)
+@_subcommand_init
+def export(
+    repo_root: Path,
+    revision: str | None,
+    output: Path | None,
+    **format_flags,
+):
+    """Create a stand-alone archive specified REVISION."""
+    print(format_flags)
+    specified_formats: list[str] = [value for value in format_flags.values() if value]
+
+    if len(specified_formats) > 1:
+        LOGGER.error("Conflicting values given for archive format")
+        sys.exit(1)
+
+    if revision is None:
+        revision = _prompt_for_a_recent_revision(repo_root)
+
+    if len(specified_formats) == 1:
+        archive_format = specified_formats[0]
+        if archive_format.startswith("."):
+            archive_format = archive_format[1:]
+        if output is None:
+            output = Path(
+                export_.generate_archive_name(
+                    Manifest.of(repo_root).name, revision, extension=archive_format
+                )
+            )
+        else:
+            output = output.parent / (output.name + f".{archive_format}")
+
+    try:
+        export_.export_backup(repo_root, revision, output)
+    except ValueError as whats_that:
+        LOGGER.error(whats_that)
+        sys.exit(1)

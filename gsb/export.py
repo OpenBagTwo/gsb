@@ -8,7 +8,9 @@ from . import _git
 from .manifest import Manifest
 
 
-def generate_archive_name(repo_name: str, revision: str) -> str:
+def generate_archive_name(
+    repo_name: str, revision: str, extension: str | None = None
+) -> str:
     """Programmatically generate a name for an archived backup
 
     Parameters
@@ -17,12 +19,16 @@ def generate_archive_name(repo_name: str, revision: str) -> str:
         The alias assigned to the GSB-managed repo
     revision : str
         The commit hash or tag name of the backup that's being archived
+    extension : str, optional
+        The file extension for the archive (thus specifying the archive's format).
+        If None is provided, an appropriate one will be chosen based on the
+        operating system.
 
     Returns
     -------
     str
-        A (hopefully) descriptive archive filename, including an OS-appropriate
-        default extension
+        A (hopefully) descriptive archive filename, including a format-specifying
+        extension
 
     Notes
     -----
@@ -30,9 +36,9 @@ def generate_archive_name(repo_name: str, revision: str) -> str:
     - zip for Windows
     - tar.gz for POSIX systems (Mac and Linux)
     """
-    return pathvalidate.sanitize_filename(
-        f'{repo_name}_{revision}.{"zip" if os.name == "nt" else "tar.gz"}'
-    )
+    if extension is None:
+        extension = "zip" if os.name == "nt" else "tar.gz"
+    return pathvalidate.sanitize_filename(f"{repo_name}_{revision}.{extension}")
 
 
 def export_backup(
