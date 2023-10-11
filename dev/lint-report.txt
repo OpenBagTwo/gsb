@@ -1,18 +1,19 @@
-************* Module gsb._git
-gsb/_git.py:734:8: W0707: Consider explicitly re-raising using 'raise ValueError(no_such_branch) from no_such_branch' (raise-missing-from)
-gsb/_git.py:760:8: W0707: Consider explicitly re-raising using 'raise ValueError(no_such_branch) from no_such_branch' (raise-missing-from)
+************* Module gsb._make_zip_archive
+gsb/_make_zip_archive.py:8:0: E0611: No name 'GIT_FILEMODE_LINK' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:8:0: E0611: No name 'Commit' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:8:0: E0611: No name 'Oid' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:8:0: E0611: No name 'Tree' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:65:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module gsb.fastforward
-gsb/fastforward.py:169:21: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
-gsb/fastforward.py:176:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
-gsb/fastforward.py:186:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
+gsb/fastforward.py:185:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
 ************* Module gsb.history
 gsb/history.py:40:0: R0913: Too many arguments (7/5) (too-many-arguments)
 gsb/history.py:40:0: R0914: Too many local variables (16/15) (too-many-locals)
 ************* Module gsb.cli
-gsb/cli.py:42:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
-gsb/cli.py:103:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 94 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
-gsb/cli.py:207:0: R0913: Too many arguments (6/5) (too-many-arguments)
+gsb/cli.py:44:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
+gsb/cli.py:105:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 94 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
+gsb/cli.py:209:0: R0913: Too many arguments (6/5) (too-many-arguments)
 
 -----------------------------------
-Your code has been rated at 9.77/10
+Your code has been rated at 9.56/10
 
