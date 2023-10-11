@@ -13,7 +13,8 @@ gsb/history.py:40:0: R0914: Too many local variables (16/15) (too-many-locals)
 gsb/cli.py:44:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
 gsb/cli.py:105:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 94 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
 gsb/cli.py:209:0: R0913: Too many arguments (6/5) (too-many-arguments)
+gsb/cli.py:469:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
 
 -----------------------------------
-Your code has been rated at 9.56/10
+Your code has been rated at 9.55/10
 
