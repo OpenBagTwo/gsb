@@ -400,6 +400,7 @@ def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
         "Format for the archived backup. If not specified,"
         " an appropriate one will be chosen based on your OS."
     ),
+    metavar="FORMAT",
 )
 @click.option(
     "--output",
