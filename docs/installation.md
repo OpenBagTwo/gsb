@@ -42,7 +42,7 @@ Then continue onto the next section.
 
 4. Ensure that `gsb` is compatible with your system by running:
     ```bash
-    python3 -m pytest --pyargs gsb.test
+    gsb test
     ```
     If all tests pass, then you're good to go!
 
