@@ -361,35 +361,35 @@ def _prompt_for_revisions_to_delete(repo_root: Path) -> tuple[str, ...]:
     "xz_flag",
     is_flag=True,
     flag_value="tar.xz",
-    help="Export as a .tar.xz archive",
+    help="Export as a .tar.xz archive.",
 )
 @click.option(
     "-j",
     "bz2_flag",
     is_flag=True,
     flag_value="tar.bz2",
-    help="Export as a .tar.bz2 archive",
+    help="Export as a .tar.bz2 archive.",
 )
 @click.option(
     "-z",
     "gz_flag",
     is_flag=True,
     flag_value="tar.gz",
-    help="Export as a .tar.gz archive",
+    help="Export as a .tar.gz archive.",
 )
 @click.option(
     "-t",
     "tar_flag",
     is_flag=True,
     flag_value="tar",
-    help="Export as an uncompressed .tar archive",
+    help="Export as an uncompressed .tar archive.",
 )
 @click.option(
     "-p",
     "zip_flag",
     is_flag=True,
     flag_value="zip",
-    help="Export as a .zip archive",
+    help="Export as a .zip archive.",
 )
 @click.option(
     "--format",
