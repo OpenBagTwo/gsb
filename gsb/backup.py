@@ -93,6 +93,10 @@ def create_backup(
             raise
         LOGGER.info("Nothing new to commit--all files are up-to-date.")
     if tag_message:
+        head = _git.show(repo_root, "HEAD")
+        for tag in _git.get_tags(repo_root, annotated_only=True):
+            if tag.target == head:
+                raise ValueError(f"The current HEAD is already tagged as {tag.name}")
         identifier = _git.tag(
             repo_root, tag_name or generate_tag_name(), tag_message
         ).name
