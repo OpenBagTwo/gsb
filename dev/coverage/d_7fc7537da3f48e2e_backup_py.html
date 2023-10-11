@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">28 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">28<span class="text"> run</span></button>
+            <span class="text">32 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">32<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_cli_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.2">coverage.py v7.3.2</a>,
-            created at 2023-10-11 16:33 +0000
+            created at 2023-10-11 17:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -175,11 +175,15 @@
     <p class="run"><span class="n"><a id="t93" href="#t93">93</a></span><span class="t">            <span class="key">raise</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">        <span class="nam">LOGGER</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span><span class="str">"Nothing new to commit--all files are up-to-date."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">    <span class="key">if</span> <span class="nam">tag_message</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">        <span class="nam">identifier</span> <span class="op">=</span> <span class="nam">_git</span><span class="op">.</span><span class="nam">tag</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">            <span class="nam">repo_root</span><span class="op">,</span> <span class="nam">tag_name</span> <span class="key">or</span> <span class="nam">generate_tag_name</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">tag_message</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">        <span class="op">)</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">        <span class="nam">LOGGER</span><span class="op">.</span><span class="nam">log</span><span class="op">(</span><span class="nam">IMPORTANT</span><span class="op">,</span> <span class="str">"Created new tagged backup: %s"</span><span class="op">,</span> <span class="nam">identifier</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">    <span class="key">return</span> <span class="nam">identifier</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">        <span class="nam">head</span> <span class="op">=</span> <span class="nam">_git</span><span class="op">.</span><span class="nam">show</span><span class="op">(</span><span class="nam">repo_root</span><span class="op">,</span> <span class="str">"HEAD"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">        <span class="key">for</span> <span class="nam">tag</span> <span class="key">in</span> <span class="nam">_git</span><span class="op">.</span><span class="nam">get_tags</span><span class="op">(</span><span class="nam">repo_root</span><span class="op">,</span> <span class="nam">annotated_only</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">            <span class="key">if</span> <span class="nam">tag</span><span class="op">.</span><span class="nam">target</span> <span class="op">==</span> <span class="nam">head</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">                <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="str">f"The current HEAD is already tagged as {tag.name}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">        <span class="nam">identifier</span> <span class="op">=</span> <span class="nam">_git</span><span class="op">.</span><span class="nam">tag</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="nam">repo_root</span><span class="op">,</span> <span class="nam">tag_name</span> <span class="key">or</span> <span class="nam">generate_tag_name</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">tag_message</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">        <span class="op">)</span><span class="op">.</span><span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">        <span class="nam">LOGGER</span><span class="op">.</span><span class="nam">log</span><span class="op">(</span><span class="nam">IMPORTANT</span><span class="op">,</span> <span class="str">"Created new tagged backup: %s"</span><span class="op">,</span> <span class="nam">identifier</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">    <span class="key">return</span> <span class="nam">identifier</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -189,7 +193,7 @@
             <a id="nextFileLink" class="nav" href="d_7fc7537da3f48e2e_cli_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.2">coverage.py v7.3.2</a>,
-            created at 2023-10-11 16:33 +0000
+            created at 2023-10-11 17:25 +0000
         </p>
     </div>
 </footer>
