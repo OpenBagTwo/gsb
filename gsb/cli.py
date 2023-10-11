@@ -455,3 +455,17 @@ def export(
     except ValueError as whats_that:
         LOGGER.error(whats_that)
         sys.exit(1)
+
+
+@click.argument(
+    "pytest_args",
+    nargs=-1,
+)
+@gsb.command(context_settings={"ignore_unknown_options": True})
+def test(pytest_args: tuple[str, ...]):  # pragma: no cover
+    """Run the GSB test suite to ensure that it is running correctly on your system.
+    Requires you to have installed GSB with the test extra
+    (i.e. pipx install gsb[test])."""
+    import pytest
+
+    pytest.main(["--pyargs", "gsb.test", *pytest_args])
