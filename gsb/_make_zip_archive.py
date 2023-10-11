@@ -48,7 +48,7 @@ def write_zip_archive(
     >>> from gsb import _git
     >>> repo = pygit2.Repository('.')
     >>> with zipfile.ZipFile('foo.zip', 'w') as archive:
-    >>>     _git.write_zip_archive(repo, repo.head.target, archive)
+    ...     _git.write_zip_archive(repo, repo.head.target, archive)
     """
     # Try to get a tree form whatever we got
     # Try to get a tree form whatever we got
