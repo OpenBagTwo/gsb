@@ -79,6 +79,7 @@ def _repo_with_history(tmp_path_factory):
     Manifest(root, "history of life", ("species",)).write()
     (root / ".gitignore").touch()
     _git.add(root, ["species", MANIFEST_NAME, ".gitignore"])
+    _git.commit(root, "Start of GSB tracking")
     _git.tag(root, "gsb1.0", "Start of gsb tracking")
 
     (root / "species").write_text(
