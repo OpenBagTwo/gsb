@@ -33,8 +33,9 @@ def generate_archive_name(
     Notes
     -----
     The default choice of extension (and thus format) is:
+
     - zip for Windows
-    - tar.gz for POSIX systems (Mac and Linux)
+    - tar.gz for all other systems
     """
     if extension is None:
         extension = "zip" if os.name == "nt" else "tar.gz"
