@@ -83,10 +83,13 @@ class TestCreateBackup:
         repo = _git._repo(repo_root, new=False)
         assert repo.revparse_single(identifier).type == pygit2.GIT_OBJ_TAG
 
-    def test_raise_when_theres_nothing_new_to_backup(self, repo_root):
-        backup.create_backup(repo_root)
+    @pytest.mark.parametrize("tagged", (False, True), ids=("untagged", "tagged"))
+    def test_raise_when_theres_nothing_new_to_backup(self, repo_root, tagged):
+        backup.create_backup(repo_root, tag_message="You're it" if tagged else None)
         with pytest.raises(ValueError):
-            backup.create_backup(repo_root)
+            backup.create_backup(
+                repo_root, tag_message="You're still it" if tagged else None
+            )
 
     def test_tagging_a_previously_untagged_backup(self, repo_root):
         commit_hash = backup.create_backup(repo_root)
