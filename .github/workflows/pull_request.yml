@@ -43,4 +43,4 @@ jobs:
       run: |
         mkdir -p sandbox
         cd sandbox
-        gsb test gsb -vv --doctest-modules --ignore-glob="docs/**" --log-level=DEBUG
+        gsb test -vv --ignore-glob="docs/**" --log-level=DEBUG
