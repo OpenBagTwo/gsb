@@ -767,7 +767,7 @@ def delete_branch(repo_root: Path, branch_name: str) -> None:
 
 def archive(repo_root: Path, filename: Path, reference: str = "HEAD") -> None:
     """Create a standalone archive containing the files in the repo at the
-    current HEAD
+    current HEAD, equivalent to running `git archive -o <filename>`
 
     Parameters
     ----------
@@ -800,14 +800,14 @@ def archive(repo_root: Path, filename: Path, reference: str = "HEAD") -> None:
 
     match tuple(suffix.lower() for suffix in filename.suffixes):
         case ():
-            raise ValueError(f"{filename} does not specify an extension.")
+            raise ValueError(f"Filename {filename} does not specify an extension.")
         case *_, ".tar":
             opener = partial(tarfile.open, mode="x:")
         case (*_, ".tgz") | (*_, ".tar", ".gz"):
             opener = partial(tarfile.open, mode="x:gz")
         case (*_, ".tbz2" | ".tbz") | (*_, ".tar", (".bz2" | ".bz")):
             opener = partial(tarfile.open, mode="x:bz2")
-        case (*_, ".txz" | ".tlzma", ".tlz") | (*_, ".tar", (".xz" | ".lzma" | ".lz")):
+        case (*_, ".txz" | ".tlzma" | ".tlz") | (*_, ".tar", (".xz" | ".lzma" | ".lz")):
             opener = partial(tarfile.open, mode="x:xz")
         case (*_, ".zip"):
             with zipfile.ZipFile(
