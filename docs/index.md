@@ -25,7 +25,7 @@ Does it take too long to create or restore a Minecraft backup?
 Do you want to rewind your game five hours and explore _what might have been_ if
 only you'd punched that NPC in the face?
 
-If that sounds like you, then `gsb` is here to help! This is a lightweight wrapper
+If that sounds like you, then GSB is here to help! This is a lightweight wrapper
 around the [Git](https://git-scm.com/) version control system that's optimized for
 game saves. Features (will) include:
 
@@ -41,21 +41,22 @@ game saves. Features (will) include:
 
 ## Installation
 
-The `gsb` package is written for **Python 3.11** but otherwise
+The `gsb` package is written for **Python 3.11 or newer** but otherwise
 should run on any operating system and architecture.
 
-The latest release can be installed from PyPI via `pip`:
+The easiest way to install it is via [pipx](https://pypa.github.io/pipx/):
 
 ```bash
-$ python -m pip install --user gsb
+$ pipx install gsb
 ```
 
-Full installation instructions can be found on
-[GitHub Pages](https://openbagtwo.github.io/gsb/dev/installation).
+For more help (including instructions for installing an up-to-date version
+of Python), check out the
+[Installation Guide](installation).
 
 ## Usage
 
-The recommended way to interact with `gsb` is via its  command-line interface.
+The recommended way to interact with GSB is via its  command-line interface.
 Once you've installed the package, run the following command to get an overview of the
 available actions:
 
@@ -70,10 +71,8 @@ $ gsb <verb> --help
 ```
 (_e.g._ `gsb backup --help`)
 
-for further details on running each of those commands.
-
-Full documentation, including tutorials, examples and full CLI docs, can be
-found on [GitHub Pages](https://openbagtwo.github.io/gsb/).
+for further details on running each of those commands or just read through
+the [CLI docs](cli) or check out the [Quick-Start Guide](usage).
 
 ### Quick-Start Guide
 
@@ -84,12 +83,12 @@ Coming soon!
 If you're interested in helping develop this project, have a look at the
 [repo backlog](https://github.com/OpenBagTwo/gsb/issues) and then read
 through the
-[contributor's guide](https://openbagtwo.github.io/gsb/dev/contrib).
+[contributor's guide](contrib).
 
 ## License
 
 This project--the executable, source code and all documentation--are published
 under the
-[GNU Public License v3](https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE),
-and any contributions to or derivatives of this project _must_ be licensed under
-compatible terms.
+[GNU Public License v3](https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE)
+unless otherwise stated, and any contributions to or derivatives of this project
+_must_ be licensed under compatible terms.

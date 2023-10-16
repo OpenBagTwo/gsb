@@ -1,3 +1,3 @@
-# About `gsb`
+# About GSB
 
 Coming soon!

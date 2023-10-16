@@ -4,7 +4,7 @@
 ![PyPI downloads](https://img.shields.io/pypi/dm/gsb.svg)
 
 The `gsb` package has minimal dependencies and should run on pretty much any computer
-or operating system. It does require **Python 3.11 or greater**
+or operating system. It does require **Python 3.11 or newer**
 portable distributions (read: no need for admin privileges) of which
 are available through miniconda and
 [mambaforge](https://github.com/conda-forge/miniforge#mambaforge).

@@ -1,8 +1,8 @@
-# Using `gsb`
+# Using GSB
 
 !!! warning "PSA"
     These are instructions for the pre-MVP release
-    of `gsb`. Explicitly: these instructions require
+    of GSB. Explicitly: these instructions require
     you to explicitly navigate to or the specify the
     path of every save file you want to manage, every
     time you run any command. By v0.1 this should no
@@ -10,7 +10,7 @@
 
 ## Locating Your Save Data
 
-Before setting up `gsb` to manage your game saves, you'll
+Before setting up GSB to manage your game saves, you'll
 first need to know where your save data is located. This
 will, of course, vary wildly based on platform and title, but
 many games have
@@ -29,7 +29,7 @@ certain files or subfolders, specify that using the `--track` flag (or if you
 want to ignore nay files matching a certain pattern, use `--ignore`).
 
 !!! tip "Pro Tip"
-    While `gsb` does not currently support the ability to separately manage individual
+    While GSB does not currently support the ability to separately manage individual
     files located in the same folder,
     [this feature is planned.](https://github.com/OpenBagTwo/gsb/issues/29).
     In the meantime, for games where each save is located within a subfolder (_e.g._
@@ -62,7 +62,7 @@ Note that `gsb` has two kinds of backups:
 
 You can view your list of available backups at any time by navigating to your save's folder
 and running [`gsb history`](../cli/#history). By default, this will show the identifiers and
-dates of all tagged `gsb`-managed backups, so have a look at the various command-line
+dates of all tagged GSB-managed backups, so have a look at the various command-line
 options to customize both the list of what you see and the amount of information you get
 on each backup.
 
@@ -74,8 +74,8 @@ If you want to restore a backup, you can do so via [`gsb rewind`](../cli/#rewind
     In order to keep your backup history linear, technically what happens when you
     "rewind" your save state is that the files at that revision are restored and
     then played forward as a _new_ commit. That way all of your changes since the
-    point you rewound to are still in your history (future versions of `gsb` will
-    let you clean this up later).
+    point you rewound to are still in your history (see below for instructions
+    on cleaning up any unneeded or superfluous backups).
 
 If you don't provide a restore point, the command will prompt you to choose from a list
 of recent backups.
@@ -98,6 +98,6 @@ these loose objects.
 
 ## Advanced History Management directly with Git
 
-Behind the curtain, `gsb` runs on [Git](https://git-scm.com/) meaning you can run
-any advanced commands you wish on a `gsb`-managed save repo directly via the
+Behind the curtain, GSB runs on [Git](https://git-scm.com/) meaning you can run
+any advanced commands you wish on a GSB-managed save repo directly via the
 `git` CLI or any general-purpose Git tool.
