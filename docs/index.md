@@ -47,7 +47,7 @@ should run on any operating system and architecture.
 The easiest way to install it is via [pipx](https://pypa.github.io/pipx/):
 
 ```bash
-$ pipx install gsb
+pipx install gsb
 ```
 
 For more help (including instructions for installing an up-to-date version
@@ -61,13 +61,13 @@ Once you've installed the package, run the following command to get an overview 
 available actions:
 
 ```bash
-$ gsb --help
+gsb --help
 ```
 
 and use:
 
 ```bash
-$ gsb <verb> --help
+gsb <verb> --help
 ```
 (_e.g._ `gsb backup --help`)
 
