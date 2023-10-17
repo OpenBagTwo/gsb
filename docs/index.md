@@ -71,23 +71,21 @@ gsb <verb> --help
 ```
 (_e.g._ `gsb backup --help`)
 
-for further details on running each of those commands or just read through
-the [CLI docs](cli) or check out the [Quick-Start Guide](usage).
+for further details on running each of those commands.
 
-### Quick-Start Guide
-
-Coming soon!
+!!! tip "See Also"
+    Alternatively, just read through the [CLI docs](cli)
+    and check out the [Quick-Start Guide](usage).
 
 ## Contributing
 
 If you're interested in helping develop this project, have a look at the
-[repo backlog](https://github.com/OpenBagTwo/gsb/issues) and then read
-through the
+[repo backlog](https://github.com/OpenBagTwo/gsb/issues), then read through the
 [contributor's guide](contrib).
 
 ## License
 
-This project--the executable, source code and all documentation--are published
+This project—the executable, source code and all documentation—are published
 under the
 [GNU Public License v3](https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE)
 unless otherwise stated, and any contributions to or derivatives of this project

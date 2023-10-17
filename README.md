@@ -76,20 +76,15 @@ for further details on running each of those commands.
 Full documentation, including tutorials, examples and full CLI docs, can be
 found [here](https://openbagtwo.github.io/gsb/).
 
-### Quick-Start Guide
-
-Coming soon!
-
 ## Contributing
 
 If you're interested in helping develop this project, have a look at the
-[repo backlog](https://github.com/OpenBagTwo/gsb/issues) and then read
-through the
+[repo backlog](https://github.com/OpenBagTwo/gsb/issues), then read through the
 [contributor's guide](https://openbagtwo.github.io/gsb/release/contrib).
 
 ## License
 
-This project--the executable, source code and all documentation--are published
+This project—the executable, source code and all documentation—are published
 under the
 [GNU Public License v3](https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE)
 unless otherwise stated, and any contributions to or derivatives of this project
