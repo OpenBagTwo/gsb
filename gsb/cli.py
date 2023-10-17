@@ -307,7 +307,7 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
 )
 @_subcommand_init
 def delete(repo_root: Path, revisions: tuple[str, ...]):
-    """Delete one or more backups."""
+    """Delete one or more backups by their specified REVISION."""
     if not revisions:
         revisions = _prompt_for_revisions_to_delete(repo_root)
     try:
@@ -426,7 +426,7 @@ def export(
     output: Path | None,
     **format_flags,
 ):
-    """Create a stand-alone archive specified REVISION."""
+    """Create a stand-alone archive of the specified REVISION."""
     print(format_flags)
     specified_formats: list[str] = [value for value in format_flags.values() if value]
 
@@ -465,7 +465,7 @@ def export(
 def test(pytest_args: tuple[str, ...]):  # pragma: no cover
     """Run the GSB test suite to ensure that it is running correctly on your system.
     Requires you to have installed GSB with the test extra
-    (i.e. pipx install gsb[test])."""
+    (_i.e._ `pipx install gsb[test]`)."""
     import pytest
 
     pytest.main(["--pyargs", "gsb.test", *pytest_args])
