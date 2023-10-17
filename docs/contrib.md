@@ -22,7 +22,7 @@ The development environment for GSB is managed via
 [conda](https://docs.conda.io/en/latest/). If you don't have one already,
 I highly recommend using a [conda-forge](https://conda-forge.org/)-based
 distribution, such as
-[mambaforge](https://github.com/conda-forge/miniforge#mambaforge).
+[miniforge](https://github.com/conda-forge/miniforge).
 
 Once you have conda installed and your fork cloned to your local workspace,
 navigate to that workspace and:
