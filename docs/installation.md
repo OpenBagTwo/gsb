@@ -20,7 +20,7 @@ Python runtime.
 !!! tip "Recommendation"
     The easiest and safest option is to install a
     [miniconda](https://docs.conda.io/en/latest/) distribution (I strongly
-    recommend [mambaforge](https://github.com/conda-forge/miniforge#mambaforge)).
+    recommend [miniforge](https://github.com/conda-forge/miniforge)).
     This can be done on almost any computer and requires no admin privileges.
 
 ## Installing `gsb`
@@ -39,7 +39,7 @@ for [making sure that GSB is fully compatible with your system.](#verifying-your
 
 ### Inside a conda environment
 
-These instructions assume that you've already downloaded and installed mambaforge
+These instructions assume that you've already downloaded and installed miniforge
 or another conda distribution and that mamba/conda is already registered
 to your system path.
 
