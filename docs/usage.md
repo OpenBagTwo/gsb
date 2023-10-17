@@ -25,13 +25,13 @@ in a file explorer.
 Once you've located a game you want to save, open a command-line and navigate
 to the folder containing your save and run the command [`gsb init`](../cli/#init).
 By default, all files in the folder will be tracked, so if you only want to track
-certain files or subfolders, specify that using the `--track` flag (or if you
-want to ignore nay files matching a certain pattern, use `--ignore`).
+certain files or subfolders, specify them using the `--track` flag (or if you
+want to ignore any files matching a certain pattern, use `--ignore`).
 
 !!! tip "Pro Tip"
-    While GSB does not currently support the ability to separately manage individual
+    While GSB does not currently support separately managing individual
     files located in the same folder,
-    [this feature is planned.](https://github.com/OpenBagTwo/gsb/issues/29).
+    [this feature is planned](https://github.com/OpenBagTwo/gsb/issues/29).
     In the meantime, for games where each save is located within a subfolder (_e.g._
     Minecraft worlds), if you want to manage your saves separately, run `gsb init`
     _inside_ each world folder rather than in your "saves" folder.
@@ -39,29 +39,29 @@ want to ignore nay files matching a certain pattern, use `--ignore`).
 ## Create a backup with `gsb backup`
 
 When you ran `gsb init` it automatically created your first backup. When you're ready
-to create your next one, navigate back to the folder where your save is stored and
-run the [`gsb backup`](../cli/#backup) command to create another.
+to create your next one, navigate back to the folder where you ran `gsb init`
+and run the [`gsb backup`](../cli/#backup) command to create another.
 
 Note that `gsb` has two kinds of backups:
 
-1. "Untagged" backups (created by default) are good for just "checking in" regular gameplay
+1. "Untagged" backups (created by default) are good for just checking in regular gameplay
    where you might want to restore to the last state if, say, a creeper blows up your base.
 2. "Tagged" backups (created by supplying the `--tag` argument along with a message) are
    meant to denote specific points you might want to return to later (right before an epic
    boss fight or right before a story branch).
 
 !!! danger "Pro Tip"
-    You can overwrite a previous backup using the `--combine` / `-c` flag. And if when
-    making a new tagged backup you want to delete all of the untagged backups you've made
-    since the last time you used the `--tag` flag, you can use `-cc`, _e.g._
+    You can overwrite a previous backup using the `--combine` / `-c` flag. And when
+    making a new tagged backup, you might want to "squash" all of the untagged backups you've made
+    since your last tagged point, in which case you can use `-cc`, _e.g._
     ```bash
     gsb backup -cc --tag "A backup that's actually important"
     ```
 
 ## List your backups using `gsb history`
 
-You can view your list of available backups at any time by navigating to your save's folder
-and running [`gsb history`](../cli/#history). By default, this will show the identifiers and
+You can view a list of available backups at any time via the
+[`gsb history`](../cli/#history) command. By default, this will show the identifiers and
 dates of all tagged GSB-managed backups, so have a look at the various command-line
 options to customize both the list of what you see and the amount of information you get
 on each backup.
@@ -98,6 +98,6 @@ these loose objects.
 
 ## Advanced History Management directly with Git
 
-Behind the curtain, GSB runs on [Git](https://git-scm.com/) meaning you can run
-any advanced commands you wish on a GSB-managed save repo directly via the
+Behind the curtain, GSB runs on [Git](https://git-scm.com/), meaning you can run
+any advanced commands you wish on a GSB-managed repo directly via the
 `git` CLI or any general-purpose Git tool.

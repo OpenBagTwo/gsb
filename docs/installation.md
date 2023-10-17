@@ -47,8 +47,7 @@ to your system path.
    ```bash
    mamba create -n gsb "python>=3.11" "pip>22"
    ```
-   (substitute `conda` for `mamba` as needed, and skip this step and the next if
-    you're using the system Python)
+   (substitute `conda` for `mamba` as needed)
 
 1. Activate your new environment:
     ```bash
@@ -84,20 +83,22 @@ also being backed up in another way.
 ## Verifying Your Installation
 
 The instructions above recommend installing `gsb` with the optional `[test]`
-extra to allow you to verify that GSB installed successfully on your system.
-To do so, open a command prompt and run:
+extra to enable easy running of GSB's included test suite. Doing so will ensure
+that GSB is able to work with your file system and that all of the dependcies
+and shared libraries are interacting correctly. Run this test suite by opening
+a suitable command line and running the command:
 
 ```bash
 gsb test
 ```
 
-If you get an error that `gsb` was not found, first make sure to activate its
-virtual environment, then try again.
-
 If all tests pass, then you're good to go!
 
-!!! tip
-    If you'd like `gsb` to be available outside of your conda virtual environment,
+!!! note "conda/venv users:"
+    If you get an error that `gsb` was not found, first make sure to activate its
+    virtual environment, then try again.
+
+    If you'd like `gsb` to be available outside of your virtual environment,
     you can copy the executable to somewhere within your system path, _e.g._ for
     Linux, starting with the virtual environment deactivated:
     ```bash
