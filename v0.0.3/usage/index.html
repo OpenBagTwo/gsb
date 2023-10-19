@@ -1,0 +1,928 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Gili "OpenBagTwo" Barlev">
+      
+      
+      
+        <link rel="prev" href="../installation/">
+      
+      
+        <link rel="next" href="../suggestions/">
+      
+      
+      <link rel="icon" href="../img/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>Quick-Start Guide - Documentation for the gsb Package</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="indigo">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-gsb" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Documentation for the gsb Package" class="md-header__button md-logo" aria-label="Documentation for the gsb Package" data-md-component="logo">
+      
+  <img src="../img/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation for the gsb Package
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quick-Start Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/OpenBagTwo/gsb" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gsb
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Documentation for the gsb Package" class="md-nav__button md-logo" aria-label="Documentation for the gsb Package" data-md-component="logo">
+      
+  <img src="../img/logo.png" alt="logo">
+
+    </a>
+    Documentation for the gsb Package
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/OpenBagTwo/gsb" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    gsb
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation Instructions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Quick-Start Guide
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Quick-Start Guide
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#locating-your-save-data" class="md-nav__link">
+    Locating Your Save Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-tracking-with-gsb-init" class="md-nav__link">
+    Start tracking with gsb init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-backup-with-gsb-backup" class="md-nav__link">
+    Create a backup with gsb backup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-your-backups-using-gsb-history" class="md-nav__link">
+    List your backups using gsb history
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restore-a-backup-with-gsb-rewind" class="md-nav__link">
+    Restore a backup with gsb rewind
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deleting-a-backup-with-gsb-delete" class="md-nav__link">
+    Deleting a backup with gsb delete
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-history-management-directly-with-git" class="md-nav__link">
+    Advanced History Management directly with Git
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suggestions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best Practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contrib/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution Guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Full CLI Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Python API Docs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Python API Docs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/gsb/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    gsb
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            gsb
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/history/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/fastforward/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    fastforward
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/rewind/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rewind
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/backup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    backup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#locating-your-save-data" class="md-nav__link">
+    Locating Your Save Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-tracking-with-gsb-init" class="md-nav__link">
+    Start tracking with gsb init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-backup-with-gsb-backup" class="md-nav__link">
+    Create a backup with gsb backup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-your-backups-using-gsb-history" class="md-nav__link">
+    List your backups using gsb history
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restore-a-backup-with-gsb-rewind" class="md-nav__link">
+    Restore a backup with gsb rewind
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deleting-a-backup-with-gsb-delete" class="md-nav__link">
+    Deleting a backup with gsb delete
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-history-management-directly-with-git" class="md-nav__link">
+    Advanced History Management directly with Git
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="using-gsb">Using GSB</h1>
+<div class="admonition warning">
+<p class="admonition-title">PSA</p>
+<p>These are instructions for the pre-MVP release
+of GSB. Explicitly: these instructions require
+you to explicitly navigate to or the specify the
+path of every save file you want to manage, every
+time you run any command. By v0.1 this should no
+longer be required.</p>
+</div>
+<h2 id="locating-your-save-data">Locating Your Save Data</h2>
+<p>Before setting up GSB to manage your game saves, you'll
+first need to know where your save data is located. This
+will, of course, vary wildly based on platform and title, but
+many games have
+<a href="https://help.minecraft.net/hc/en-us/articles/4409159214605-Managing-Data-and-Game-Storage-in-Minecraft-Java-Edition-#h_01FGA90Z06DE00GT8E81SWX9SE">support pages</a>
+that will tell you where to look,
+and many game launchers provide <a href="https://yuzu-emu.org/wiki/faq/#how-do-i-add-a-save-to-my-game">menu options to open your
+save folder</a>
+in a file explorer.</p>
+<h2 id="start-tracking-with-gsb-init">Start tracking with <code>gsb init</code></h2>
+<p>Once you've located a game you want to save, open a command-line and navigate
+to the folder containing your save and run the command <a href="../cli/#init"><code>gsb init</code></a>.
+By default, all files in the folder will be tracked, so if you only want to track
+certain files or subfolders, specify them using the <code>--track</code> flag (or if you
+want to ignore any files matching a certain pattern, use <code>--ignore</code>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Pro Tip</p>
+<p>While GSB does not currently support separately managing individual
+files located in the same folder,
+<a href="https://github.com/OpenBagTwo/gsb/issues/29">this feature is planned</a>.
+In the meantime, for games where each save is located within a subfolder (<em>e.g.</em>
+Minecraft worlds), if you want to manage your saves separately, run <code>gsb init</code>
+<em>inside</em> each world folder rather than in your "saves" folder.</p>
+</div>
+<h2 id="create-a-backup-with-gsb-backup">Create a backup with <code>gsb backup</code></h2>
+<p>When you ran <code>gsb init</code> it automatically created your first backup. When you're ready
+to create your next one, navigate back to the folder where you ran <code>gsb init</code>
+and run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create another.</p>
+<p>Note that <code>gsb</code> has two kinds of backups:</p>
+<ol>
+<li>"Untagged" backups (created by default) are good for just checking in regular gameplay
+   where you might want to restore to the last state if, say, a creeper blows up your base.</li>
+<li>"Tagged" backups (created by supplying the <code>--tag</code> argument along with a message) are
+   meant to denote specific points you might want to return to later (right before an epic
+   boss fight or right before a story branch).</li>
+</ol>
+<div class="admonition danger">
+<p class="admonition-title">Pro Tip</p>
+<p>You can overwrite a previous backup using the <code>--combine</code> / <code>-c</code> flag. And when
+making a new tagged backup, you might want to "squash" all of the untagged backups you've made
+since your last tagged point, in which case you can use <code>-cc</code>, <em>e.g.</em>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gsb<span class="w"> </span>backup<span class="w"> </span>-cc<span class="w"> </span>--tag<span class="w"> </span><span class="s2">&quot;A backup that&#39;s actually important&quot;</span>
+</span></code></pre></div></p>
+</div>
+<h2 id="list-your-backups-using-gsb-history">List your backups using <code>gsb history</code></h2>
+<p>You can view a list of available backups at any time via the
+<a href="../cli/#history"><code>gsb history</code></a> command. By default, this will show the identifiers and
+dates of all tagged GSB-managed backups, so have a look at the various command-line
+options to customize both the list of what you see and the amount of information you get
+on each backup.</p>
+<h2 id="restore-a-backup-with-gsb-rewind">Restore a backup with <code>gsb rewind</code></h2>
+<p>If you want to restore a backup, you can do so via <a href="../cli/#rewind"><code>gsb rewind</code></a>.</p>
+<details class="info">
+<summary>Technical Details</summary>
+<p>In order to keep your backup history linear, technically what happens when you
+"rewind" your save state is that the files at that revision are restored and
+then played forward as a <em>new</em> commit. That way all of your changes since the
+point you rewound to are still in your history (see below for instructions
+on cleaning up any unneeded or superfluous backups).</p>
+</details>
+<p>If you don't provide a restore point, the command will prompt you to choose from a list
+of recent backups.</p>
+<h2 id="deleting-a-backup-with-gsb-delete">Deleting a backup with <code>gsb delete</code></h2>
+<p>Use <a href="../cli/#delete"><code>gsb delete</code></a> to delete any backups you no longer need. Note
+that this command doesn't <em>actually</em> delete anything on its own (so you won't
+recover any disk space immediately). What it does instead is rewrites your history
+to exclude those restore points, thus marking them as "loose." To permanently
+delete these backups, you will need to download and install a full
+<a href="https://git-scm.com/downloads">Git client</a> and run a "garbage collect" to prune
+these loose objects.</p>
+<details class="danger">
+<summary>Pruning via the Git CLI</summary>
+<p>If you have the Git command-line utility installed, the command to run is:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>gc<span class="w"> </span>--aggressive<span class="w"> </span>--prune<span class="o">=</span>now
+</span></code></pre></div></p>
+</details>
+<h2 id="advanced-history-management-directly-with-git">Advanced History Management directly with Git</h2>
+<p>Behind the curtain, GSB runs on <a href="https://git-scm.com/">Git</a>, meaning you can run
+any advanced commands you wish on a GSB-managed repo directly via the
+<code>git</code> CLI or any general-purpose Git tool.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>
