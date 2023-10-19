@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
@@ -397,15 +397,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    Development Workflow
+  <a href="#opening-a-pr" class="md-nav__link">
+    Opening a PR
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#opening-a-pr" class="md-nav__link">
-    Opening a PR
+  <a href="#development-workflow" class="md-nav__link">
+    Development Workflow
   </a>
   
 </li>
@@ -530,6 +530,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/gsb/logging/" class="md-nav__link">
         
   
@@ -550,11 +570,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/onboard/" class="md-nav__link">
+      <a href="../reference/gsb/history/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    onboard
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
   </span>
   
 
@@ -610,71 +670,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/manifest/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    manifest
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../reference/gsb/backup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     backup
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/export/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    export
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/history/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    history
   </span>
   
 
@@ -754,15 +754,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    Development Workflow
+  <a href="#opening-a-pr" class="md-nav__link">
+    Opening a PR
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#opening-a-pr" class="md-nav__link">
-    Opening a PR
+  <a href="#development-workflow" class="md-nav__link">
+    Development Workflow
   </a>
   
 </li>
@@ -792,24 +792,25 @@
 <h1 id="contribution-guide">Contribution Guide</h1>
 <p><a href="../coverage"><img alt="coverage" src="../img/coverage.svg" /></a>
 <a href="../lint-report.txt"><img alt="lint" src="../img/pylint.svg" /></a></p>
-<p>The <code>gsb</code> package  is an open source project, and its source code is
+<p>GSB is an open source project, and its source code is
 <a href="https://github.com/OpenBagTwo/gsb">publicly available on GitHub</a>.</p>
-<p>Please open <a href="https://github.com/OpenBagTwo/gsb/issues/new">a new issue</a>
+<p>Please open <a href="https://github.com/OpenBagTwo/gsb/issues/new/choose">a new issue</a>
 to report a bug or to propose a new feature or enhancement.</p>
 <p>If you would like to contribute your own bugfixes or code enhancements, start by
-<a href="https://github.com/OpenBagTwo/gsb/fork">forking this repo</a>, and cloning
+<a href="https://github.com/OpenBagTwo/gsb/fork">forking the repo</a> and cloning
 it into your local workspace.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Note that all work should be done off of the <code>dev</code> branch</p>
 </div>
 <h2 id="setting-up-a-development-environment">Setting up a Development Environment</h2>
-<p>The development environment for this package is managed using
+<p>The development environment for GSB is managed via
 <a href="https://docs.conda.io/en/latest/">conda</a>. If you don't have one already,
 I highly recommend using a <a href="https://conda-forge.org/">conda-forge</a>-based
-distribution, such as <a href="https://github.com/conda-forge/miniforge#mambaforge">mambaforge</a>.</p>
-<p>Once you have conda installed and your fork cloned to your local workspace, navigate
-to that workspace and:</p>
+distribution, such as
+<a href="https://github.com/conda-forge/miniforge">miniforge</a>.</p>
+<p>Once you have conda installed and your fork cloned to your local workspace,
+navigate to that workspace and:</p>
 <ol>
 <li>Create the development environment via
    <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mamba<span class="w"> </span>env<span class="w"> </span>create
@@ -821,20 +822,21 @@ to that workspace and:</p>
 <li>Install the package in editable mode:
    <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>test<span class="o">]</span>
 </span></code></pre></div></li>
-<li>Set up <a href="https://pre-commit.com/">pre-commit</a>:
+<li>Set up pre-commit:
    <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pre-commit<span class="w"> </span>install
 </span></code></pre></div></li>
 </ol>
-<p>Once that's done, start developing! Pre-commit is a fantastic tool that will
-take care of most style-guide enforcement for you, but details are below.</p>
+<p>Once that's done, start developing! <a href="https://pre-commit.com/">Pre-commit</a>
+is a fantastic tool that will take care of most style-guide enforcement
+for you, but details are below.</p>
 <h2 id="style-guide">Style Guide</h2>
 <p>This package follows the standard Python style guides, most notably
-<a href="https://peps.python.org/pep-0008/">PEP8</a>, targeting the Python 3.10 feature set.
+<a href="https://peps.python.org/pep-0008/">PEP8</a>, targeting the Python 3.11 feature set.
 The one exception is that the line length maximum is set to 88, not 79. All
 non-trivial and "public" functions must have docstrings in
 <a href="https://numpydoc.readthedocs.io/en/latest/format.html">the NumPy style</a>.</p>
 <p>All code should be fully type-hinted, leveraging the latest changes
-<a href="https://docs.python.org/3/whatsnew/3.10.html#new-features-related-to-type-hints">introduced to the language</a>.
+<a href="https://docs.python.org/3/whatsnew/3.11.html#new-features-related-to-type-hints">introduced to the language</a>.
 Favor use of <code>| None</code> ✅ instead of <code>Optional</code> ❌ and built-in types (<code>list</code>, <code>tuple</code> ✅)
 <a href="https://docs.python.org/3/whatsnew/3.9.html#type-hinting-generics-in-standard-collections">over their capitalized types</a>
 (<code>from typing import List, Tuple</code> ❌).</p>
@@ -882,30 +884,35 @@ as broad as the function will allow. For example:
 </span><span id="__span-4-37"><a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>    <span class="k">return</span> <span class="n">return_me</span>
 </span></code></pre></div>
 In the above, <code>sort_me</code> could be a list of strings, a set of <code>Path</code>s, or
-really any group of objects that you can iteratethrough and
+really any group of objects that you can iterate through and
 that has a defined length (and even that isn't even <em>technically</em>
 a requirement). Meanwhile on the output side, you're defining right off the
 bat that <code>return_me</code> is going to be a list and then enforcing that every
 member will be a string.</p>
 </details>
 <p>There are a variety of other style conventions, especially around non-Python
-files, but they will be automatically enforced by
-<a href="https://github.com/OpenBagTwo/gsb/blob/dev/.pre-commit-config.yaml">pre-commit</a>.</p>
+files, but they will be
+<a href="https://github.com/OpenBagTwo/gsb/blob/dev/.pre-commit-config.yaml">enforced by pre-commit</a>
+automatically.</p>
 <h2 id="unit-testing">Unit Testing</h2>
-<p>While unit tests are not globally required, any PR will require validation that
-the changes introduced are performing as intended (see below), and unit tests
-are a great way to provide that, especially given that <code>gsb</code> is meant to
-run across a wide variety of platforms. This package uses
-<a href="https://docs.pytest.org/">py.test</a> as its test runner, and a wide
-variety of
-testing utililities and <a href="https://github.com/OpenBagTwo/gsb/blob/dev/gsb/test/conftest.py">fixtures</a>
-are available for you to leverage for help mocking out file systems.</p>
+<p>While unit tests are not absolutely required, any PR will require validation that
+the changes introduced are performing as intended (<a href="/#opening-a-pr">see below</a>),
+and unit tests are a great way to provide that. Especially given that GSB is
+meant to run across a wide variety of platforms, unit tests that get run
+automatically as part of the project's
+<a href="https://github.com/OpenBagTwo/gsb/actions">CI process</a> are definitely the
+easiest way to build confidence that your contribution is behaving as intended.</p>
+<p>GSB uses <a href="https://docs.pytest.org/">py.test</a> as its test runner, and a wide
+variety of testing utilities and
+<a href="https://github.com/OpenBagTwo/gsb/blob/dev/gsb/test/conftest.py">fixtures</a>
+are available for you for help mocking out file systems and initializing
+Git repos.</p>
 <h2 id="documentation">Documentation</h2>
-<p>In addition to internal (docstring) documentation, <code>gsb</code> includes
+<p>In addition to internal (docstring) documentation, GSB includes
 HTML documentation hosted on GitHub Pages. This includes the static guides (that
-you are literally reading right now) as well as dynamically-generated HTML docs.</p>
+you are literally reading right now) as well as dynamically-generated API docs.</p>
 <p>The tool that performs this magic is called <a href="https://www.mkdocs.org/">MkDocs</a> and
-is included in the <code>gsb</code> development environment. One of MkDocs' killer]
+is included in the <code>gsb</code> development environment. One of MkDocs' killer
 features is its ability to quickly render and serve the documentation locally.
 To do this, navigate your terminal to the repo root, activate your <code>gsb</code>
 environment and run the command:</p>
@@ -913,19 +920,25 @@ environment and run the command:</p>
 </span></code></pre></div>
 <p>and the terminal will soon contain a link (typically to http://127.0.0.1:8000/)
 where you can preview the documentation.</p>
-<p>When developing <code>gsb</code>, you should <em>both</em> check
-the <a href="http://127.0.0.1:8000/reference/gsb/">compiled API docs based on your docstrings</a>
+<p>When developing GSB, whether or not you touch the hand-written static pages,
+you should also check the
+<a href="http://127.0.0.1:8000/reference/gsb/">compiled API docs based on your docstrings</a>
 (<a href="http://127.0.0.1:8000/cli/">and changes to the CLI</a>) to ensure that everything
 is rendering as it should.</p>
+<h2 id="opening-a-pr">Opening a PR</h2>
+<p>Once you're ready to contribute your code change back,
+<a href="https://github.com/OpenBagTwo/gsb/compare">open a PR</a> (remember to
+target the <code>dev</code> branch unless this is a hotfix), fill out the PR template, and
+then tag <strong><a href="https://github.com/OpenBagTwo">@OpenBagTwo</a></strong> for review.</p>
 <h2 id="development-workflow">Development Workflow</h2>
-<p>Development of <code>gsb</code> follows
+<p>Development of GSB follows
 <a href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">Gitflow</a>,
 with all development done on feature-branches created off the <code>dev</code> branch.</p>
 <p>Once a significant number of changes have been merged into <code>dev</code> (usually the
 culmination of a
 <a href="https://github.com/OpenBagTwo/gsb/milestones">milestone</a>), a staging
-branch will be created off of <code>dev</code>, and a PR will be opened targeting merging
-changes from that branch into <code>release</code>. This process is typically accompanied
+branch will be created off of <code>dev</code>, and a PR will be opened for merging the
+new features into <code>release</code>. This process is typically accompanied
 by the creation of release candidate versions which are built and uploaded to PyPI
 for pre-release testing. During this phase, changes will be made directly
 to the staging branch to fix any bugs or regressions that come up during testing.</p>
@@ -947,26 +960,23 @@ so that you can just copy them into the full release</p>
 </li>
 <li>
 <p>Cutting the new release will automatically push a new package build to
-   <a href="https://pypi.org/project/gsb/">pypi</a> and
+   <a href="https://pypi.org/project/gsb/">PyPI</a> and
    <a href="https://openbagtwo.github.io/gsb/release/">update the docs</a>.</p>
 </li>
 <li>Once the release is complete, the <code>dev</code> branch must be <strong>rebased</strong> on top of
-   <code>release</code>. This serves two goals:
-   - it applies any changes committed directly to the staging branch to <code>dev</code>
-   - it keeps the commit history linear (and makes it much easier to calculate)
-     the number of commits in <code>dev</code> since the last release.</li>
+   <code>release</code>. This serves two goals:<ul>
+<li>it applies any changes committed directly to the staging branch to <code>dev</code></li>
+<li>it keeps the commit history linear (and makes it much easier to calculate
+  the number of commits in <code>dev</code> since the last release).</li>
+</ul>
+</li>
 </ol>
-<h2 id="opening-a-pr">Opening a PR</h2>
-<p>Once you're ready to contribute your code change back,
-<a href="https://github.com/OpenBagTwo/gsb/compare">open a PR</a> (remember to
-target the <code>dev</code> branch unless this is a hotfix), fill out the PR template, and
-then tag <strong><a href="https://github.com/OpenBagTwo">@OpenBagTwo</a></strong> for review.</p>
 <h2 id="license">License</h2>
 <p>This project--the executable, source code and all documentation--are published
 under the
 <a href="https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE">GNU Public License v3</a>,
-and any contributions to or derivatives of this project <em>must</em> be licensed under
-compatible terms.</p>
+unless otherwise stated, and any contributions to or derivatives of this
+project <em>must</em> be licensed under compatible terms.</p>
 
 
 

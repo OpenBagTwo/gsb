@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
@@ -320,6 +320,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#using-pipx" class="md-nav__link">
+    Using pipx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#inside-a-conda-environment" class="md-nav__link">
     Inside a conda environment
   </a>
@@ -331,6 +338,19 @@
     Installation via pip
   </a>
   
+    <nav class="md-nav" aria-label="Installation via pip">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bleeding-edge" class="md-nav__link">
+    Bleeding Edge
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -339,8 +359,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bleeding-edge" class="md-nav__link">
-    Bleeding Edge
+  <a href="#verifying-your-installation" class="md-nav__link">
+    Verifying Your Installation
   </a>
   
 </li>
@@ -515,6 +535,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/gsb/logging/" class="md-nav__link">
         
   
@@ -535,11 +575,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/onboard/" class="md-nav__link">
+      <a href="../reference/gsb/history/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    onboard
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
   </span>
   
 
@@ -595,71 +675,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/manifest/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    manifest
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../reference/gsb/backup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     backup
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/export/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    export
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/history/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    history
   </span>
   
 
@@ -719,6 +739,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#using-pipx" class="md-nav__link">
+    Using pipx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#inside-a-conda-environment" class="md-nav__link">
     Inside a conda environment
   </a>
@@ -730,6 +757,19 @@
     Installation via pip
   </a>
   
+    <nav class="md-nav" aria-label="Installation via pip">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bleeding-edge" class="md-nav__link">
+    Bleeding Edge
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -738,8 +778,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bleeding-edge" class="md-nav__link">
-    Bleeding Edge
+  <a href="#verifying-your-installation" class="md-nav__link">
+    Verifying Your Installation
   </a>
   
 </li>
@@ -763,66 +803,88 @@
 <p><a href="https://badge.fury.io/py/gsb"><img alt="PyPI version" src="https://badge.fury.io/py/gsb.svg" /></a>
 <img alt="PyPI downloads" src="https://img.shields.io/pypi/dm/gsb.svg" /></p>
 <p>The <code>gsb</code> package has minimal dependencies and should run on pretty much any computer
-or operating system. It does require <strong>Python 3.11 or greater</strong>
-portable distributions (read: no need for admin privileges) of which
-are available through miniconda and
-<a href="https://github.com/conda-forge/miniforge#mambaforge">mambaforge</a>.</p>
+or operating system. It does require <strong>Python 3.11 or newer</strong>, however, so
+the first step is making sure that requirement is met.</p>
+<p>To do so, open a terminal and run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-V
+</span></code></pre></div>
+<p>If you get a message that no such command or executable exists, or if the version
+that's returned is before 3.11, you'll first need to install an up-to-date
+Python runtime.</p>
+<div class="admonition tip">
+<p class="admonition-title">Recommendation</p>
+<p>The easiest and safest option is to install a
+<a href="https://docs.conda.io/en/latest/">miniconda</a> distribution (I strongly
+recommend <a href="https://github.com/conda-forge/miniforge">miniforge</a>).
+This can be done on almost any computer and requires no admin privileges.</p>
+</div>
 <h2 id="installing-gsb">Installing <code>gsb</code></h2>
+<h3 id="using-pipx">Using pipx</h3>
+<p>The easiest way to install GSB if you're using the system Python is via
+<a href="https://pypa.github.io/pipx/">pipx</a>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pipx<span class="w"> </span>install<span class="w"> </span>gsb<span class="o">[</span>test<span class="o">]</span>
+</span></code></pre></div>
+<p><em>You may omit the <code>[test]</code> extra if you really want, but it's a good idea
+for <a href="#verifying-your-installation">making sure that GSB is fully compatible with your system.</a></em></p>
 <h3 id="inside-a-conda-environment">Inside a conda environment</h3>
-<p>Skip this sub-section if you're using the system Python.</p>
-<p>These instructions assume that you've already downloaded and installed mambaforge
+<p>These instructions assume that you've already downloaded and installed miniforge
 or another conda distribution and that mamba/conda is already registered
 to your system path.</p>
 <ol>
 <li>
 <p>Open a terminal (miniforge prompt on Windows) and create a new virtual environment via:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mamba<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>gsb<span class="w"> </span><span class="s2">&quot;python&gt;=3.10&quot;</span><span class="w"> </span><span class="s2">&quot;pip&gt;22&quot;</span>
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mamba<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>gsb<span class="w"> </span><span class="s2">&quot;python&gt;=3.11&quot;</span><span class="w"> </span><span class="s2">&quot;pip&gt;22&quot;</span>
 </span></code></pre></div>
-   (substitute <code>conda</code> for <code>mamba</code> as needed, and skip this step and the next if
-    you're using the system Python)</p>
+   (substitute <code>conda</code> for <code>mamba</code> as needed)</p>
 </li>
 <li>
 <p>Activate your new environment:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>conda<span class="w"> </span>activate<span class="w"> </span>gsb
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>conda<span class="w"> </span>activate<span class="w"> </span>gsb
 </span></code></pre></div></p>
 </li>
 </ol>
 <p>Then continue onto the next section.</p>
 <h3 id="installation-via-pip">Installation via pip</h3>
+<p>Whether you're using conda or another virtual environment manager (<em>e.g.</em> venv),
+to actually install GSB within your virtual environment, first make sure that
+the environment is activated, then:</p>
 <ol start="3">
-<li>
-<p>Install <code>gsb</code> from PyPI using pip:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>gsb<span class="o">[</span>test<span class="o">]</span>
-</span></code></pre></div></p>
-</li>
-<li>
-<p>Ensure that <code>gsb</code> is compatible with your system by running:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gsb<span class="w"> </span><span class="nb">test</span>
-</span></code></pre></div>
-    If all tests pass, then you're good to go!</p>
-</li>
+<li>Install <code>gsb</code> from PyPI using pip:
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>gsb<span class="o">[</span>test<span class="o">]</span>
+</span></code></pre></div></li>
 </ol>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you'd like <code>gsb</code> to be available outside of your virtual environment,
-you can copy the executable to somewhere within your system path, <em>e.g.</em> for
-Linux, starting with the virtual environment deactivated:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$PATH</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>/home/openbagtwo/.mambaforge/condabin:/home/openbagtwo/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>$<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>gsb
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>$<span class="w"> </span>which<span class="w"> </span>gsb
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>/home/openbagtwo/.mambaforge/envs/gsb/bin/gsb
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>$<span class="w"> </span>cp<span class="w"> </span>/home/openbagtwo/.mambaforge/envs/gsb/bin/gsb<span class="w"> </span>~/.local/bin/
-</span></code></pre></div></p>
-</div>
-<h2 id="bleeding-edge">Bleeding Edge</h2>
+<h4 id="bleeding-edge">Bleeding Edge</h4>
 <p>If you'd like to test out upcoming features or help with beta testing, you
 can install from the current development branch via:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>git+https://github.com/OpenBagTwo/gsb.git@dev#egg<span class="o">=</span>gsb<span class="o">[</span>test<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>Be warned</strong> that any code on this branch is considered highly experimental. Given that this
-is a tool for <em>managing backups</em> make sure that you are not using it on any data that isn't
+is a tool for <em>managing backups</em>, make sure that you are not using it on any data that isn't
 also being backed up in another way.</p>
+<h2 id="verifying-your-installation">Verifying Your Installation</h2>
+<p>The instructions above recommend installing <code>gsb</code> with the optional <code>[test]</code>
+extra to enable easy running of GSB's included test suite. Doing so will ensure
+that GSB is able to work with your file system and that all of the dependcies
+and shared libraries are interacting correctly. Run this test suite by opening
+a suitable command line and running the command:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gsb<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<p>If all tests pass, then you're good to go!</p>
+<div class="admonition note">
+<p class="admonition-title">conda/venv users:</p>
+<p>If you get an error that <code>gsb</code> was not found, first make sure to activate its
+virtual environment, then try again.</p>
+<p>If you'd like <code>gsb</code> to be available outside of your virtual environment,
+you can copy the executable to somewhere within your system path, <em>e.g.</em> for
+Linux, starting with the virtual environment deactivated:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$PATH</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>/home/openbagtwo/.mambaforge/condabin:/home/openbagtwo/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>$<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>gsb
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>$<span class="w"> </span>which<span class="w"> </span>gsb
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>/home/openbagtwo/.mambaforge/envs/gsb/bin/gsb
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>$<span class="w"> </span>cp<span class="w"> </span>/home/openbagtwo/.mambaforge/envs/gsb/bin/gsb<span class="w"> </span>~/.local/bin/
+</span></code></pre></div></p>
+</div>
 
 
 

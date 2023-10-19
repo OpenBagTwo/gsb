@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
@@ -530,6 +530,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/gsb/logging/" class="md-nav__link">
         
   
@@ -550,11 +570,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/onboard/" class="md-nav__link">
+      <a href="../reference/gsb/history/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    onboard
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
   </span>
   
 
@@ -610,71 +670,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/manifest/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    manifest
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../reference/gsb/backup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     backup
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/export/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    export
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/history/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    history
   </span>
   
 
@@ -789,18 +789,18 @@
                   
 
 
-<h1 id="using-gsb">Using <code>gsb</code></h1>
+<h1 id="using-gsb">Using GSB</h1>
 <div class="admonition warning">
 <p class="admonition-title">PSA</p>
 <p>These are instructions for the pre-MVP release
-of <code>gsb</code>. Explicitly: these instructions require
+of GSB. Explicitly: these instructions require
 you to explicitly navigate to or the specify the
 path of every save file you want to manage, every
 time you run any command. By v0.1 this should no
 longer be required.</p>
 </div>
 <h2 id="locating-your-save-data">Locating Your Save Data</h2>
-<p>Before setting up <code>gsb</code> to manage your game saves, you'll
+<p>Before setting up GSB to manage your game saves, you'll
 first need to know where your save data is located. This
 will, of course, vary wildly based on platform and title, but
 many games have
@@ -813,24 +813,24 @@ in a file explorer.</p>
 <p>Once you've located a game you want to save, open a command-line and navigate
 to the folder containing your save and run the command <a href="../cli/#init"><code>gsb init</code></a>.
 By default, all files in the folder will be tracked, so if you only want to track
-certain files or subfolders, specify that using the <code>--track</code> flag (or if you
-want to ignore nay files matching a certain pattern, use <code>--ignore</code>).</p>
+certain files or subfolders, specify them using the <code>--track</code> flag (or if you
+want to ignore any files matching a certain pattern, use <code>--ignore</code>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Pro Tip</p>
-<p>While <code>gsb</code> does not currently support the ability to separately manage individual
+<p>While GSB does not currently support separately managing individual
 files located in the same folder,
-<a href="https://github.com/OpenBagTwo/gsb/issues/29">this feature is planned.</a>.
+<a href="https://github.com/OpenBagTwo/gsb/issues/29">this feature is planned</a>.
 In the meantime, for games where each save is located within a subfolder (<em>e.g.</em>
 Minecraft worlds), if you want to manage your saves separately, run <code>gsb init</code>
 <em>inside</em> each world folder rather than in your "saves" folder.</p>
 </div>
 <h2 id="create-a-backup-with-gsb-backup">Create a backup with <code>gsb backup</code></h2>
 <p>When you ran <code>gsb init</code> it automatically created your first backup. When you're ready
-to create your next one, navigate back to the folder where your save is stored and
-run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create another.</p>
+to create your next one, navigate back to the folder where you ran <code>gsb init</code>
+and run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create another.</p>
 <p>Note that <code>gsb</code> has two kinds of backups:</p>
 <ol>
-<li>"Untagged" backups (created by default) are good for just "checking in" regular gameplay
+<li>"Untagged" backups (created by default) are good for just checking in regular gameplay
    where you might want to restore to the last state if, say, a creeper blows up your base.</li>
 <li>"Tagged" backups (created by supplying the <code>--tag</code> argument along with a message) are
    meant to denote specific points you might want to return to later (right before an epic
@@ -838,16 +838,16 @@ run the <a href="../cli/#backup"><code>gsb backup</code></a> command to create a
 </ol>
 <div class="admonition danger">
 <p class="admonition-title">Pro Tip</p>
-<p>You can overwrite a previous backup using the <code>--combine</code> / <code>-c</code> flag. And if when
-making a new tagged backup you want to delete all of the untagged backups you've made
-since the last time you used the <code>--tag</code> flag, you can use <code>-cc</code>, <em>e.g.</em>
+<p>You can overwrite a previous backup using the <code>--combine</code> / <code>-c</code> flag. And when
+making a new tagged backup, you might want to "squash" all of the untagged backups you've made
+since your last tagged point, in which case you can use <code>-cc</code>, <em>e.g.</em>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gsb<span class="w"> </span>backup<span class="w"> </span>-cc<span class="w"> </span>--tag<span class="w"> </span><span class="s2">&quot;A backup that&#39;s actually important&quot;</span>
 </span></code></pre></div></p>
 </div>
 <h2 id="list-your-backups-using-gsb-history">List your backups using <code>gsb history</code></h2>
-<p>You can view your list of available backups at any time by navigating to your save's folder
-and running <a href="../cli/#history"><code>gsb history</code></a>. By default, this will show the identifiers and
-dates of all tagged <code>gsb</code>-managed backups, so have a look at the various command-line
+<p>You can view a list of available backups at any time via the
+<a href="../cli/#history"><code>gsb history</code></a> command. By default, this will show the identifiers and
+dates of all tagged GSB-managed backups, so have a look at the various command-line
 options to customize both the list of what you see and the amount of information you get
 on each backup.</p>
 <h2 id="restore-a-backup-with-gsb-rewind">Restore a backup with <code>gsb rewind</code></h2>
@@ -857,8 +857,8 @@ on each backup.</p>
 <p>In order to keep your backup history linear, technically what happens when you
 "rewind" your save state is that the files at that revision are restored and
 then played forward as a <em>new</em> commit. That way all of your changes since the
-point you rewound to are still in your history (future versions of <code>gsb</code> will
-let you clean this up later).</p>
+point you rewound to are still in your history (see below for instructions
+on cleaning up any unneeded or superfluous backups).</p>
 </details>
 <p>If you don't provide a restore point, the command will prompt you to choose from a list
 of recent backups.</p>
@@ -877,8 +877,8 @@ these loose objects.</p>
 </span></code></pre></div></p>
 </details>
 <h2 id="advanced-history-management-directly-with-git">Advanced History Management directly with Git</h2>
-<p>Behind the curtain, <code>gsb</code> runs on <a href="https://git-scm.com/">Git</a> meaning you can run
-any advanced commands you wish on a <code>gsb</code>-managed save repo directly via the
+<p>Behind the curtain, GSB runs on <a href="https://git-scm.com/">Git</a>, meaning you can run
+any advanced commands you wish on a GSB-managed repo directly via the
 <code>git</code> CLI or any general-purpose Git tool.</p>
 
 

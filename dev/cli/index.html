@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../img/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6a10b989.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
@@ -451,6 +451,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/gsb/logging/" class="md-nav__link">
         
   
@@ -471,11 +491,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/onboard/" class="md-nav__link">
+      <a href="../reference/gsb/history/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    onboard
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
   </span>
   
 
@@ -531,71 +591,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/gsb/manifest/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    manifest
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../reference/gsb/backup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     backup
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/export/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    export
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/gsb/history/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    history
   </span>
   
 
@@ -681,7 +681,7 @@
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  --help            Show this message and exit.
 </span></code></pre></div>
 <h2 id="delete">delete</h2>
-<p>Delete one or more backups.</p>
+<p>Delete one or more backups by their specified REVISION.</p>
 <p><strong>Usage:</strong></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gsb delete [OPTIONS] [REVISION]...
 </span></code></pre></div>
@@ -694,7 +694,7 @@
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  --help            Show this message and exit.
 </span></code></pre></div>
 <h2 id="export">export</h2>
-<p>Create a stand-alone archive specified REVISION.</p>
+<p>Create a stand-alone archive of the specified REVISION.</p>
 <p><strong>Usage:</strong></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gsb export [OPTIONS] [REVISION]
 </span></code></pre></div>
@@ -774,7 +774,7 @@
 <h2 id="test">test</h2>
 <p>Run the GSB test suite to ensure that it is running correctly on your system.
 Requires you to have installed GSB with the test extra
-(i.e. pipx install gsb[test]).</p>
+(<em>i.e.</em> <code>pipx install gsb[test]</code>).</p>
 <p><strong>Usage:</strong></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>gsb test [OPTIONS] [PYTEST_ARGS]...
 </span></code></pre></div>

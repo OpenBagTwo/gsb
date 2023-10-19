@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="img/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.6a10b989.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.35e1ed30.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.356b1318.min.css">
@@ -290,19 +290,6 @@
     Usage
   </a>
   
-    <nav class="md-nav" aria-label="Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#quick-start-guide" class="md-nav__link">
-    Quick-Start Guide
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -527,6 +514,26 @@
   
   
     <li class="md-nav__item">
+      <a href="reference/gsb/onboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    onboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="reference/gsb/logging/" class="md-nav__link">
         
   
@@ -547,11 +554,51 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/gsb/onboard/" class="md-nav__link">
+      <a href="reference/gsb/history/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    onboard
+    history
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/gsb/manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/gsb/export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    export
   </span>
   
 
@@ -607,71 +654,11 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/gsb/manifest/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    manifest
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="reference/gsb/backup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     backup
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/gsb/export/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    export
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/gsb/history/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    history
   </span>
   
 
@@ -741,19 +728,6 @@
     Usage
   </a>
   
-    <nav class="md-nav" aria-label="Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#quick-start-guide" class="md-nav__link">
-    Quick-Start Guide
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -802,7 +776,7 @@
 <p>Does it take too long to create or restore a Minecraft backup?</p>
 <p>Do you want to rewind your game five hours and explore <em>what might have been</em> if
 only you'd punched that NPC in the face?</p>
-<p>If that sounds like you, then <code>gsb</code> is here to help! This is a lightweight wrapper
+<p>If that sounds like you, then GSB is here to help! This is a lightweight wrapper
 around the <a href="https://git-scm.com/">Git</a> version control system that's optimized for
 game saves. Features (will) include:</p>
 <ul>
@@ -816,39 +790,40 @@ game saves. Features (will) include:</p>
 <li>... all without ever needing to know a thing about Git</li>
 </ul>
 <h2 id="installation">Installation</h2>
-<p>The <code>gsb</code> package is written for <strong>Python 3.11</strong> but otherwise
+<p>The <code>gsb</code> package is written for <strong>Python 3.11 or newer</strong> but otherwise
 should run on any operating system and architecture.</p>
-<p>The latest release can be installed from PyPI via <code>pip</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>gsb
+<p>The easiest way to install it is via <a href="https://pypa.github.io/pipx/">pipx</a>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pipx<span class="w"> </span>install<span class="w"> </span>gsb
 </span></code></pre></div>
-<p>Full installation instructions can be found on
-<a href="https://openbagtwo.github.io/gsb/dev/installation">GitHub Pages</a>.</p>
+<p>For more help (including instructions for installing an up-to-date version
+of Python), check out the
+<a href="installation">Installation Guide</a>.</p>
 <h2 id="usage">Usage</h2>
-<p>The recommended way to interact with <code>gsb</code> is via its  command-line interface.
+<p>The recommended way to interact with GSB is via its  command-line interface.
 Once you've installed the package, run the following command to get an overview of the
 available actions:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>gsb<span class="w"> </span>--help
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>gsb<span class="w"> </span>--help
 </span></code></pre></div>
 <p>and use:</p>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>gsb<span class="w"> </span>&lt;verb&gt;<span class="w"> </span>--help
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gsb<span class="w"> </span>&lt;verb&gt;<span class="w"> </span>--help
 </span></code></pre></div>
 (<em>e.g.</em> <code>gsb backup --help</code>)</p>
 <p>for further details on running each of those commands.</p>
-<p>Full documentation, including tutorials, examples and full CLI docs, can be
-found on <a href="https://openbagtwo.github.io/gsb/">GitHub Pages</a>.</p>
-<h3 id="quick-start-guide">Quick-Start Guide</h3>
-<p>Coming soon!</p>
+<div class="admonition tip">
+<p class="admonition-title">See Also</p>
+<p>Alternatively, just read through the <a href="cli">CLI docs</a>
+and check out the <a href="usage">Quick-Start Guide</a>.</p>
+</div>
 <h2 id="contributing">Contributing</h2>
 <p>If you're interested in helping develop this project, have a look at the
-<a href="https://github.com/OpenBagTwo/gsb/issues">repo backlog</a> and then read
-through the
-<a href="https://openbagtwo.github.io/gsb/dev/contrib">contributor's guide</a>.</p>
+<a href="https://github.com/OpenBagTwo/gsb/issues">repo backlog</a>, then read through the
+<a href="contrib">contributor's guide</a>.</p>
 <h2 id="license">License</h2>
-<p>This project--the executable, source code and all documentation--are published
+<p>This project—the executable, source code and all documentation—are published
 under the
-<a href="https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE">GNU Public License v3</a>,
-and any contributions to or derivatives of this project <em>must</em> be licensed under
-compatible terms.</p>
+<a href="https://github.com/OpenBagTwo/gsb/blob/dev/LICENSE">GNU Public License v3</a>
+unless otherwise stated, and any contributions to or derivatives of this project
+<em>must</em> be licensed under compatible terms.</p>
 
 
 

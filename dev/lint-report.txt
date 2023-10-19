@@ -4,16 +4,16 @@ gsb/_make_zip_archive.py:8:0: E0611: No name 'Commit' in module 'pygit2' (no-nam
 gsb/_make_zip_archive.py:8:0: E0611: No name 'Oid' in module 'pygit2' (no-name-in-module)
 gsb/_make_zip_archive.py:8:0: E0611: No name 'Tree' in module 'pygit2' (no-name-in-module)
 gsb/_make_zip_archive.py:65:15: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module gsb.fastforward
-gsb/fastforward.py:185:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
-************* Module gsb.history
-gsb/history.py:40:0: R0913: Too many arguments (7/5) (too-many-arguments)
-gsb/history.py:40:0: R0914: Too many local variables (16/15) (too-many-locals)
 ************* Module gsb.cli
 gsb/cli.py:44:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
 gsb/cli.py:105:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 94 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
 gsb/cli.py:209:0: R0913: Too many arguments (6/5) (too-many-arguments)
 gsb/cli.py:469:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
+************* Module gsb.history
+gsb/history.py:40:0: R0913: Too many arguments (7/5) (too-many-arguments)
+gsb/history.py:40:0: R0914: Too many local variables (16/15) (too-many-locals)
+************* Module gsb.fastforward
+gsb/fastforward.py:185:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
 
 -----------------------------------
 Your code has been rated at 9.55/10
