@@ -1,4 +1,5 @@
 """Common logging utilities"""
+
 import logging
 
 IMPORTANT = 25  # INFO logs that should be displayed even without "-v"

@@ -1,4 +1,5 @@
 """Tests for rewriting repo histories"""
+
 import logging
 import subprocess
 

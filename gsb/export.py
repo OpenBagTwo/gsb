@@ -1,4 +1,5 @@
 """Functionality for creating standalone backups"""
+
 import os
 from pathlib import Path
 

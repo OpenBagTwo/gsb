@@ -1,4 +1,5 @@
 """Functionality for removing backups from a repo's history"""
+
 import datetime as dt
 import logging
 from pathlib import Path
