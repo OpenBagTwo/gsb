@@ -1,4 +1,5 @@
 """Functionality for restoring to an old backup"""
+
 import logging
 from pathlib import Path
 

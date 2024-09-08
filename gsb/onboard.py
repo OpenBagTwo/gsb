@@ -1,4 +1,5 @@
 """Functionality for onboarding a new save state"""
+
 from pathlib import Path
 from typing import Iterable
 

@@ -1,4 +1,5 @@
 """Tests for reviewing repo histories"""
+
 import subprocess
 
 import pytest

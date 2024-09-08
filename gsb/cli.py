@@ -1,4 +1,5 @@
 """Command-line interface"""
+
 import datetime as dt
 import functools
 import logging

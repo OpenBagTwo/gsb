@@ -1,6 +1,7 @@
 """ZIP-compatible `repo.write_archive`, stand-alone for easier upstream sharing.
 As it is adapted directly from pygit2, this module is licensed under the
 GNU Public License v2."""
+
 import datetime as dt
 import zipfile
 from time import time

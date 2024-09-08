@@ -1,4 +1,5 @@
 """Configuration definition for an individual GSB-managed save"""
+
 import datetime as dt
 import json
 import logging
