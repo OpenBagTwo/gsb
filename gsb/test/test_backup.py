@@ -1,4 +1,5 @@
 """Tests for creating backups"""
+
 import os
 import subprocess
 from pathlib import Path
@@ -75,13 +76,13 @@ class TestCreateBackup:
         identifier = backup.create_backup(repo_root)
 
         repo = _git._repo(repo_root, new=False)
-        assert repo[identifier].type == pygit2.GIT_OBJ_COMMIT
+        assert repo[identifier].type == pygit2.GIT_OBJECT_COMMIT
 
     def test_tagged_backup_is_a_tag(self, repo_root):
         identifier = backup.create_backup(repo_root, "You're it")
 
         repo = _git._repo(repo_root, new=False)
-        assert repo.revparse_single(identifier).type == pygit2.GIT_OBJ_TAG
+        assert repo.revparse_single(identifier).type == pygit2.GIT_OBJECT_TAG
 
     @pytest.mark.parametrize("tagged", (False, True), ids=("untagged", "tagged"))
     def test_raise_when_theres_nothing_new_to_backup(self, repo_root, tagged):

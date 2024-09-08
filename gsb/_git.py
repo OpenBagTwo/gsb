@@ -1,4 +1,5 @@
 """Abstraction around the git library interface (to allow for easier backend swaps"""
+
 import datetime as dt
 import getpass
 import logging
@@ -400,7 +401,7 @@ class Tag(NamedTuple):
             tag_object = repo.revparse_single(reference.name)
             reference = reference.shorthand
 
-        if tag_object.type == pygit2.GIT_OBJ_TAG:
+        if tag_object.type == pygit2.GIT_OBJECT_TAG:
             try:
                 gsb = tag_object.tagger.name == "gsb"
             except AttributeError:  # pragma: no cover
@@ -411,7 +412,7 @@ class Tag(NamedTuple):
                 Commit.from_pygit2(repo[tag_object.target]),
                 gsb,
             )
-        if tag_object.type == pygit2.GIT_OBJ_COMMIT:
+        if tag_object.type == pygit2.GIT_OBJECT_COMMIT:
             return cls(reference, None, Commit.from_pygit2(tag_object), False)
         raise TypeError(  # pragma: no cover
             f"Don't know how to parse reference of type: {tag_object.type}"
@@ -480,7 +481,7 @@ def tag(
         repo.create_tag(
             tag_name,
             reference,
-            pygit2.GIT_OBJ_COMMIT,
+            pygit2.GIT_OBJECT_COMMIT,
             tagger,
             annotation,
         )
@@ -604,9 +605,9 @@ def show(repo_root: Path, reference: str) -> Commit | Tag:
     """
     repo = _repo(repo_root)
     revision = _resolve_reference(reference, repo)
-    if revision.type == pygit2.GIT_OBJ_TAG:
+    if revision.type == pygit2.GIT_OBJECT_TAG:
         return Tag.from_repo_reference(str(revision.id), repo)
-    if revision.type == pygit2.GIT_OBJ_COMMIT:
+    if revision.type == pygit2.GIT_OBJECT_COMMIT:
         return Commit.from_pygit2(revision)
     raise TypeError(  # pragma: no cover
         f"Object of type {revision.type} is not a valid revision"
