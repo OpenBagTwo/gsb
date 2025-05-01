@@ -8,6 +8,7 @@ import pytest
 from gsb import _git, fastforward
 from gsb.backup import create_backup
 from gsb.history import get_history
+from gsb.onboard import create_repo
 from gsb.rewind import restore_backup
 
 
@@ -65,6 +66,34 @@ class TestDeleteBackups:
             revision["identifier"]
             for revision in get_history(root, since=jurassic_timestamp)
         ] == ["gsb1.3", "gsb1.2"]
+
+    def test_deleting_a_backup_resulting_in_two_identical_backups(self, tmp_path):
+        root = tmp_path / "ping-pong"
+        root.mkdir(parents=True)
+
+        state_file = root / "state.txt"
+
+        create_repo(root, state_file.name)
+
+        state_file.write_text("ping")
+        create_backup(root, "Ping", tag_name="v1")
+
+        state_file.write_text("pong")
+        create_backup(root, "Pong", tag_name="v2")
+
+        state_file.write_text("ping")
+        create_backup(root, "Ping again", tag_name="v3")
+
+        state_file.write_text("pong")
+        create_backup(root, "Pong again", tag_name="v4")
+
+        fastforward.delete_backups(root, "v2")
+
+        assert [revision["identifier"] for revision in get_history(root)] == [
+            "v4",
+            "v3",
+            "v1",
+        ]
 
     def test_deleting_multiple_backups(self, root, all_backups):
         _git.reset(root, "gsb1.3", hard=True)
