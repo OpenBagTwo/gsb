@@ -88,9 +88,29 @@ class TestCreateBackup:
     def test_raise_when_theres_nothing_new_to_backup(self, repo_root, tagged):
         backup.create_backup(repo_root, tag_message="You're it" if tagged else None)
         with pytest.raises(ValueError):
+            # tagged will raise because tag is already tagged
+            # untagged will raise by default
             backup.create_backup(
                 repo_root, tag_message="You're still it" if tagged else None
             )
+
+    def test_do_nothing_on_empty_if_told_to_ignore(self, repo_root):
+        backup.create_backup(repo_root)
+
+        last_revision = get_history(
+            repo_root, tagged_only=False, include_non_gsb=True, limit=1
+        )[0]["identifier"]
+
+        _ = backup.create_backup(
+            repo_root,
+            raise_on_empty=False,
+        )
+        assert [
+            revision["identifier"]
+            for revision in get_history(
+                repo_root, tagged_only=False, include_non_gsb=True, limit=1
+            )
+        ] == [last_revision]
 
     def test_tagging_a_previously_untagged_backup(self, repo_root):
         commit_hash = backup.create_backup(repo_root)
@@ -135,6 +155,20 @@ class TestCLI:
             len(prior_commits) + 1,
             len(prior_tags),
         )
+
+    @pytest.mark.parametrize("ignore_empty", (None, "-i", "--ignore-empty"))
+    def test_backup_fails_when_nothing_to_commit(
+        self, repo_root, prior_commits, prior_tags, ignore_empty
+    ):
+        subprocess.run(["gsb", "backup"], cwd=repo_root)
+
+        args = ["gsb", "backup"]
+        if ignore_empty:
+            args.append(ignore_empty)
+        result = subprocess.run(args, cwd=repo_root)
+        assert (result.returncode == 0) == (ignore_empty is not None)
+
+        assert len(list(_git.log(repo_root))) == len(prior_commits) + 1
 
     @pytest.mark.parametrize("how", ("by_argument", "by_option"))
     def test_passing_in_a_custom_root(self, repo_root, how, prior_commits):
