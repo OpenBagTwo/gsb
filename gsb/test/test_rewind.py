@@ -72,7 +72,7 @@ class TestRestoreBackup:
         )
 
     def test_restores_file_content_to_a_previous_commit(self, repo):
-        commit_two = list(get_history(repo, tagged_only=False))[-4]
+        commit_two = get_history(repo, tagged_only=False)[-4]
         assert not commit_two["identifier"].startswith("gsb")  # not a tag
         rewind.restore_backup(repo, commit_two["identifier"])
         assert (repo / "save" / "data.txt").read_text() == "2\n"
@@ -92,7 +92,7 @@ class TestRestoreBackup:
         assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
         rewind.restore_backup(repo, last_backup["identifier"])
         assert (repo / "save" / "data.txt").read_text() == "9\n"
-        all_backups = list(get_history(repo, tagged_only=False))
+        all_backups = get_history(repo, tagged_only=False)
 
         assert all_backups[2] == last_backup  # because reverse-chronological
 
@@ -161,6 +161,53 @@ class TestRestoreBackup:
         time.sleep(1)  # blergh
         rewind.restore_backup(repo_root, restore_point["identifier"])
         assert not (repo_root / "furniture" / "sofa").exists()
+
+    def test_hard_rewind_does_not_keep_unsaved_changes(self, repo):
+
+        old_history = get_history(repo, tagged_only=False)
+        rewind.restore_backup(repo, old_history[0]["identifier"], hard=True)
+        new_history = get_history(repo, tagged_only=False)
+
+        assert (repo / "save" / "data.txt").read_text() == "9\n"
+        assert new_history == old_history
+
+    @pytest.mark.parametrize("keep_gsb_files", (True, False))
+    def test_hard_rewind_keeps_committed_gsb_file_changes_by_default(
+        self, repo, keep_gsb_files
+    ):
+        kwargs = {"hard": True}
+        if not keep_gsb_files:
+            kwargs["keep_gsb_files"] = keep_gsb_files
+
+        old_history = get_history(repo, tagged_only=False)
+
+        with (repo / ".gitignore").open("a") as gitignore_file:
+            gitignore_file.write("\nboop\n")
+
+        _git.add(repo, (".gitignore",))
+        _git.commit(repo, "Not even a GSB backup")
+
+        rewind.restore_backup(repo, old_history[0]["identifier"], **kwargs)
+        new_history = get_history(repo, tagged_only=False)
+
+        assert (
+            (repo / ".gitignore").read_text().splitlines()[-1] == "boop"
+        ) == keep_gsb_files
+        if keep_gsb_files:
+            assert new_history[1:] == old_history
+        else:
+            assert new_history == old_history
+
+    def test_hard_rewinding_to_older_backups(self, repo):
+        old_history = [
+            revision["commit_hash"] for revision in get_history(repo, tagged_only=False)
+        ]
+        rewind.restore_backup(repo, old_history[5], hard=True)
+        new_history = [
+            revision["commit_hash"] for revision in get_history(repo, tagged_only=False)
+        ]
+
+        assert new_history == old_history[5:]
 
 
 class TestCLI:
@@ -318,3 +365,33 @@ class TestCLI:
         )
 
         assert "# it's a comment" not in (repo / MANIFEST_NAME).read_text()
+
+    def test_hard_rewind_defaults_to_last_backup(self, repo):
+        old_history = get_history(repo, tagged_only=False)
+
+        _ = subprocess.run(
+            ["gsb", "rewind", "--hard"], cwd=repo, capture_output=False, input="y\n"
+        )
+
+        new_history = get_history(repo, tagged_only=False)
+
+        assert (repo / "save" / "data.txt").read_text() == "9\n"
+        assert new_history == old_history
+
+    def test_hard_rewind_warns_about_discarding_changes(self, repo):
+        result = subprocess.run(
+            ["gsb", "rewind", "--hard"], cwd=repo, capture_output=True, input="n\n"
+        )
+        assert "You have unsaved change" in result.stderr.decode()
+
+        assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
+
+    def test_hard_rewind_warns_about_the_backups_youre_deleting(self, repo):
+        result = subprocess.run(
+            ["gsb", "rewind", "--hard", "gsb2023.07.12"],
+            cwd=repo,
+            capture_output=True,
+            input="n\n",
+        )
+
+        assert "gsb2023.07.13" in result.stderr.decode()
