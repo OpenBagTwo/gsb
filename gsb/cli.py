@@ -125,7 +125,7 @@ def backup(
             if "not enough values to unpack" in str(probably_not_enough_values):
                 LOGGER.error("Cannot combine with the very first backup.")
                 sys.exit(1)
-            raise probably_not_enough_values  # pragma: no-cover
+            raise probably_not_enough_values  # pragma: no cover
 
         LOGGER.log(IMPORTANT, "Combining with %s", combine_me["identifier"])
         if combine_me["tagged"]:
@@ -373,7 +373,7 @@ def _enumerate_revisions_to_be_discarded(repo_root: Path, restore_point: str) ->
         if revision == break_point:
             break
         limit += 1
-    else:  # pragma: no-cover
+    else:  # pragma: no cover
         LOGGER.error("Specified revision is not in the current history. Cannot rewind.")
         sys.exit(1)
 
