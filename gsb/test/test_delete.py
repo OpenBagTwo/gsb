@@ -67,33 +67,74 @@ class TestDeleteBackups:
             for revision in get_history(root, since=jurassic_timestamp)
         ] == ["gsb1.3", "gsb1.2"]
 
-    def test_deleting_a_backup_resulting_in_two_identical_backups(self, tmp_path):
-        root = tmp_path / "ping-pong"
-        root.mkdir(parents=True)
+    class TestBackupDeletionCreatingDegeneracy:
 
-        state_file = root / "state.txt"
+        def test_redundant_commits_are_skipped(self, tmp_path):
+            root = tmp_path / "ping-pong"
+            root.mkdir(parents=True)
 
-        create_repo(root, state_file.name)
+            state_file = root / "state.txt"
 
-        state_file.write_text("ping")
-        create_backup(root, "Ping", tag_name="v1")
+            create_repo(root, state_file.name)
 
-        state_file.write_text("pong")
-        create_backup(root, "Pong", tag_name="v2")
+            state_file.write_text("ping")
+            v1 = create_backup(root)
 
-        state_file.write_text("ping")
-        create_backup(root, "Ping again", tag_name="v3")
+            state_file.write_text("pong")
+            v2 = create_backup(root)
 
-        state_file.write_text("pong")
-        create_backup(root, "Pong again", tag_name="v4")
+            state_file.write_text("ping")
+            v3 = create_backup(root)
 
-        fastforward.delete_backups(root, "v2")
+            state_file.write_text("pong")
+            v4 = create_backup(root)
 
-        assert [revision["identifier"] for revision in get_history(root)] == [
-            "v4",
-            "v3",
-            "v1",
-        ]
+            fastforward.delete_backups(root, v2)
+
+            new_history = [
+                revision for revision in get_history(root, tagged_only=False)
+            ]
+            assert v4 in new_history[0]["description"]
+            assert new_history[1]["commit_hash"] == v1
+
+        @pytest.fixture
+        def setup(self, tmp_path, caplog):
+            root = tmp_path / "ping-pong"
+            root.mkdir(parents=True)
+
+            state_file = root / "state.txt"
+
+            create_repo(root, state_file.name)
+
+            state_file.write_text("ping")
+            create_backup(root, "Ping", tag_name="v1")
+
+            state_file.write_text("pong")
+            create_backup(root, "Pong", tag_name="v2")
+
+            state_file.write_text("ping")
+            create_backup(root, "Ping again", tag_name="v3")
+
+            state_file.write_text("pong")
+            create_backup(root, "Pong again", tag_name="v4")
+
+            caplog.clear()
+            with caplog.at_level(logging.WARNING):
+                fastforward.delete_backups(root, "v2")
+
+            yield root, caplog.records
+
+        def test_redundant_tags_are_both_preserved(self, setup):
+            root, _ = setup
+
+            assert [
+                revision["identifier"]
+                for revision in get_history(root, tagged_only=False)
+            ][:-1] == ["v4", "v3", "v1"]
+
+        def test_redundant_tags_produce_warnings(self, setup):
+            _, records = setup
+            assert records[-1].message.startswith("Backup v3 is identical to")
 
     def test_deleting_multiple_backups(self, root, all_backups):
         _git.reset(root, "gsb1.3", hard=True)
