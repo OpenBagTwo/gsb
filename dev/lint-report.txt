@@ -1,26 +1,29 @@
+************* Module gsb.cli
+gsb/cli.py:45:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
+gsb/cli.py:121:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 98 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
+gsb/cli.py:235:0: R0913: Too many arguments (6/5) (too-many-arguments)
+gsb/cli.py:235:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+gsb/cli.py:495:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
 ************* Module gsb.fastforward
-gsb/fastforward.py:186:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
-************* Module gsb._make_zip_archive
-gsb/_make_zip_archive.py:9:0: E0611: No name 'GIT_FILEMODE_LINK' in module 'pygit2' (no-name-in-module)
-gsb/_make_zip_archive.py:9:0: E0611: No name 'Commit' in module 'pygit2' (no-name-in-module)
-gsb/_make_zip_archive.py:9:0: E0611: No name 'Oid' in module 'pygit2' (no-name-in-module)
-gsb/_make_zip_archive.py:9:0: E0611: No name 'Tree' in module 'pygit2' (no-name-in-module)
-gsb/_make_zip_archive.py:66:15: W0718: Catching too general exception Exception (broad-exception-caught)
+gsb/fastforward.py:199:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
 ************* Module gsb._git
 gsb/_git.py:404:30: E1101: Module 'pygit2' has no 'GIT_OBJECT_TAG' member (no-member)
 gsb/_git.py:415:30: E1101: Module 'pygit2' has no 'GIT_OBJECT_COMMIT' member (no-member)
 gsb/_git.py:484:12: E1101: Module 'pygit2' has no 'GIT_OBJECT_COMMIT' member (no-member)
 gsb/_git.py:608:24: E1101: Module 'pygit2' has no 'GIT_OBJECT_TAG' member (no-member)
 gsb/_git.py:610:24: E1101: Module 'pygit2' has no 'GIT_OBJECT_COMMIT' member (no-member)
-************* Module gsb.cli
-gsb/cli.py:45:9: W0511: TODO: when we add log files, set this to minimum log level across all handlers (fixme)
-gsb/cli.py:106:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 95 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
-gsb/cli.py:210:0: R0913: Too many arguments (6/5) (too-many-arguments)
-gsb/cli.py:470:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
 ************* Module gsb.history
-gsb/history.py:41:0: R0913: Too many arguments (7/5) (too-many-arguments)
-gsb/history.py:41:0: R0914: Too many local variables (16/15) (too-many-locals)
+gsb/history.py:42:0: R0913: Too many arguments (7/5) (too-many-arguments)
+gsb/history.py:42:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+gsb/history.py:42:0: R0914: Too many local variables (18/15) (too-many-locals)
+gsb/history.py:42:0: R0912: Too many branches (14/12) (too-many-branches)
+************* Module gsb._make_zip_archive
+gsb/_make_zip_archive.py:9:0: E0611: No name 'GIT_FILEMODE_LINK' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:9:0: E0611: No name 'Commit' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:9:0: E0611: No name 'Oid' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:9:0: E0611: No name 'Tree' in module 'pygit2' (no-name-in-module)
+gsb/_make_zip_archive.py:66:15: W0718: Catching too general exception Exception (broad-exception-caught)
 
 -----------------------------------
-Your code has been rated at 9.21/10
+Your code has been rated at 9.19/10
 
