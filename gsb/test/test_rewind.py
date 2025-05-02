@@ -370,7 +370,10 @@ class TestCLI:
         old_history = get_history(repo, tagged_only=False)
 
         _ = subprocess.run(
-            ["gsb", "rewind", "--hard"], cwd=repo, capture_output=False, input="y\n"
+            ["gsb", "rewind", "--hard"],
+            cwd=repo,
+            capture_output=False,
+            input="y\n".encode(),
         )
 
         new_history = get_history(repo, tagged_only=False)
@@ -380,9 +383,12 @@ class TestCLI:
 
     def test_hard_rewind_warns_about_discarding_changes(self, repo):
         result = subprocess.run(
-            ["gsb", "rewind", "--hard"], cwd=repo, capture_output=True, input="n\n"
+            ["gsb", "rewind", "--hard"],
+            cwd=repo,
+            capture_output=True,
+            input="n\n".encode(),
         )
-        assert "You have unsaved change" in result.stderr.decode()
+        assert "any unsaved change" in result.stderr.decode()
 
         assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
 
@@ -391,7 +397,8 @@ class TestCLI:
             ["gsb", "rewind", "--hard", "gsb2023.07.12"],
             cwd=repo,
             capture_output=True,
-            input="n\n",
+            input="n\n".encode(),
         )
 
         assert "gsb2023.07.13" in result.stderr.decode()
+        assert "gsb2023.07.12" not in result.stderr.decode()

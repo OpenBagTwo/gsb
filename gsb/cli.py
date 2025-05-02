@@ -264,24 +264,42 @@ def history(
     is_flag=True,
     help="Also revert the GSB configuration files (including .gitignore)",
 )
+@click.option(
+    "--hard",
+    is_flag=True,
+    help=(
+        "Discard any changes (backed up or no)"
+        " since the specified (default: latest) revision"
+    ),
+)
 @click.argument(
     "revision",
     type=str,
     required=False,
 )
 @_subcommand_init
-def rewind(repo_root: Path, revision: str | None, include_gsb_settings: bool):
+def rewind(
+    repo_root: Path, revision: str | None, hard: bool, include_gsb_settings: bool
+):
     """Restore a backup to the specified REVISION."""
+    if hard:
+        if revision is None:
+            revision = history_.get_history(
+                repo_root, tagged_only=False, include_non_gsb=True, limit=1
+            )[0]["identifier"]
+        _enumerate_revisions_to_be_discarded(repo_root, revision)
     if revision is None:
         revision = _prompt_for_a_recent_revision(repo_root)
     try:
-        rewind_.restore_backup(repo_root, revision, not include_gsb_settings)
+        rewind_.restore_backup(
+            repo_root, revision, keep_gsb_files=not include_gsb_settings, hard=hard
+        )
     except ValueError as whats_that:
         LOGGER.error(whats_that)
         sys.exit(1)
 
 
-def _prompt_for_a_recent_revision(repo_root) -> str:
+def _prompt_for_a_recent_revision(repo_root: Path) -> str:
     """Select a recent revision from a prompt"""
     LOGGER.log(IMPORTANT, "Here is a list of recent backups:")
     revisions = history_.show_history(repo_root, limit=10)
@@ -326,6 +344,39 @@ def _prompt_for_a_recent_revision(repo_root) -> str:
     if choice.strip() in [str(i + 1) for i in range(len(revisions))]:
         return revisions[int(choice.strip()) - 1]["identifier"]
     return choice
+
+
+def _enumerate_revisions_to_be_discarded(repo_root: Path, restore_point: str) -> None:
+    """List all the backups to be deleted by a hard restore to the restore-point,
+    then ask the user for confirmation"""
+
+    # figure out how far back this is in the history
+    break_point = _git.show(repo_root, restore_point)
+    if isinstance(break_point, _git.Tag):
+        break_point = break_point.target
+    limit = 0
+    for revision in _git.log(repo_root):
+        if revision == break_point:
+            break
+        limit += 1
+    else:  # pragma: no-cover
+        LOGGER.error("Specified revision is not in the current history. Cannot rewind.")
+        sys.exit(1)
+
+    LOGGER.warning("The following backups will be deleted:")
+    history_.show_history(
+        repo_root, numbering=None, tagged_only=False, include_non_gsb=True, limit=limit
+    )
+    LOGGER.warning("\nalong with any unsaved changes.\n")
+
+    confirmed: bool = click.confirm(
+        "Are you sure you wish to continue?",
+        default=False,
+        show_default=True,
+    )
+    if not confirmed:
+        LOGGER.error("Aborting.")
+        sys.exit(1)
 
 
 @click.argument(
