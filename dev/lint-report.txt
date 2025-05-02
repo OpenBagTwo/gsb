@@ -3,7 +3,7 @@ gsb/cli.py:45:9: W0511: TODO: when we add log files, set this to minimum log lev
 gsb/cli.py:121:12: W0632: Possible unbalanced tuple unpacking with sequence defined at line 98 of gsb.history: left side has 2 labels, right side has 0 values (unbalanced-tuple-unpacking)
 gsb/cli.py:235:0: R0913: Too many arguments (6/5) (too-many-arguments)
 gsb/cli.py:235:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-gsb/cli.py:494:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
+gsb/cli.py:559:4: C0415: Import outside toplevel (pytest) (import-outside-toplevel)
 ************* Module gsb.fastforward
 gsb/fastforward.py:199:11: E1120: No value for argument 'starting_point' in function call (no-value-for-parameter)
 ************* Module gsb._git
@@ -25,5 +25,5 @@ gsb/_make_zip_archive.py:9:0: E0611: No name 'Tree' in module 'pygit2' (no-name-
 gsb/_make_zip_archive.py:66:15: W0718: Catching too general exception Exception (broad-exception-caught)
 
 -----------------------------------
-Your code has been rated at 9.18/10
+Your code has been rated at 9.22/10
 
