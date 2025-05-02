@@ -171,10 +171,17 @@ class TestRestoreBackup:
         assert (repo / "save" / "data.txt").read_text() == "9\n"
         assert new_history == old_history
 
+    def test_hard_rewind_deletes_untracked_files(self, repo):
+        restore_point = backup.create_backup(repo)
+
+        (repo / "save" / "fluffy.txt").write_text("doc\n")
+
+        rewind.restore_backup(repo, restore_point, hard=True)
+
+        assert not (repo / "save" / "fluffy.txt").exists()
+
     def test_hard_rewind_does_not_promote_untagged_backups(self, repo):
         backup.create_backup(repo)
-
-        (repo / "save" / "data.txt").write_text("10\n")
 
         old_head = get_history(repo, tagged_only=False, limit=1)[0]
         rewind.restore_backup(repo, old_head["identifier"], hard=True)
