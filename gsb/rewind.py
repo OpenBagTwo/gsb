@@ -62,10 +62,10 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
         IMPORTANT, "Backing up any unsaved changes before rewinding to %s", revision
     )
     try:
-        orig_head: str = backup.create_backup(
+        orig_head = backup.create_backup(
             repo_root,
             f"Backing up state before rewinding to {revision}",
-        )  # type: ignore[assignment]
+        )
     except ValueError:  #  nothing to back up
         orig_head = _git.show(repo_root, "HEAD").hash  # type: ignore[union-attr]
 
@@ -77,4 +77,4 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
         repo_root,
         f"Restored to {revision}",
         tag_name=generate_restore_tag_name(revision),
-    )  # type: ignore[return-value]
+    )
