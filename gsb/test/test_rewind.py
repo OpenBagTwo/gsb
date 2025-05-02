@@ -402,3 +402,24 @@ class TestCLI:
 
         assert "gsb2023.07.13" in result.stderr.decode()
         assert "gsb2023.07.12" not in result.stderr.decode()
+
+    def test_delete_original(self, repo):
+        backup.create_backup(repo, tag_message="Saving any unsaved changes")
+        old_history = [
+            revision["identifier"] for revision in get_history(repo, tagged_only=False)
+        ]
+
+        _ = subprocess.run(
+            ["gsb", "rewind", "gsb2023.07.12", "--delete-original"],
+            cwd=repo,
+            capture_output=True,
+        )
+        new_history = [
+            revision["identifier"] for revision in get_history(repo, tagged_only=False)
+        ]
+
+        assert (
+            new_history[1:]
+            == old_history[: old_history.index("gsb2023.07.12")]
+            + old_history[old_history.index("gsb2023.07.12") + 1 :]
+        )
