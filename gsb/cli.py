@@ -155,12 +155,17 @@ def backup(
             LOGGER.log(IMPORTANT, "(no backups to combine)")
         parent_hash = last_tag["identifier"]
 
-    backup_.create_backup(
-        path_as_arg or repo_root,
-        tag,
-        parent=parent_hash,
-        raise_on_empty=not ignore_empty,
-    )
+    try:
+        backup_.create_backup(
+            path_as_arg or repo_root,
+            tag,
+            parent=parent_hash,
+        )
+    except ValueError as nothing_to_commit:
+        if ignore_empty:
+            LOGGER.warning("Nothing to commit")
+        else:
+            raise nothing_to_commit
 
 
 @click.option(

@@ -94,24 +94,6 @@ class TestCreateBackup:
                 repo_root, tag_message="You're still it" if tagged else None
             )
 
-    def test_do_nothing_on_empty_if_told_to_ignore(self, repo_root):
-        backup.create_backup(repo_root)
-
-        last_revision = get_history(
-            repo_root, tagged_only=False, include_non_gsb=True, limit=1
-        )[0]["identifier"]
-
-        _ = backup.create_backup(
-            repo_root,
-            raise_on_empty=False,
-        )
-        assert [
-            revision["identifier"]
-            for revision in get_history(
-                repo_root, tagged_only=False, include_non_gsb=True, limit=1
-            )
-        ] == [last_revision]
-
     def test_tagging_a_previously_untagged_backup(self, repo_root):
         commit_hash = backup.create_backup(repo_root)
         tag_name = backup.create_backup(repo_root, "You're it")

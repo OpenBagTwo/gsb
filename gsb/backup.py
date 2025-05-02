@@ -37,8 +37,7 @@ def create_backup(
     commit_message: str | None = None,
     parent: str | None = None,
     tag_name: str | None = None,
-    raise_on_empty: bool = True,
-) -> str | None:
+) -> str:
     """Create a new backup
 
     Parameters
@@ -62,11 +61,6 @@ def create_backup(
         By default, tag names are automatically generated. Use this argument to
         provide a custom tag name. This option is ignored when not creating
         a tag.
-    raise_on_empty : bool, optional
-        By default, if there is nothing to commit (and you're not tagging a
-        previously untagged commit), this method will raise
-        a ValueError. To simply log that there's nothing new to commit,
-        pass `raise_on_empty=False`.
 
     Returns
     -------
@@ -96,10 +90,9 @@ def create_backup(
         LOGGER.info("Changes committed with hash %s", identifier[:8])
         LOGGER.debug("Full hash: %s", identifier)
     except ValueError:
-        if not tag_message and raise_on_empty:
+        if not tag_message:
             raise
-        LOGGER.warning("Nothing new to commit--all files are up-to-date.")
-        identifier = None
+        LOGGER.info("Nothing new to commit--all files are up-to-date.")
     if tag_message:
         head = _git.show(repo_root, "HEAD")
         for tag in _git.get_tags(repo_root, annotated_only=True):

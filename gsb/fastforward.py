@@ -59,11 +59,11 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
             revision = tag_lookup[revision]  # type: ignore[index]
         new_history.append(revision)
 
-    head = backup.create_backup(repo_root, raise_on_empty=False)
-    if head:
+    try:
+        head = backup.create_backup(repo_root)
         LOGGER.log(IMPORTANT, "Unsaved changes have been backed up as %s", head[:8])
         new_history.append(_git.show(repo_root, head))
-    else:
+    except ValueError:  # no unsaved changes
         head = _git.show(repo_root, "HEAD").hash  # type: ignore[union-attr]
 
     try:
