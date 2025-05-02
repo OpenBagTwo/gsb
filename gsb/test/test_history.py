@@ -164,7 +164,7 @@ class TestCLI:
         ]
         assert backups == [last_backup, "2. gsb1.3", "3. gsb1.2"]
 
-    @pytest.mark.parametrize("flag", ("--include_non_gsb", "-g"))
+    @pytest.mark.parametrize("flag", ("--include-non-gsb", "-g"))
     def test_including_non_gsb(self, root, last_backup, flag):
         args = ["gsb", "history", flag]
 

@@ -359,7 +359,7 @@ class TestCLI:
             manifest.write("# it's a comment\n")
 
         _ = subprocess.run(
-            ["gsb", "rewind", "gsb2023.07.12", "--include_gsb_settings"],
+            ["gsb", "rewind", "gsb2023.07.12", "--include-gsb-settings"],
             cwd=repo,
             capture_output=False,
         )

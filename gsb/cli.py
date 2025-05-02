@@ -206,7 +206,7 @@ def init(
 
 
 @click.option(
-    "--include_non_gsb",
+    "--include-non-gsb",
     "-g",
     is_flag=True,
     help="Include backups created directly with Git / outside of gsb.",
@@ -260,7 +260,7 @@ def history(
 
 
 @click.option(
-    "--include_gsb_settings",
+    "--include-gsb-settings",
     is_flag=True,
     help="Also revert the GSB configuration files (including .gitignore)",
 )
