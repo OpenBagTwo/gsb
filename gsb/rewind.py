@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from . import _git, backup
+from . import _git, backup, manifest
 from .logging import IMPORTANT
 
 LOGGER = logging.getLogger(__name__)
@@ -73,7 +73,9 @@ def restore_backup(
 
     orig_head = _git.show(repo_root, "HEAD").hash  # type: ignore[union-attr]
 
-    if not hard:
+    if hard:
+        _git.add(repo_root, manifest.Manifest.of(repo_root).patterns)
+    else:
         LOGGER.log(
             IMPORTANT, "Backing up any unsaved changes before rewinding to %s", revision
         )
