@@ -453,7 +453,6 @@ def export(
     **format_flags,
 ):
     """Create a stand-alone archive of the specified REVISION."""
-    print(format_flags)
     specified_formats: list[str] = [value for value in format_flags.values() if value]
 
     if len(specified_formats) > 1:
