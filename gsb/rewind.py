@@ -69,7 +69,7 @@ def restore_backup(
     ValueError
         If the specified revision does not exist
     """
-    _git.show(repo_root, revision)
+    _git.show(repo_root, revision)  # ensure revision exists
 
     orig_head = _git.show(repo_root, "HEAD").hash  # type: ignore[union-attr]
 
@@ -88,14 +88,18 @@ def restore_backup(
     _git.reset(repo_root, revision, hard=True)
     if keep_gsb_files:
         _git.checkout_files(repo_root, orig_head, backup.REQUIRED_FILES)
-    if not hard:
-        _git.reset(repo_root, orig_head, hard=False)
-
-    try:
-        return backup.create_backup(
-            repo_root,
-            f"Restored to {revision}",
-            tag_name=generate_restore_tag_name(revision),
-        )
-    except ValueError:
+    if hard:
+        try:  # on the off chance that the gsb files changed, commit them
+            backup.create_backup(
+                repo_root, commit_message="Cherry-picking changes to the gsb files"
+            )
+        except ValueError:  # this is actually the more likely outcome
+            pass
         return revision
+
+    _git.reset(repo_root, orig_head, hard=False)
+    return backup.create_backup(
+        repo_root,
+        f"Restored to {revision}",
+        tag_name=generate_restore_tag_name(revision),
+    )
