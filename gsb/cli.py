@@ -80,7 +80,10 @@ def _subcommand_init(command: Callable) -> Callable:
     "--ignore-empty",
     "-i",
     is_flag=True,
-    help="Do not return an error code if there's nothing to commit",
+    help=(
+        "Do not return an error code if there's nothing to commit"
+        " (this flag only applies for untagged backups)"
+    ),
 )
 @click.option(
     "--tag",
