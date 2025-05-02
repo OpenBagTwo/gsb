@@ -61,12 +61,13 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
     LOGGER.log(
         IMPORTANT, "Backing up any unsaved changes before rewinding to %s", revision
     )
-    try:
-        orig_head = backup.create_backup(
-            repo_root, f"Backing up state before rewinding to {revision}"
-        )
-    except ValueError as already_backed_up:
-        LOGGER.warning("Nothing to back up: %s", already_backed_up)
+
+    orig_head = backup.create_backup(
+        repo_root,
+        f"Backing up state before rewinding to {revision}",
+        raise_on_empty=False,
+    )
+    if not orig_head:  # nothing to back up
         orig_head = _git.show(repo_root, "HEAD").hash  # type: ignore[union-attr]
 
     _git.reset(repo_root, revision, hard=True)
@@ -77,4 +78,4 @@ def restore_backup(repo_root: Path, revision: str, keep_gsb_files: bool = True) 
         repo_root,
         f"Restored to {revision}",
         tag_name=generate_restore_tag_name(revision),
-    )
+    )  # type: ignore[return-value]

@@ -77,6 +77,12 @@ def _subcommand_init(command: Callable) -> Callable:
 
 
 @click.option(
+    "--ignore-empty",
+    "-i",
+    is_flag=True,
+    help="Do not return an error code if there's nothing to commit",
+)
+@click.option(
     "--tag",
     type=str,
     help='Specify a description for this backup and "tag" it for future reference.',
@@ -98,7 +104,13 @@ def _subcommand_init(command: Callable) -> Callable:
     metavar="[SAVE_PATH]",
 )
 @_subcommand_init
-def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: int):
+def backup(
+    repo_root: Path,
+    path_as_arg: Path | None,
+    tag: str | None,
+    combine: int,
+    ignore_empty: bool,
+):
     """Create a new backup."""
     parent_hash = None
     if combine == 1:
@@ -143,7 +155,12 @@ def backup(repo_root: Path, path_as_arg: Path | None, tag: str | None, combine: 
             LOGGER.log(IMPORTANT, "(no backups to combine)")
         parent_hash = last_tag["identifier"]
 
-    backup_.create_backup(path_as_arg or repo_root, tag, parent=parent_hash)
+    backup_.create_backup(
+        path_as_arg or repo_root,
+        tag,
+        parent=parent_hash,
+        raise_on_empty=not ignore_empty,
+    )
 
 
 @click.option(
