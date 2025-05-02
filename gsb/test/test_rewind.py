@@ -414,12 +414,27 @@ class TestCLI:
             cwd=repo,
             capture_output=True,
         )
-        new_history = [
-            revision["identifier"] for revision in get_history(repo, tagged_only=False)
-        ]
+        new_history = []
+        for revision in get_history(repo, tagged_only=False):
+            if revision["tagged"]:
+                new_history.append(revision["identifier"])
+            elif "rebase of" in revision["description"]:
+                new_history.append(revision["description"].split(" ")[-1][:8])
+            else:
+                new_history.append(revision["identifier"])
 
         assert (
             new_history[1:]
             == old_history[: old_history.index("gsb2023.07.12")]
             + old_history[old_history.index("gsb2023.07.12") + 1 :]
         )
+
+    def test_delete_original_is_incompatible_with_hard(self, repo):
+        result = subprocess.run(
+            ["gsb", "rewind", "--hard", "gsb2023.07.12", "--delete-original"],
+            cwd=repo,
+            capture_output=True,
+            input="n\n".encode(),
+        )
+        assert result.returncode != 0
+        assert (repo / "save" / "data.txt").read_text() == "Sneaky sneaky\n"
