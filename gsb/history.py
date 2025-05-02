@@ -2,6 +2,7 @@
 
 import datetime as dt
 import logging
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, TypedDict
 
@@ -87,10 +88,12 @@ def get_history(
         If called with `return_parent=True` `get_history` and the earliest commit
         had no parent (being the initial commit, itself).
     """
-    tag_lookup = {
-        tag.target: tag for tag in _git.get_tags(repo_root, annotated_only=True)
-    }
-    LOGGER.debug("Retrieved %s tags", len(tag_lookup))
+    tag_lookup = defaultdict(list)
+    tag_count = 0
+    for tag in _git.get_tags(repo_root, annotated_only=True):
+        tag_lookup[tag.target].append(tag)
+        tag_count += 1
+    LOGGER.debug("Retrieved %s tags", tag_count)
 
     revisions: list[Revision] = []
     defer_break = False
@@ -100,13 +103,25 @@ def get_history(
                 defer_break = True
             else:
                 break
-        if tag := tag_lookup.get(commit):
+        if tags := tag_lookup.get(commit):
             if since_last_tagged_backup:
                 break
             tagged = True
-            identifier = tag.name
-            is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
-            description = tag.annotation or commit.message
+            for tag in reversed(tags):
+                identifier = tag.name
+                is_gsb = tag.gsb if tag.gsb is not None else commit.gsb
+                description = tag.annotation or commit.message
+                if is_gsb or include_non_gsb:
+                    revisions.append(
+                        {
+                            "identifier": identifier,
+                            "commit_hash": commit.hash,
+                            "description": description.strip(),
+                            "timestamp": commit.timestamp,
+                            "tagged": tagged,
+                            "gsb": is_gsb,
+                        }
+                    )
         else:
             if tagged_only and not always_include_latest:
                 continue
@@ -114,18 +129,18 @@ def get_history(
             identifier = commit.hash[:8]
             is_gsb = commit.gsb
             description = commit.message
-        if not include_non_gsb and not is_gsb and not always_include_latest:
-            continue
-        revisions.append(
-            {
-                "identifier": identifier,
-                "commit_hash": commit.hash,
-                "description": description.strip(),
-                "timestamp": commit.timestamp,
-                "tagged": tagged,
-                "gsb": is_gsb,
-            }
-        )
+            if not include_non_gsb and not is_gsb and not always_include_latest:
+                continue
+            revisions.append(
+                {
+                    "identifier": identifier,
+                    "commit_hash": commit.hash,
+                    "description": description.strip(),
+                    "timestamp": commit.timestamp,
+                    "tagged": tagged,
+                    "gsb": is_gsb,
+                }
+            )
         if always_include_latest:
             if defer_break:
                 break

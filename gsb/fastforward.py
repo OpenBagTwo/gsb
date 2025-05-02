@@ -76,33 +76,47 @@ def rewrite_history(repo_root: Path, starting_point: str, *revisions: str) -> st
                 case _git.Commit():
                     _git.reset(repo_root, revision.hash, hard=True)
                     _git.reset(repo_root, head, hard=False)
-                    new_hash = _git.commit(
-                        repo_root,
-                        message=(
-                            revision.message + "\n\n" + f"rebase of {revision.hash}"
-                        ),
-                        timestamp=revision.timestamp,
-                    ).hash
-                    head = new_hash
+                    try:
+                        new_hash = _git.commit(
+                            repo_root,
+                            message=(
+                                revision.message + "\n\n" + f"rebase of {revision.hash}"
+                            ),
+                            timestamp=revision.timestamp,
+                        ).hash
+                        head = new_hash
+                    except ValueError:  # nothing to commit
+                        # identical to the last revision, so fuhgeddaboudit
+                        pass
                 case _git.Tag():
                     _git.reset(repo_root, revision.target.hash, hard=True)
                     _git.reset(repo_root, head, hard=False)
-                    new_hash = _git.commit(
-                        repo_root,
-                        message=(
-                            (revision.annotation or revision.name)
-                            + "\n\n"
-                            + f"rebase of {revision.target.hash}"
-                            + f' ("{revision.target.message.strip()}")'
-                        ),
-                        timestamp=revision.target.timestamp,
-                    ).hash
+                    try:
+                        new_hash = _git.commit(
+                            repo_root,
+                            message=(
+                                (revision.annotation or revision.name)
+                                + "\n\n"
+                                + f"rebase of {revision.target.hash}"
+                                + f' ("{revision.target.message.strip()}")'
+                            ),
+                            timestamp=revision.target.timestamp,
+                        ).hash
+                    except ValueError:  # nothing to commit
+                        LOGGER.warning(
+                            "Backup %s is identical to %s",
+                            revision.name,
+                            head,
+                        )
+                        new_hash = head
                     tags_to_update.append((revision, new_hash))
                     head = new_hash
+
                 case _:  # pragma: no cover
                     raise NotImplementedError(
                         f"Don't know how to handle revision of type {type(revision)}"
                     )
+
         for tag, target in tags_to_update:
             _git.delete_tag(repo_root, tag.name)
             _git.tag(repo_root, tag.name, tag.annotation, target=target)
