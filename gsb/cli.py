@@ -265,6 +265,11 @@ def history(
     help="Also revert the GSB configuration files (including .gitignore)",
 )
 @click.option(
+    "--delete-original",
+    is_flag=True,
+    help="Delete the original backup (incompatible with --hard)",
+)
+@click.option(
     "--hard",
     is_flag=True,
     help=(
@@ -279,10 +284,17 @@ def history(
 )
 @_subcommand_init
 def rewind(
-    repo_root: Path, revision: str | None, hard: bool, include_gsb_settings: bool
+    repo_root: Path,
+    revision: str | None,
+    hard: bool,
+    delete_original: bool,
+    include_gsb_settings: bool,
 ):
     """Restore a backup to the specified REVISION."""
     if hard:
+        if delete_original:
+            LOGGER.error("--delete-original and --hard cannot be used together")
+            sys.exit(1)
         if revision is None:
             revision = history_.get_history(
                 repo_root, tagged_only=False, include_non_gsb=True, limit=1
@@ -294,6 +306,8 @@ def rewind(
         rewind_.restore_backup(
             repo_root, revision, keep_gsb_files=not include_gsb_settings, hard=hard
         )
+        if delete_original:
+            fastforward.delete_backups(repo_root, revision)
     except ValueError as whats_that:
         LOGGER.error(whats_that)
         sys.exit(1)
