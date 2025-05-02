@@ -267,7 +267,7 @@ def history(
 @click.option(
     "--delete-original",
     is_flag=True,
-    help="Delete the original backup (incompatible with --hard)",
+    help="Delete the original backup from the history (incompatible with --hard)",
 )
 @click.option(
     "--hard",
