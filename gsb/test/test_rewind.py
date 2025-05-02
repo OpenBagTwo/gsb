@@ -369,12 +369,13 @@ class TestCLI:
     def test_hard_rewind_defaults_to_last_backup(self, repo):
         old_history = get_history(repo, tagged_only=False)
 
-        _ = subprocess.run(
+        result = subprocess.run(
             ["gsb", "rewind", "--hard"],
             cwd=repo,
             capture_output=False,
             input="y\n".encode(),
         )
+        assert result.returncode == 0
 
         new_history = get_history(repo, tagged_only=False)
 
@@ -409,11 +410,14 @@ class TestCLI:
             revision["identifier"] for revision in get_history(repo, tagged_only=False)
         ]
 
-        _ = subprocess.run(
+        result = subprocess.run(
             ["gsb", "rewind", "gsb2023.07.12", "--delete-original"],
             cwd=repo,
             capture_output=True,
         )
+
+        assert result.returncode == 0
+
         new_history = []
         for revision in get_history(repo, tagged_only=False):
             if revision["tagged"]:
