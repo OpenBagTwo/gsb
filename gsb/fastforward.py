@@ -196,4 +196,4 @@ def delete_backups(repo_root: Path, *revisions: str) -> str:
             " the linear commit history:\n"
             + "\n".join((f"  - {revision}" for revision in to_delete.values()))
         )
-    return rewrite_history(repo_root, *to_keep)
+    return rewrite_history(repo_root, to_keep[0], *to_keep[1:])
