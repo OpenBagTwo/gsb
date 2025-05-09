@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../export/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../history/">
+        <link rel="next" href="../rewind/">
       
       
       <link rel="icon" href="../../../img/favicon.png">
@@ -470,29 +470,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../export/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    export
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -584,81 +561,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../history/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    history
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../backup/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    backup
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../rewind/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     rewind
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../manifest/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    manifest
     
   </span>
   
@@ -699,12 +607,104 @@
   
   
     <li class="md-nav__item">
+      <a href="../export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    export
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    backup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../onboard/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     onboard
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    history
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    manifest
     
   </span>
   
@@ -1076,7 +1076,7 @@ history</p>
 </span><span id="__span-0-196"><a id="__codelineno-0-196" name="__codelineno-0-196"></a>            <span class="s2">&quot; the linear commit history:</span><span class="se">\n</span><span class="s2">&quot;</span>
 </span><span id="__span-0-197"><a id="__codelineno-0-197" name="__codelineno-0-197"></a>            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">revision</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">revision</span> <span class="ow">in</span> <span class="n">to_delete</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 </span><span id="__span-0-198"><a id="__codelineno-0-198" name="__codelineno-0-198"></a>        <span class="p">)</span>
-</span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>    <span class="k">return</span> <span class="n">rewrite_history</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="o">*</span><span class="n">to_keep</span><span class="p">)</span>
+</span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>    <span class="k">return</span> <span class="n">rewrite_history</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="n">to_keep</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">to_keep</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
